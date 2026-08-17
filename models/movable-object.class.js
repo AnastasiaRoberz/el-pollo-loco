@@ -1,11 +1,16 @@
-class movableObject {
+class MovableObject {
 	img;
-	x;
-	y;
+	xPos = 0;
+	yPos = 0;
+	width;
+	height = 480;
 
-    loadImg(path) {
-        this.img = 
-    }
+	constructor(path) {
+		this.loadImg(path);
+	}
 
-	move() {}
+	loadImg(path) {
+		this.img = new Image();
+		this.img.src = "../assets/img/" + path;
+	}
 }
