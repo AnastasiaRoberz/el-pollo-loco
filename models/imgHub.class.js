@@ -13,16 +13,16 @@ export class ImageHub {
 			"../assets/img/2_character_pepe/1_idle/idle/I-10.png",
 		],
 		longIdle: [
-			"../assets/img/2_character_pepe/1_idle/idle/I-11.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-12.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-13.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-14.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-15.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-16.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-17.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-18.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-19.png",
-			"../assets/img/2_character_pepe/1_idle/idle/I-20.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-11.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-12.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-13.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-14.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-15.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-16.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-17.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-18.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-19.png",
+			"../assets/img/2_character_pepe/1_idle/long_idle/I-20.png",
 		],
 		walk: [
 			"../assets/img/2_character_pepe/2_walk/W-21.png",
@@ -121,7 +121,7 @@ export class ImageHub {
 		secondLayer: ["../assets/img/5_background/layers/2_second_layer/1.png", "../assets/img/5_background/layers/2_second_layer/2.png"],
 		thirdLayer: ["../assets/img/5_background/layers/3_third_layer/1.png", "../assets/img/5_background/layers/3_third_layer/2.png"],
 		clouds: ["../assets/img/5_background/layers/4_clouds/1.png", "../assets/img/5_background/layers/4_clouds/2.png"],
-		air: ["../assets/img/5_background/layers/air.png"],
+		air: "../assets/img/5_background/layers/air.png",
 	};
 
 	static BOTTLE = {
@@ -157,7 +157,7 @@ export class ImageHub {
 		],
 	};
 
-	static introOutroScreens = {
+	static INTRO_OUTRO_SCREENS = {
 		start: ["../assets/img/9_intro_outro_screens/start/startscreen_1.png"],
 		won: [
 			"../assets/img/You won, you lost/You Win A.png",
