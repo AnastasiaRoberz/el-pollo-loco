@@ -16,10 +16,34 @@ export class World {
 	constructor(canvas) {
 		this.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
-		this.canvas = canvas;
-		this.bgImg = new Image();
-		this.bgImg.src = "../assets/img/5_background/layers/air.png";
+		this.bgLayers = this.createBgLayers(4);
 		this.draw();
+	}
+
+	createBgLayers(sections) {
+		const layers = [];
+		const step = this.canvas.width - 1;
+
+		for (let i = 0; i < sections; i++) {
+			layers.push(new BackgroundLayer(ImageHub.Backgrounnd.air, i * step));
+		}
+
+		for (let i = 0; i < sections; i++) {
+			const img = ImageHub.BACKGROUND.thirdLayer[i % 2];
+			layers.push(new BackgroundLayer(img, i * step));
+		}
+
+		for (let i = 0; i < sections; i++) {
+			const img = ImageHub.BACKGROUND.secondLayer[i % 2];
+			layers.push(new BackgroundLayer(img, i * step));
+		}
+
+		for (let i = 0; i < sections; i++) {
+			const img = ImageHub.BACKGROUND.firstLayer[i % 2];
+			layers.push(new BackgroundLayer(img, i * step));
+		}
+
+		return layers;
 	}
 
 	draw() {
