@@ -5,7 +5,9 @@ export class BackgroundLayer extends MovableObject {
 	width = 1280;
 	height = 720;
 
-	constructor(layerFolder) {
-		super("5_background/layers/" + layerFolder + "/full.png");
+	constructor(imgPath, xPos) {
+		super();
+		this.loadImg(imgPath);
+		this.xPos = xPos;
 	}
 }

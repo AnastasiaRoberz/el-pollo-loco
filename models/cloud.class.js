@@ -5,9 +5,17 @@ export class Cloud extends MovableObject {
 	width = 1280;
 	height = 720;
 
-	constructor() {
-		super("5_background/layers/4_clouds/full.png");
+	constructor(imgPath, xPos) {
+		super();
+		this.loadImg(imgPath);
+		this.xPos = xPos;
+		this.animate();
+	}
 
-		this.xPos = -Math.random() * 500;
+	animate() {
+		setInterval(() => {
+			this.moveLeft();
+			if (this.xPos <= -this.width) this.xPos = 720;
+		}, 1000 / 60);
 	}
 }
