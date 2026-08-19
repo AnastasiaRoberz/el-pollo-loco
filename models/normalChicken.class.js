@@ -6,10 +6,10 @@ export class NormalChicken extends Chicken {
 
 	constructor(canvasWidth, canvasHeight) {
 		super();
-		this.height = canvasHeight * 0.3;
+		this.height = canvasHeight * 0.18;
 		this.width = this.height;
-		this.yPos = canvasHeight * 0.8 - this.height;
-		this.xPos = this.loadImg(ImageHub.NORMAL_CHICKEN.walk[0]);
+		this.yPos = canvasHeight * 0.88 - this.height;
+		this.loadImg(ImageHub.NORMAL_CHICKEN.walk[0]);
 		this.loadImages(this.imagesWalk);
 		this.animate();
 	}

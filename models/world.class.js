@@ -9,7 +9,7 @@ export class World {
 	canvas;
 	ctx;
 	character;
-	enemies = [new NormalChicken(), new NormalChicken(), new NormalChicken()];
+	enemies;
 	bgLayers = [];
 	clouds = [];
 	camera;
@@ -20,6 +20,11 @@ export class World {
 		this.ctx = canvas.getContext("2d");
 		World.maxWidth = this.sections * this.canvas.width;
 		this.character = new Character(this.canvas.width, this.canvas.height);
+		this.enemies = [
+			new NormalChicken(this.canvas.width, this.canvas.height),
+			new NormalChicken(this.canvas.width, this.canvas.height),
+			new NormalChicken(this.canvas.width, this.canvas.height),
+		];
 		this.bgLayers = this.createBgLayers();
 		this.clouds = this.createClouds();
 		this.draw();
