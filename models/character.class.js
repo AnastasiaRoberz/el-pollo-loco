@@ -11,11 +11,44 @@ export class Character extends MovableObject {
 	longIdle = false;
 
 	constructor() {
-		super("2_character_pepe/1_idle/idle/I-1.png");
+		super();
+		this.loadImg(ImageHub.PEPE.idle[0]);
+		this.loadImages(ImageHub.PEPE.idle);
+		this.loadImages(ImageHub.PEPE.walk);
+		this.loadImages(ImageHub.PEPE.jump);
+		this.animate();
 	}
 
-	move() {
-		this.xPos += 20;
+	animate() {
+		setInterval(() => {
+			if (Keyboard.RIGHT) {
+				this.flipDirection = false;
+				this.moveRight();
+			}
+
+			if (Keyboard.LEFT) {
+				this.flipDirection = true;
+				this.moveLeft();
+			}
+
+			if (Keyboard.SPACE) this.jump();
+		}, 1000 / 60);
+
+		setInterval(() => {
+			if (this.longIdle) {
+				this.showAnimation(ImageHub.PEPE.longIdle);
+			} else if (this.isDead) {
+				this.showAnimation(ImageHub.PEPE.dead);
+			} else if (this.isHurt) {
+				this.showAnimation(ImageHub.PEPE.hurt);
+			} else if (this.isAboveGround) {
+				this.showAnimation(ImageHub.PEPE.jump);
+			} else if (Keyboard.RIGHT || Keyboard.LEFT) {
+				this.showAnimation(ImageHub.PEPE.walk);
+			} else {
+				this.showAnimation(ImageHub.PEPE.idle);
+			}
+		}, 300);
 	}
 
 	jump() {}
