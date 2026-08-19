@@ -1,3 +1,5 @@
+import { World } from "./world.class.js";
+
 export class MovableObject {
 	img;
 	xPos;
@@ -39,11 +41,11 @@ export class MovableObject {
 	}
 
 	moveRight() {
-		this.xPos += this.speed;
+		if (this.xPos < World.maxWidth - this.width) this.xPos += this.speed;
 	}
 
 	moveLeft() {
-		this.xPos -= this.speed;
+		if (this.xPos > 0) this.xPos -= this.speed;
 	}
 
 	draw(ctx) {

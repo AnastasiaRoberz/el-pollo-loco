@@ -3,15 +3,15 @@ import { Keyboard } from "./keyboard.class.js";
 import { MovableObject } from "./movableObject.class.js";
 
 export class Character extends MovableObject {
-	xPos = 100;
-	yPos = 240;
-	width = 203;
-	height = 400;
 	speed = 10;
 	longIdle = false;
 
-	constructor() {
+	constructor(canvasWidth, canvasHeight) {
 		super();
+		this.height = canvasHeight * 0.6;
+		this.width = this.height * 0.52;
+		this.yPos = canvasHeight * 0.9 - this.height;
+		this.xPos = this.width;
 		this.loadImg(ImageHub.PEPE.idle[0]);
 		this.loadImages(ImageHub.PEPE.idle);
 		this.loadImages(ImageHub.PEPE.walk);
