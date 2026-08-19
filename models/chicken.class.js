@@ -5,8 +5,17 @@ export class Chicken extends MovableObject {
 	imagesWalk = [];
 
 	constructor() {
-		super("3_enemies_chicken/chicken_normal/1_walk/3_w.png");
+		super();
+		this.xPos = Math.random() * 720;
+	}
 
-		this.xPos = 200 + Math.random() * 500;
+	animate() {
+		setInterval(() => {
+			this.moveLeft();
+		}, 1000 / 60);
+
+		setInterval(() => {
+			this.showAnimation(this.imagesWalk);
+		}, 100);
 	}
 }
