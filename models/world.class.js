@@ -47,12 +47,19 @@ export class World {
 	}
 
 	draw() {
+		const maxCamera = -(2800 - 720);
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.drawImage(this.bgImg, 0, 0, 720, 480);
+
+		this.camera = -this.character.xPos + 100;
+		if (this.camera > 0) this.camera = 0;
+		if (this.camera < maxCamera) this.camera = maxCamera;
+		this.ctx.translate(this.camera, 0);
+
 		this.addObjectsToMap(this.bgLayer);
 		this.addItemToMap(this.clouds);
 		this.addItemToMap(this.character);
 		this.addObjectsToMap(this.enemies);
+		this.ctx.translate(-this.camera, 0);
 
 		requestAnimationFrame(() => this.draw());
 	}
