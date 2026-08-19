@@ -56,8 +56,9 @@ export class World {
 		this.ctx.translate(this.camera, 0);
 
 		this.addObjectsToMap(this.bgLayer);
-		this.addItemToMap(this.clouds);
-		this.addItemToMap(this.character);
+		this.addObjectsToMap(this.clouds);
+		this.character.draw(this.ctx);
+		// this.character.drawFrame(this.ctx);
 		this.addObjectsToMap(this.enemies);
 		this.ctx.translate(-this.camera, 0);
 
@@ -65,10 +66,9 @@ export class World {
 	}
 
 	addObjectsToMap(objects) {
-		objects.forEach((object) => this.addItemToMap(object));
-	}
-
-	addItemToMap(item) {
-		this.ctx.drawImage(item.img, item.xPos, item.yPos, item.width, item.height);
+		objects.forEach((object) => {
+			object.draw(this.ctx);
+			// object.drawFrame(this.ctx);
+		});
 	}
 }
