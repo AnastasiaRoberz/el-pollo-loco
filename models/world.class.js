@@ -7,9 +7,14 @@ import { NormalChicken } from "./normalChicken.class.js";
 export class World {
 	canvas;
 	ctx;
-	bgImg;
+	character = new Character();
+	enemies = [new NormalChicken(), new NormalChicken(), new NormalChicken()];
+	bgLayers = [];
+	clouds = [new Cloud(ImageHub.BACKGROUND.clouds[0], 0), new Cloud(ImageHub.BACKGROUND.clouds[1], 720)];
+	camera;
 
 	constructor(canvas) {
+		this.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
 		this.canvas = canvas;
 		this.bgImg = new Image();
