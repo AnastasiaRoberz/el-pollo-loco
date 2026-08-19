@@ -1,8 +1,10 @@
-class World {
-	character = new Character();
-	enemies = [new Chicken(), new Chicken(), new Chicken()];
-	bgLayer = [new BackgroundLayer("3_third_layer"), new BackgroundLayer("2_second_layer"), new BackgroundLayer("1_first_layer")];
-	clouds = new Cloud();
+import { BackgroundLayer } from "./background.class.js";
+import { Character } from "./character.class.js";
+import { Cloud } from "./cloud.class.js";
+import { ImageHub } from "./imgHub.class.js";
+import { NormalChicken } from "./normalChicken.class.js";
+
+export class World {
 	canvas;
 	ctx;
 	bgImg;
