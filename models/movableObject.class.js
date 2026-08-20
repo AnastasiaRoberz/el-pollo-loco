@@ -12,7 +12,9 @@ export class MovableObject {
 	speed = 0.15;
 	isDead = false;
 	isHurt = false;
-	isAboveGround = false;
+	speedY = 0;
+	acceleration = 3;
+	defaultYPos;
 
 	loadImg(path) {
 		this.img = new Image();
@@ -46,6 +48,22 @@ export class MovableObject {
 
 	moveLeft() {
 		this.xPos -= this.speed;
+	}
+
+	applyGravity() {
+		setInterval(() => {
+			if (this.isAboveGround() || this.speedY > 0) {
+				this.yPos -= this.speedY;
+				this.speedY -= this.acceleration;
+			} else {
+				this.yPos = this.defaultYPos;
+				this.speedY = 0;
+			}
+		}, 1000 / 25);
+	}
+
+	isAboveGround() {
+		return this.yPos < this.defaultYPos;
 	}
 
 	draw(ctx) {

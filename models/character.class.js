@@ -5,14 +5,17 @@ import { MovableObject } from "./movableObject.class.js";
 export class Character extends MovableObject {
 	speed = 10;
 	longIdle = false;
+	defaultYPos;
 
-	constructor(canvasWidth, canvasHeight, maxWidth) {
+	constructor(canvasHeight, maxWidth) {
 		super();
 		this.height = canvasHeight * 0.6;
 		this.width = this.height * 0.52;
-		this.yPos = canvasHeight * 0.9 - this.height;
+		this.defaultYPos = canvasHeight * 0.9 - this.height;
+		this.yPos = this.defaultYPos;
 		this.xPos = this.width;
 		this.loadImagesToCache();
+		this.applyGravity();
 		this.animate(maxWidth);
 	}
 
@@ -38,7 +41,9 @@ export class Character extends MovableObject {
 				this.moveLeft();
 			}
 
-			if (Keyboard.SPACE) this.jump();
+			if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround()) {
+				this.speedY = 35;
+			}
 		}, 1000 / 60);
 
 		setInterval(() => {
@@ -48,7 +53,7 @@ export class Character extends MovableObject {
 				this.showAnimation(ImageHub.PEPE.dead);
 			} else if (this.isHurt) {
 				this.showAnimation(ImageHub.PEPE.hurt);
-			} else if (this.isAboveGround) {
+			} else if (this.isAboveGround()) {
 				this.showAnimation(ImageHub.PEPE.jump);
 			} else if (Keyboard.RIGHT || Keyboard.LEFT) {
 				this.showAnimation(ImageHub.PEPE.walk);
@@ -57,6 +62,4 @@ export class Character extends MovableObject {
 			}
 		}, 250);
 	}
-
-	jump() {}
 }

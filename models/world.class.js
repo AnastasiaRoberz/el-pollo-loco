@@ -17,7 +17,7 @@ export class World {
 		this.ctx = canvas.getContext("2d");
 		this.level = new Level(this.canvas, 2, 5);
 		this.maxWidth = this.level.maxWidth;
-		this.character = new Character(this.canvas.width, this.canvas.height, this.maxWidth);
+		this.character = new Character(this.canvas.height, this.maxWidth);
 		this.bgLayers = this.level.bgLayers;
 		this.clouds = this.level.clouds;
 		this.enemies = this.level.enemies;
