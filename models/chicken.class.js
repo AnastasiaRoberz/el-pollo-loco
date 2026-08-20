@@ -6,7 +6,6 @@ export class Chicken extends MovableObject {
 
 	constructor() {
 		super();
-		this.xPos = Math.random() * 960 * 2;
 	}
 
 	animate() {

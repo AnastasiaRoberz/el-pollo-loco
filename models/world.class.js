@@ -1,26 +1,23 @@
-import { BackgroundLayer } from "./background.class.js";
 import { Character } from "./character.class.js";
-import { Cloud } from "./cloud.class.js";
-import { ImageHub } from "./imgHub.class.js";
 import { Level } from "./level.class.js";
-import { NormalChicken } from "./normalChicken.class.js";
 
 export class World {
 	canvas;
 	ctx;
 	character;
-	enemies;
+	enemies = [];
 	bgLayers = [];
 	clouds = [];
 	camera;
 	level;
+	maxWidth;
 
 	constructor(canvas) {
 		this.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
-		this.maxWidth = this.sections * this.canvas.width;
-		this.character = new Character(this.canvas.width, this.canvas.height);
-		this.level = new Level(this.canvas, 4, 5);
+		this.level = new Level(this.canvas, 2, 5);
+		this.maxWidth = this.level.maxWidth;
+		this.character = new Character(this.canvas.width, this.canvas.height, this.maxWidth);
 		this.bgLayers = this.level.bgLayers;
 		this.clouds = this.level.clouds;
 		this.enemies = this.level.enemies;

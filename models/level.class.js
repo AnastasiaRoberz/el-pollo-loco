@@ -1,14 +1,17 @@
 import { BackgroundLayer } from "./background.class.js";
+import { BossChicken } from "./bossChicken.class.js";
 import { Cloud } from "./cloud.class.js";
 import { ImageHub } from "./imgHub.class.js";
 import { NormalChicken } from "./normalChicken.class.js";
 
 export class Level {
+	maxWidth;
 	bgLayers;
 	clouds;
 	enemies;
 
 	constructor(canvas, sections, enemiesAmount) {
+		this.maxWidth = sections * canvas.width;
 		this.createBgLayers(canvas, sections);
 		this.createClouds(canvas, sections);
 		this.createEnemies(canvas, sections, enemiesAmount);
@@ -55,8 +58,9 @@ export class Level {
 	createEnemies(canvas, enemiesAmount) {
 		const chickens = [];
 		for (let i = 0; i < enemiesAmount; i++) {
-			chickens.push(new NormalChicken(canvas.width, canvas.height));
+			chickens.push(new NormalChicken(canvas.height, this.maxWidth));
 		}
+		chickens.push(new BossChicken(canvas.height, this.maxWidth));
 		this.enemies = chickens;
 	}
 }

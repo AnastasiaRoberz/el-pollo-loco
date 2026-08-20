@@ -41,11 +41,11 @@ export class MovableObject {
 	}
 
 	moveRight() {
-		if (this.xPos < World.maxWidth - this.width) this.xPos += this.speed;
+		this.xPos += this.speed;
 	}
 
 	moveLeft() {
-		if (this.xPos > 0) this.xPos -= this.speed;
+		this.xPos -= this.speed;
 	}
 
 	draw(ctx) {
