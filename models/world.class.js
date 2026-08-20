@@ -2,10 +2,10 @@ import { BackgroundLayer } from "./background.class.js";
 import { Character } from "./character.class.js";
 import { Cloud } from "./cloud.class.js";
 import { ImageHub } from "./imgHub.class.js";
+import { Level } from "./level.class.js";
 import { NormalChicken } from "./normalChicken.class.js";
 
 export class World {
-	static maxWidth;
 	canvas;
 	ctx;
 	character;
@@ -13,63 +13,22 @@ export class World {
 	bgLayers = [];
 	clouds = [];
 	camera;
-	sections = 2;
+	level;
 
 	constructor(canvas) {
 		this.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
-		World.maxWidth = this.sections * this.canvas.width;
+		this.maxWidth = this.sections * this.canvas.width;
 		this.character = new Character(this.canvas.width, this.canvas.height);
-		this.enemies = [
-			new NormalChicken(this.canvas.width, this.canvas.height),
-			new NormalChicken(this.canvas.width, this.canvas.height),
-			new NormalChicken(this.canvas.width, this.canvas.height),
-		];
-		this.bgLayers = this.createBgLayers();
-		this.clouds = this.createClouds();
+		this.level = new Level(this.canvas, 4, 5);
+		this.bgLayers = this.level.bgLayers;
+		this.clouds = this.level.clouds;
+		this.enemies = this.level.enemies;
 		this.draw();
 	}
 
-	createBgLayers() {
-		const layers = [];
-		const step = this.canvas.width;
-
-		for (let i = 0; i < this.sections; i++) {
-			layers.push(new BackgroundLayer(ImageHub.BACKGROUND.air, i * step, this.canvas.width, this.canvas.height));
-		}
-
-		for (let i = 0; i < this.sections; i++) {
-			const img = ImageHub.BACKGROUND.thirdLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step, this.canvas.width, this.canvas.height));
-		}
-
-		for (let i = 0; i < this.sections; i++) {
-			const img = ImageHub.BACKGROUND.secondLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step, this.canvas.width, this.canvas.height));
-		}
-
-		for (let i = 0; i < this.sections; i++) {
-			const img = ImageHub.BACKGROUND.firstLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step, this.canvas.width, this.canvas.height));
-		}
-
-		return layers;
-	}
-
-	createClouds() {
-		const cloudsArr = [];
-		const step = this.canvas.width;
-
-		for (let i = 0; i < this.sections; i++) {
-			const img = ImageHub.BACKGROUND.clouds[i % 2];
-			cloudsArr.push(new Cloud(img, i * step, this.canvas.width, this.canvas.height));
-		}
-
-		return cloudsArr;
-	}
-
 	draw() {
-		const maxCamera = -(World.maxWidth - this.canvas.width);
+		const maxCamera = -(this.maxWidth - this.canvas.width);
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 		this.camera = -this.character.xPos + this.character.width;
