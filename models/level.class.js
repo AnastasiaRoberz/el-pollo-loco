@@ -3,6 +3,7 @@ import { BossChicken } from "./bossChicken.class.js";
 import { Cloud } from "./cloud.class.js";
 import { ImageHub } from "./imgHub.class.js";
 import { NormalChicken } from "./normalChicken.class.js";
+import { SmallChicken } from "./smallChicken.class.js";
 
 export class Level {
 	maxWidth;
@@ -59,6 +60,7 @@ export class Level {
 		const chickens = [];
 		for (let i = 0; i < enemiesAmount; i++) {
 			chickens.push(new NormalChicken(canvas.height, this.maxWidth));
+			chickens.push(new SmallChicken(canvas.height, this.maxWidth));
 		}
 		chickens.push(new BossChicken(canvas.height, this.maxWidth));
 		this.enemies = chickens;
