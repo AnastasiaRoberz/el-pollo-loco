@@ -15,7 +15,7 @@ export class Cloud extends MovableObject {
 	animate() {
 		setInterval(() => {
 			this.moveLeft();
-			if (this.xPos <= -this.width) this.xPos = 720;
+			if (this.xPos <= -this.width) this.xPos = this.width * 2;
 		}, 1000 / 60);
 	}
 }

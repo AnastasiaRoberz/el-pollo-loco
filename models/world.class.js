@@ -8,7 +8,7 @@ export class World {
 	enemies = [];
 	bgLayers = [];
 	clouds = [];
-	camera;
+	cameraPos;
 	level;
 	maxWidth;
 
@@ -25,20 +25,20 @@ export class World {
 	}
 
 	draw() {
-		const maxCamera = -(this.maxWidth - this.canvas.width);
+		const maxcameraPos = -(this.maxWidth - this.canvas.width);
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-		this.camera = -this.character.xPos + this.character.width;
-		if (this.camera > 0) this.camera = 0;
-		if (this.camera < maxCamera) this.camera = maxCamera;
-		this.ctx.translate(this.camera, 0);
+		this.cameraPos = -this.character.xPos + this.character.width;
+		if (this.cameraPos > 0) this.cameraPos = 0;
+		if (this.cameraPos < maxcameraPos) this.cameraPos = maxcameraPos;
+		this.ctx.translate(this.cameraPos, 0);
 
 		this.addObjectsToMap(this.bgLayers);
 		this.addObjectsToMap(this.clouds);
 		this.character.draw(this.ctx);
 		// this.character.drawFrame(this.ctx);
 		this.addObjectsToMap(this.enemies);
-		this.ctx.translate(-this.camera, 0);
+		this.ctx.translate(-this.cameraPos, 0);
 
 		requestAnimationFrame(() => this.draw());
 	}

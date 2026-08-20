@@ -6,27 +6,34 @@ export class Character extends MovableObject {
 	speed = 10;
 	longIdle = false;
 
-	constructor(canvasWidth, canvasHeight) {
+	constructor(canvasWidth, canvasHeight, maxWidth) {
 		super();
 		this.height = canvasHeight * 0.6;
 		this.width = this.height * 0.52;
 		this.yPos = canvasHeight * 0.9 - this.height;
 		this.xPos = this.width;
-		this.loadImg(ImageHub.PEPE.idle[0]);
-		this.loadImages(ImageHub.PEPE.idle);
-		this.loadImages(ImageHub.PEPE.walk);
-		this.loadImages(ImageHub.PEPE.jump);
-		this.animate();
+		this.loadImagesToCache();
+		this.animate(maxWidth);
 	}
 
-	animate() {
+	loadImagesToCache() {
+		this.loadImg(ImageHub.PEPE.idle[0]);
+		this.loadImages(ImageHub.PEPE.idle);
+		this.loadImages(ImageHub.PEPE.longIdle);
+		this.loadImages(ImageHub.PEPE.walk);
+		this.loadImages(ImageHub.PEPE.jump);
+		this.loadImages(ImageHub.PEPE.hurt);
+		this.loadImages(ImageHub.PEPE.dead);
+	}
+
+	animate(maxWidth) {
 		setInterval(() => {
-			if (Keyboard.RIGHT) {
+			if (Keyboard.RIGHT && this.xPos < maxWidth - this.width) {
 				this.flipDirection = false;
 				this.moveRight();
 			}
 
-			if (Keyboard.LEFT) {
+			if (Keyboard.LEFT && this.xPos > 0) {
 				this.flipDirection = true;
 				this.moveLeft();
 			}
@@ -48,7 +55,7 @@ export class Character extends MovableObject {
 			} else {
 				this.showAnimation(ImageHub.PEPE.idle);
 			}
-		}, 300);
+		}, 250);
 	}
 
 	jump() {}
