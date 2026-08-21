@@ -1,4 +1,5 @@
 import { ImageHub } from "./img-hub.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { MovableObject } from "./movable-object.class.js";
 
@@ -30,29 +31,37 @@ export class Character extends MovableObject {
 	}
 
 	animate(maxWidth) {
-		setInterval(() => {
-			if (Keyboard.RIGHT && this.xPos < maxWidth - this.width) {
-				this.flipDirection = false;
-				this.moveRight();
-			}
+		IntervalHub.startInterval(
+			"pepe-moves",
+			() => {
+				if (Keyboard.RIGHT && this.xPos < maxWidth - this.width) {
+					this.flipDirection = false;
+					this.moveRight();
+				}
 
-			if (Keyboard.LEFT && this.xPos > 0) {
-				this.flipDirection = true;
-				this.moveLeft();
-			}
+				if (Keyboard.LEFT && this.xPos > 0) {
+					this.flipDirection = true;
+					this.moveLeft();
+				}
 
-			if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround()) this.jump(35);
-		}, 1000 / 60);
+				if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround()) this.jump(35);
+			},
+			1000 / 60,
+		);
 
-		setInterval(() => {
-			this.checkAnimation();
-		}, 250);
+		IntervalHub.startInterval(
+			"pepe-animation",
+			() => {
+				this.checkAnimation();
+			},
+			250,
+		);
 	}
 
 	checkAnimation() {
 		if (this.longIdle) {
 			this.showAnimation(ImageHub.PEPE.longIdle);
-		} else if (Keyboard.RIGHT || Keyboard.LEFT) {
+		} else if ((Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround()) {
 			this.showAnimation(ImageHub.PEPE.walk);
 		} else if (this.isAboveGround()) {
 			this.showAnimation(ImageHub.PEPE.jump);

@@ -1,5 +1,6 @@
 import { Chicken } from "./chicken.class.js";
 import { ImageHub } from "./img-hub.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 
 export class BossChicken extends Chicken {
 	constructor(canvasHeight, maxWidth) {
@@ -22,8 +23,12 @@ export class BossChicken extends Chicken {
 	}
 
 	animate() {
-		setInterval(() => {
-			this.showAnimation(ImageHub.BOSS_CHICKEN.alert);
-		}, 300);
+		IntervalHub.startInterval(
+			"bos-chicken-animate",
+			() => {
+				this.showAnimation(ImageHub.BOSS_CHICKEN.alert);
+			},
+			300,
+		);
 	}
 }

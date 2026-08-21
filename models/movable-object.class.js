@@ -1,4 +1,5 @@
 import { DrawableObject } from "./drawable-object.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 
 export class MovableObject extends DrawableObject {
 	flipDirection = false;
@@ -39,15 +40,19 @@ export class MovableObject extends DrawableObject {
 	}
 
 	applyGravity() {
-		setInterval(() => {
-			if (this.isAboveGround() || this.speedY > 0) {
-				this.yPos -= this.speedY;
-				this.speedY -= this.acceleration;
-			} else {
-				this.yPos = this.defaultYPos;
-				this.speedY = 0;
-			}
-		}, 1000 / 25);
+		IntervalHub.startInterval(
+			"gravity",
+			() => {
+				if (this.isAboveGround() || this.speedY > 0) {
+					this.yPos -= this.speedY;
+					this.speedY -= this.acceleration;
+				} else {
+					this.yPos = this.defaultYPos;
+					this.speedY = 0;
+				}
+			},
+			1000 / 25,
+		);
 	}
 
 	isAboveGround() {

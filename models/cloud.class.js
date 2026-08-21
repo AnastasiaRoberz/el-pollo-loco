@@ -1,3 +1,4 @@
+import { IntervalHub } from "./interval-hub.class.js";
 import { MovableObject } from "./movable-object.class.js";
 
 export class Cloud extends MovableObject {
@@ -13,9 +14,13 @@ export class Cloud extends MovableObject {
 	}
 
 	animate() {
-		setInterval(() => {
-			this.moveLeft();
-			if (this.xPos <= -this.width) this.xPos = this.width * 2;
-		}, 1000 / 60);
+		IntervalHub.startInterval(
+			"cloud-animation",
+			() => {
+				this.moveLeft();
+				if (this.xPos <= -this.width) this.xPos = this.width * 2;
+			},
+			1000 / 60,
+		);
 	}
 }

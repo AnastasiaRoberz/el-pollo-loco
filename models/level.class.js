@@ -2,6 +2,7 @@ import { BackgroundLayer } from "./background.class.js";
 import { BossChicken } from "./boss-chicken.class.js";
 import { Cloud } from "./cloud.class.js";
 import { ImageHub } from "./img-hub.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 import { NormalChicken } from "./normal-chicken.class.js";
 import { SmallChicken } from "./small-chicken.class.js";
 import { StatusBar } from "./status-bar.class.js";
@@ -10,19 +11,21 @@ export class Level {
 	maxWidth;
 	bgLayers;
 	clouds;
-	enemies;
+	enemies = [];
 	healthBar;
 	coinBar;
 	bottleBar;
 
-	constructor(canvas, sections, enemiesAmount) {
+	constructor(canvas, sections) {
 		this.maxWidth = sections * canvas.width;
 		this.createBgLayers(canvas, sections);
 		this.createClouds(canvas, sections);
-		this.createEnemies(canvas, sections, enemiesAmount);
 		this.healthBar = new StatusBar("health", "green", 20);
 		this.coinBar = new StatusBar("coin", "orange", 80);
 		this.bottleBar = new StatusBar("bottle", "blue", 140);
+		this.enemies.push(new BossChicken(canvas.height, this.maxWidth));
+		this.addStartEnemies();
+		// this.addEnemies();
 	}
 
 	createBgLayers(canvas, sections) {
@@ -63,13 +66,28 @@ export class Level {
 		this.clouds = cloudsArr;
 	}
 
-	createEnemies(canvas, enemiesAmount) {
-		const chickens = [];
-		for (let i = 0; i < enemiesAmount; i++) {
-			chickens.push(new NormalChicken(canvas.height, this.maxWidth));
-			chickens.push(new SmallChicken(canvas.height, this.maxWidth));
+	addStartEnemies() {
+		for (let i = 0; i < 5; i++) {
+			this.enemies.push(new NormalChicken(canvas.width * 2, canvas.height, canvas.width));
+			this.enemies.push(new SmallChicken(canvas.width * 2, canvas.height, canvas.width));
 		}
-		chickens.push(new BossChicken(canvas.height, this.maxWidth));
-		this.enemies = chickens;
+	}
+
+	addEnemies() {
+		IntervalHub.startInterval(
+			"add-normal-chicken",
+			() => {
+				this.enemies.push(new NormalChicken(canvas.width, canvas.height, this.maxWidth));
+			},
+			4000,
+		);
+
+		IntervalHub.startInterval(
+			"add-small-chicken",
+			() => {
+				this.enemies.push(new SmallChicken(canvas.width, canvas.height, this.maxWidth));
+			},
+			2000,
+		);
 	}
 }

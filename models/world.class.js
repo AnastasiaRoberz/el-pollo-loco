@@ -1,5 +1,6 @@
 import { BossChicken } from "./boss-chicken.class.js";
 import { Character } from "./character.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { Level } from "./level.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
@@ -8,7 +9,6 @@ export class World {
 	canvas;
 	ctx;
 	character;
-	enemies = [];
 	bgLayers = [];
 	clouds = [];
 	throwableObjects = [];
@@ -30,7 +30,6 @@ export class World {
 		this.character = new Character(this.canvas.height, this.maxWidth);
 		this.bgLayers = this.level.bgLayers;
 		this.clouds = this.level.clouds;
-		this.enemies = this.level.enemies;
 	}
 
 	draw() {
@@ -46,7 +45,7 @@ export class World {
 		this.addObjectsToMap(this.clouds);
 		this.character.draw(this.ctx);
 		// this.character.drawFrame(this.ctx);
-		this.addObjectsToMap(this.enemies);
+		this.addObjectsToMap(this.level.enemies);
 		this.addObjectsToMap(this.throwableObjects);
 		this.ctx.translate(-this.cameraPos, 0);
 
@@ -65,10 +64,14 @@ export class World {
 	}
 
 	run() {
-		setInterval(() => {
-			this.checkCollisions();
-			this.checkThrowObjects();
-		}, 200);
+		IntervalHub.startInterval(
+			"main-interval",
+			() => {
+				this.checkCollisions();
+				this.checkThrowObjects();
+			},
+			200,
+		);
 	}
 
 	checkCollisions() {

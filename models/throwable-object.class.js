@@ -1,4 +1,5 @@
 import { ImageHub } from "./img-hub.class.js";
+import { IntervalHub } from "./interval-hub.class.js";
 import { MovableObject } from "./movable-object.class.js";
 
 export class ThrowableObject extends MovableObject {
@@ -20,10 +21,14 @@ export class ThrowableObject extends MovableObject {
 		this.yPos = yPos;
 		this.speedY = 30;
 		this.applyGravity();
-		setInterval(() => {
-			this.showAnimation(ImageHub.BOTTLE.rotation);
-			flipDirection ? (this.xPos -= this.speedX) : (this.xPos += this.speedX);
-		}, 35);
+		IntervalHub.startInterval(
+			"bottle",
+			() => {
+				this.showAnimation(ImageHub.BOTTLE.rotation);
+				flipDirection ? (this.xPos -= this.speedX) : (this.xPos += this.speedX);
+			},
+			35,
+		);
 	}
 
 	isAboveGround() {
