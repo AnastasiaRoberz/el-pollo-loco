@@ -1,5 +1,5 @@
+import { BossChicken } from "./boss-chicken.class.js";
 import { Character } from "./character.class.js";
-import { Chicken } from "./chicken.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { Level } from "./level.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
@@ -45,7 +45,7 @@ export class World {
 		this.addObjectsToMap(this.bgLayers);
 		this.addObjectsToMap(this.clouds);
 		this.character.draw(this.ctx);
-		this.character.drawFrame(this.ctx);
+		// this.character.drawFrame(this.ctx);
 		this.addObjectsToMap(this.enemies);
 		this.addObjectsToMap(this.throwableObjects);
 		this.ctx.translate(-this.cameraPos, 0);
@@ -60,7 +60,7 @@ export class World {
 	addObjectsToMap(objects) {
 		objects.forEach((object) => {
 			object.draw(this.ctx);
-			if (object instanceof Chicken) object.drawFrame(this.ctx);
+			// if (object instanceof Chicken) object.drawFrame(this.ctx);
 		});
 	}
 
@@ -73,11 +73,18 @@ export class World {
 
 	checkCollisions() {
 		this.level.enemies.forEach((enemy) => {
-			if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
+			if (this.character.isColliding(enemy) && !this.character.isAboveGround() && !enemy.isDead()) {
 				if (!this.character.isHurt()) {
 					this.character.isHit();
 					this.level.healthBar.setPercentage(this.character.energy);
 				}
+			} else if (this.character.isColliding(enemy) && this.character.isAboveGround() && !enemy.isDead()) {
+				if (!(enemy instanceof BossChicken)) enemy.die();
+				this.character.jump(15);
+				setTimeout(() => {
+					const currentIndex = this.level.enemies.indexOf(enemy);
+					this.level.enemies.splice(currentIndex, 1);
+				}, 1000);
 			}
 		});
 	}

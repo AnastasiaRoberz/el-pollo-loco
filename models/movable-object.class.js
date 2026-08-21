@@ -34,8 +34,8 @@ export class MovableObject extends DrawableObject {
 		this.xPos -= this.speed;
 	}
 
-	jump() {
-		this.speedY = 35;
+	jump(speedY) {
+		this.speedY = speedY;
 	}
 
 	applyGravity() {

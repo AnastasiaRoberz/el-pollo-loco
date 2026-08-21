@@ -11,11 +11,16 @@ export class Chicken extends MovableObject {
 
 	animate() {
 		setInterval(() => {
-			this.moveLeft();
+			if (this.energy > 0) this.moveLeft();
 		}, 1000 / 60);
 
 		setInterval(() => {
-			this.showAnimation(this.imagesWalk);
+			if (this.energy > 0) this.showAnimation(this.imagesWalk);
 		}, 100);
+	}
+
+	die() {
+		this.energy = 0;
+		this.loadImg(this.imgDead);
 	}
 }

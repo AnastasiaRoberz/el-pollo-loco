@@ -3,6 +3,7 @@ import { ImageHub } from "./img-hub.class.js";
 
 export class SmallChicken extends Chicken {
 	imagesWalk = ImageHub.SMALL_CHICKEN.walk;
+	imgDead = ImageHub.SMALL_CHICKEN.dead;
 
 	constructor(canvasHeight, maxWidth) {
 		super();

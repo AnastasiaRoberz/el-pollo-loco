@@ -41,7 +41,7 @@ export class Character extends MovableObject {
 				this.moveLeft();
 			}
 
-			if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround()) this.jump();
+			if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround()) this.jump(35);
 		}, 1000 / 60);
 
 		setInterval(() => {
