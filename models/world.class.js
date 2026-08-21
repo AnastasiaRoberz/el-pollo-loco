@@ -1,6 +1,8 @@
 import { Character } from "./character.class.js";
 import { Chicken } from "./chicken.class.js";
+import { Keyboard } from "./keyboard.class.js";
 import { Level } from "./level.class.js";
+import { ThrowableObject } from "./throwable-object.class.js";
 
 export class World {
 	canvas;
@@ -9,6 +11,7 @@ export class World {
 	enemies = [];
 	bgLayers = [];
 	clouds = [];
+	throwableObjects = [];
 	cameraPos;
 	level;
 	maxWidth;
@@ -20,7 +23,7 @@ export class World {
 		this.maxWidth = this.level.maxWidth;
 		this.createObjects();
 		this.draw();
-		this.checkCollisions();
+		this.run();
 	}
 
 	createObjects() {
@@ -44,6 +47,7 @@ export class World {
 		this.character.draw(this.ctx);
 		this.character.drawFrame(this.ctx);
 		this.addObjectsToMap(this.enemies);
+		this.addObjectsToMap(this.throwableObjects);
 		this.ctx.translate(-this.cameraPos, 0);
 
 		this.level.healthBar.draw(this.ctx);
@@ -60,16 +64,34 @@ export class World {
 		});
 	}
 
-	checkCollisions() {
+	run() {
 		setInterval(() => {
-			this.level.enemies.forEach((enemy) => {
-				if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
-					if (!this.character.isHurt()) {
-						this.character.isHit();
-						this.level.healthBar.setPercentage(this.character.energy);
-					}
+			this.checkCollisions();
+			this.checkThrowObjects();
+		}, 200);
+	}
+
+	checkCollisions() {
+		this.level.enemies.forEach((enemy) => {
+			if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
+				if (!this.character.isHurt()) {
+					this.character.isHit();
+					this.level.healthBar.setPercentage(this.character.energy);
 				}
-			});
-		}, 1000 / 60);
+			}
+		});
+	}
+
+	checkThrowObjects() {
+		if (Keyboard.KEY_S) {
+			const bottle = new ThrowableObject(
+				this.canvas.height,
+				this.character.xPos + this.character.width * 0.7,
+				this.character.xPos,
+				this.character.yPos * 1.8,
+				this.character.flipDirection,
+			);
+			this.throwableObjects.push(bottle);
+		}
 	}
 }

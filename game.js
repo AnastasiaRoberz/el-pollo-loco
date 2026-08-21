@@ -15,6 +15,7 @@ window.addEventListener("keydown", (event) => {
 	if (event.code === "ArrowLeft") Keyboard.LEFT = true;
 	if (event.code === "ArrowRight") Keyboard.RIGHT = true;
 	if (event.code === "Space") Keyboard.SPACE = true;
+	if (event.code === "KeyS") Keyboard.KEY_S = true;
 });
 
 window.addEventListener("keyup", (event) => {
@@ -23,6 +24,7 @@ window.addEventListener("keyup", (event) => {
 	if (event.code === "ArrowLeft") Keyboard.LEFT = false;
 	if (event.code === "ArrowRight") Keyboard.RIGHT = false;
 	if (event.code === "Space") Keyboard.SPACE = false;
+	if (event.code === "KeyS") Keyboard.KEY_S = false;
 });
 
 init();

@@ -4,4 +4,5 @@ export class Keyboard {
 	static UP = false;
 	static DOWN = false;
 	static SPACE = false;
+	static KEY_S = false;
 }
