@@ -61,7 +61,7 @@ export class Character extends MovableObject {
 	checkAnimation() {
 		if (this.longIdle) {
 			this.showAnimation(ImageHub.PEPE.longIdle);
-		} else if ((Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround()) {
+		} else if ((Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround() && !this.isHurt()) {
 			this.showAnimation(ImageHub.PEPE.walk);
 		} else if (this.isAboveGround()) {
 			this.showAnimation(ImageHub.PEPE.jump);
@@ -69,7 +69,6 @@ export class Character extends MovableObject {
 			this.showAnimation(ImageHub.PEPE.hurt);
 		} else if (this.isDead()) {
 			this.showAnimation(ImageHub.PEPE.dead);
-			this.loadImg(ImageHub.PEPE.dead[6]);
 		} else {
 			this.showAnimation(ImageHub.PEPE.idle);
 		}

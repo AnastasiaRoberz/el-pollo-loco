@@ -1,5 +1,6 @@
 import { BossChicken } from "./boss-chicken.class.js";
 import { Character } from "./character.class.js";
+import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { Level } from "./level.class.js";
@@ -15,12 +16,16 @@ export class World {
 	cameraPos;
 	level;
 	maxWidth;
+	gameOver = false;
+	gameOverImg;
 
 	constructor(canvas) {
 		this.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
 		this.level = new Level(this.canvas, 2, 5);
 		this.maxWidth = this.level.maxWidth;
+		this.gameOverImg = new Image();
+		this.gameOverImg.src = ImageHub.INTRO_OUTRO_SCREENS.lost[5];
 		this.createObjects();
 		this.draw();
 		this.run();
@@ -53,6 +58,14 @@ export class World {
 		this.level.coinBar.draw(this.ctx);
 		this.level.bottleBar.draw(this.ctx);
 
+		if (this.gameOver) {
+			const imgWidth = this.canvas.width * 0.7;
+			const imgHeight = imgWidth * 0.58;
+			const imgX = (this.canvas.width - imgWidth) / 2;
+			const imgY = (this.canvas.height - imgHeight) / 2;
+			this.ctx.drawImage(this.gameOverImg, imgX, imgY, imgWidth, imgHeight);
+		}
+
 		requestAnimationFrame(() => this.draw());
 	}
 
@@ -69,6 +82,7 @@ export class World {
 			() => {
 				this.checkCollisions();
 				this.checkThrowObjects();
+				this.checkGameEnd();
 			},
 			200,
 		);
@@ -107,6 +121,15 @@ export class World {
 				this.character.flipDirection,
 			);
 			this.throwableObjects.push(bottle);
+		}
+	}
+
+	checkGameEnd() {
+		if (this.character.isDead() && !this.gameOver) {
+			setTimeout(() => {
+				this.gameOver = true;
+				IntervalHub.stopAllIntervals();
+			}, 1500);
 		}
 	}
 }

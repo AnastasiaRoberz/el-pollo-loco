@@ -1,3 +1,5 @@
+import { ImageHub } from "./img-hub.class.js";
+
 export class DrawableObject {
 	xPos;
 	yPos;
@@ -7,6 +9,11 @@ export class DrawableObject {
 	img;
 	imgCache = {};
 	currentImage = 0;
+
+	constructor() {
+		this.loadImages(ImageHub.INTRO_OUTRO_SCREENS.won);
+		this.loadImages(ImageHub.INTRO_OUTRO_SCREENS.lost);
+	}
 
 	loadImg(path) {
 		this.img = new Image();

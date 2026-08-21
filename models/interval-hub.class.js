@@ -38,7 +38,7 @@ export class IntervalHub {
 	}
 
 	static stopAllIntervals() {
-		IntervalHub.allIntervals.forEach(clearInterval);
-		IntervalHub.allIntervals = {};
+		Object.keys(this.allIntervals).forEach((name) => this.stopInterval(name));
+		this.allIntervals = {};
 	}
 }
