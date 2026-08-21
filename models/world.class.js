@@ -76,18 +76,23 @@ export class World {
 
 	checkCollisions() {
 		this.level.enemies.forEach((enemy) => {
-			if (this.character.isColliding(enemy) && !this.character.isAboveGround() && !enemy.isDead()) {
-				if (!this.character.isHurt()) {
-					this.character.isHit();
-					this.level.healthBar.setPercentage(this.character.energy);
+			if (this.character.isColliding(enemy) && !enemy.isDead()) {
+				const isFalling = this.character.speedY < 0;
+				const isAboveEnemy = this.character.yPos < enemy.yPos + 20;
+
+				if (this.character.isAboveGround() && isFalling && isAboveEnemy) {
+					if (!(enemy instanceof BossChicken)) enemy.die();
+					setTimeout(() => {
+						const currentIndex = this.level.enemies.indexOf(enemy);
+						this.level.enemies.splice(currentIndex, 1);
+					}, 1000);
+					this.character.jump(15);
+				} else {
+					if (!this.character.isHurt()) {
+						this.character.isHit();
+						this.level.healthBar.setPercentage(this.character.energy);
+					}
 				}
-			} else if (this.character.isColliding(enemy) && this.character.isAboveGround() && !enemy.isDead()) {
-				if (!(enemy instanceof BossChicken)) enemy.die();
-				this.character.jump(15);
-				setTimeout(() => {
-					const currentIndex = this.level.enemies.indexOf(enemy);
-					this.level.enemies.splice(currentIndex, 1);
-				}, 1000);
 			}
 		});
 	}
