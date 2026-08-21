@@ -46,6 +46,10 @@ export class World {
 		this.addObjectsToMap(this.enemies);
 		this.ctx.translate(-this.cameraPos, 0);
 
+		this.level.healthBar.draw(this.ctx);
+		this.level.coinBar.draw(this.ctx);
+		this.level.bottleBar.draw(this.ctx);
+
 		requestAnimationFrame(() => this.draw());
 	}
 
@@ -60,7 +64,10 @@ export class World {
 		setInterval(() => {
 			this.level.enemies.forEach((enemy) => {
 				if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
-					if (!this.character.isHurt()) this.character.isHit();
+					if (!this.character.isHurt()) {
+						this.character.isHit();
+						this.level.healthBar.setPercentage(this.character.energy);
+					}
 				}
 			});
 		}, 1000 / 60);

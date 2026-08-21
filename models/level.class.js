@@ -1,21 +1,28 @@
 import { BackgroundLayer } from "./background.class.js";
-import { BossChicken } from "./bossChicken.class.js";
+import { BossChicken } from "./boss-chicken.class.js";
 import { Cloud } from "./cloud.class.js";
-import { ImageHub } from "./imgHub.class.js";
-import { NormalChicken } from "./normalChicken.class.js";
-import { SmallChicken } from "./smallChicken.class.js";
+import { ImageHub } from "./img-hub.class.js";
+import { NormalChicken } from "./normal-chicken.class.js";
+import { SmallChicken } from "./small-chicken.class.js";
+import { StatusBar } from "./status-bar.class.js";
 
 export class Level {
 	maxWidth;
 	bgLayers;
 	clouds;
 	enemies;
+	healthBar;
+	coinBar;
+	bottleBar;
 
 	constructor(canvas, sections, enemiesAmount) {
 		this.maxWidth = sections * canvas.width;
 		this.createBgLayers(canvas, sections);
 		this.createClouds(canvas, sections);
 		this.createEnemies(canvas, sections, enemiesAmount);
+		this.healthBar = new StatusBar("health", "green", 20);
+		this.coinBar = new StatusBar("coin", "orange", 80);
+		this.bottleBar = new StatusBar("bottle", "blue", 140);
 	}
 
 	createBgLayers(canvas, sections) {
