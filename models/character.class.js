@@ -60,6 +60,7 @@ export class Character extends MovableObject {
 			this.showAnimation(ImageHub.PEPE.hurt);
 		} else if (this.isDead()) {
 			this.showAnimation(ImageHub.PEPE.dead);
+			this.loadImg(ImageHub.PEPE.dead[6]);
 		} else {
 			this.showAnimation(ImageHub.PEPE.idle);
 		}
