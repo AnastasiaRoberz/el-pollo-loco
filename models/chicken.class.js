@@ -3,6 +3,7 @@ import { MovableObject } from "./movableObject.class.js";
 export class Chicken extends MovableObject {
 	speed = 0.5;
 	imagesWalk = [];
+	imgDead;
 
 	constructor() {
 		super();

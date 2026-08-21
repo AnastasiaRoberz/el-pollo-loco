@@ -1,4 +1,5 @@
 import { Character } from "./character.class.js";
+import { Chicken } from "./chicken.class.js";
 import { Level } from "./level.class.js";
 
 export class World {
@@ -17,11 +18,16 @@ export class World {
 		this.ctx = canvas.getContext("2d");
 		this.level = new Level(this.canvas, 2, 5);
 		this.maxWidth = this.level.maxWidth;
+		this.createObjects();
+		this.draw();
+		this.checkCollisions();
+	}
+
+	createObjects() {
 		this.character = new Character(this.canvas.height, this.maxWidth);
 		this.bgLayers = this.level.bgLayers;
 		this.clouds = this.level.clouds;
 		this.enemies = this.level.enemies;
-		this.draw();
 	}
 
 	draw() {
@@ -36,7 +42,7 @@ export class World {
 		this.addObjectsToMap(this.bgLayers);
 		this.addObjectsToMap(this.clouds);
 		this.character.draw(this.ctx);
-		// this.character.drawFrame(this.ctx);
+		this.character.drawFrame(this.ctx);
 		this.addObjectsToMap(this.enemies);
 		this.ctx.translate(-this.cameraPos, 0);
 
@@ -46,7 +52,17 @@ export class World {
 	addObjectsToMap(objects) {
 		objects.forEach((object) => {
 			object.draw(this.ctx);
-			// object.drawFrame(this.ctx);
+			if (object instanceof Chicken) object.drawFrame(this.ctx);
 		});
+	}
+
+	checkCollisions() {
+		setInterval(() => {
+			this.level.enemies.forEach((enemy) => {
+				if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
+					if (!this.character.isHurt()) this.character.isHit();
+				}
+			});
+		}, 1000 / 60);
 	}
 }
