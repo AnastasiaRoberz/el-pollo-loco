@@ -1,4 +1,4 @@
-import { MovableObject } from "./movableObject.class.js";
+import { MovableObject } from "./movable-object.class.js";
 
 export class BackgroundLayer extends MovableObject {
 	yPos = 0;

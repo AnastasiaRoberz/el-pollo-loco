@@ -143,18 +143,18 @@ export class ImageHub {
 	};
 
 	static STATUSBAR = {
-		icons: [
-			"../assets/img/7_statusbars/3_icons/icon_coin.png",
-			"../assets/img/7_statusbars/3_icons/icon_health_endboss.png",
-			"../assets/img/7_statusbars/3_icons/icon_health.png",
-			"../assets/img/7_statusbars/3_icons/icon_salsa_bottle.png",
-		],
-		barElements: [
-			"../assets/img/7_statusbars/4_bar_elements/statusbar_empty.png",
-			"../assets/img/7_statusbars/4_bar_elements/statusbar_blue.png",
-			"../assets/img/7_statusbars/4_bar_elements/statusbar_green.png",
-			"../assets/img/7_statusbars/4_bar_elements/statusbar_orange.png",
-		],
+		icons: {
+			coin: "../assets/img/7_statusbars/3_icons/icon_coin.png",
+			health: "../assets/img/7_statusbars/3_icons/icon_health.png",
+			bottle: "../assets/img/7_statusbars/3_icons/icon_salsa_bottle.png",
+			healthEndboss: "../assets/img/7_statusbars/3_icons/icon_health_endboss.png",
+		},
+		barElements: {
+			empty: "../assets/img/7_statusbars/4_bar_elements/statusbar_empty.png",
+			blue: "../assets/img/7_statusbars/4_bar_elements/statusbar_blue.png",
+			green: "../assets/img/7_statusbars/4_bar_elements/statusbar_green.png",
+			orange: "../assets/img/7_statusbars/4_bar_elements/statusbar_orange.png",
+		},
 	};
 
 	static INTRO_OUTRO_SCREENS = {

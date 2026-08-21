@@ -1,5 +1,5 @@
 import { Chicken } from "./chicken.class.js";
-import { ImageHub } from "./imgHub.class.js";
+import { ImageHub } from "./img-hub.class.js";
 
 export class BossChicken extends Chicken {
 	constructor(canvasHeight, maxWidth) {

@@ -1,6 +1,6 @@
-import { ImageHub } from "./imgHub.class.js";
+import { ImageHub } from "./img-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
-import { MovableObject } from "./movableObject.class.js";
+import { MovableObject } from "./movable-object.class.js";
 
 export class Character extends MovableObject {
 	speed = 10;
