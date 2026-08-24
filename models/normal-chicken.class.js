@@ -11,7 +11,7 @@ export class NormalChicken extends Chicken {
 		this.width = this.height;
 		this.yPos = canvasHeight * 0.88 - this.height;
 		this.xPos = maxWidth + Math.random() * canvasWidth;
-		this.loadImg(ImageHub.NORMAL_CHICKEN.walk[0]);
+		this.loadImg(this.imagesWalk[0]);
 		this.loadImages(this.imagesWalk);
 		this.animate();
 	}

@@ -4,7 +4,6 @@ import { MovableObject } from "./movable-object.class.js";
 export class Chicken extends MovableObject {
 	static idCounter = 0;
 	id;
-	speed = 2.5;
 	imagesWalk = [];
 	imgDead;
 
@@ -12,6 +11,7 @@ export class Chicken extends MovableObject {
 		super();
 		this.id = Chicken.idCounter;
 		Chicken.idCounter++;
+		this.speedX = 0.15 + Math.random() * 0.35;
 	}
 
 	animate() {
@@ -34,9 +34,9 @@ export class Chicken extends MovableObject {
 
 	die() {
 		this.energy = 0;
-		this.loadImg(this.imgDead);
 		IntervalHub.stopInterval(`chicken-walk-${this.id}`);
 		IntervalHub.stopInterval(`chicken-animate-${this.id}`);
+		this.loadImg(this.imgDead);
 	}
 
 	static resetIdCounter() {

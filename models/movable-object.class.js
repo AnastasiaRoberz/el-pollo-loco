@@ -5,7 +5,7 @@ export class MovableObject extends DrawableObject {
 	flipDirection = false;
 	speedX = 0.15;
 	speedY = 0;
-	acceleration = 3;
+	acceleration = 1.5;
 	energy = 100;
 	lastHit = 0;
 
@@ -13,30 +13,25 @@ export class MovableObject extends DrawableObject {
 		ctx.beginPath();
 		ctx.lineWidth = "2";
 		ctx.strokeStyle = "blue";
-		ctx.rect(this.xPos, this.yPos, this.width, this.height);
+		ctx.rect(
+			this.xPos + this.offset.left,
+			this.yPos + this.offset.top,
+			this.width - this.offset.left - this.offset.right,
+			this.height - this.offset.top - this.offset.bottom,
+		);
 		ctx.stroke();
 	}
 
-	/**
-	 * @param {string[]} images - Array mit Bildpfaden zu einem Zustand
-	 */
-	showAnimation(images) {
-		let i = this.currentImage % images.length;
-		let path = images[i];
-		this.img = this.imgCache[path];
-		this.currentImage++;
-	}
-
 	moveRight() {
-		this.xPos += this.speed;
+		if (!this.isDead()) this.xPos += this.speedX;
 	}
 
 	moveLeft() {
-		this.xPos -= this.speed;
+		if (!this.isDead()) this.xPos -= this.speedX;
 	}
 
 	jump(speedY) {
-		this.speedY = speedY;
+		if (!this.isDead()) this.speedY = speedY;
 	}
 
 	applyGravity() {
@@ -59,20 +54,6 @@ export class MovableObject extends DrawableObject {
 		return this.yPos < this.defaultYPos;
 	}
 
-	isHurt() {
-		if (!this.isDead()) {
-			let timePassed = new Date().getTime() - this.lastHit;
-			timePassed = timePassed / 1000;
-			return timePassed < 1;
-		} else {
-			return false;
-		}
-	}
-
-	isDead() {
-		return this.energy === 0;
-	}
-
 	isColliding(obj) {
 		return (
 			this.xPos + this.width > obj.xPos &&
@@ -82,9 +63,26 @@ export class MovableObject extends DrawableObject {
 		);
 	}
 
-	isHit() {
-		this.energy -= 20;
+	isHurt() {
+		const timePassed = (Date.now() - this.lastHit) / 1000;
+		return timePassed < 1;
+	}
+
+	isHit(damage) {
+		this.energy -= damage;
+		IntervalHub.pauseInterval("pepe-movement");
+		setTimeout(() => {
+			IntervalHub.resumeInterval("pepe-movement");
+		}, 1000);
 		if (this.energy < 0) this.energy = 0;
-		this.lastHit = new Date().getTime();
+		this.lastHit = Date.now();
+	}
+
+	isDead() {
+		return this.energy === 0;
+	}
+
+	die() {
+		this.energy = 0;
 	}
 }

@@ -15,6 +15,13 @@ export class DrawableObject {
 		this.loadImages(ImageHub.INTRO_OUTRO_SCREENS.lost);
 	}
 
+	offset = {
+		top: 0,
+		bottom: 0,
+		left: 0,
+		right: 0,
+	};
+
 	loadImg(path) {
 		this.img = new Image();
 		this.img.src = path;
@@ -29,6 +36,20 @@ export class DrawableObject {
 			img.src = path;
 			this.imgCache[path] = img;
 		});
+	}
+
+	setOffset(state) {
+		if (this.offset[state]) this.offset = this.offset[state];
+	}
+
+	/**
+	 * @param {string[]} images - Array mit Bildpfaden zu einem Zustand
+	 */
+	showAnimation(images) {
+		let i = this.currentImage % images.length;
+		let path = images[i];
+		this.img = this.imgCache[path];
+		this.currentImage++;
 	}
 
 	draw(ctx) {

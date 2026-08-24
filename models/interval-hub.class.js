@@ -1,7 +1,15 @@
 export class IntervalHub {
 	static allIntervals = {};
 
+	/**
+	 * @param {string} name - eindeutiger Bezeichner für das Interval
+	 * @param {Function} func - Funktion, die ausgeführt werden soll
+	 * @param {number} timer - Intervallzeit in Millisekunden
+	 * @returns {number} - native Intervall-ID
+	 */
+
 	static startInterval(name, func, timer) {
+		this.stopInterval(name);
 		const id = setInterval(func, timer);
 		this.allIntervals[name] = { id, func, timer, isPaused: false };
 		return id;
@@ -25,7 +33,7 @@ export class IntervalHub {
 	}
 
 	static stopInterval(name) {
-		clearInterval(this.allIntervals[name].id);
+		if (this.allIntervals[name]) clearInterval(this.allIntervals[name].id);
 		delete this.allIntervals[name];
 	}
 

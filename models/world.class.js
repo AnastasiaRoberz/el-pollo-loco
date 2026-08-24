@@ -18,6 +18,7 @@ export class World {
 	maxWidth;
 	gameOver = false;
 	gameOverImg;
+	keyboard = new Keyboard();
 
 	constructor(canvas) {
 		this.canvas = canvas;
@@ -27,12 +28,13 @@ export class World {
 		this.gameOverImg = new Image();
 		this.gameOverImg.src = ImageHub.INTRO_OUTRO_SCREENS.lost[5];
 		this.createObjects();
+
 		this.draw();
 		this.run();
 	}
 
 	createObjects() {
-		this.character = new Character(this.canvas.height, this.maxWidth);
+		this.character = new Character(this.canvas.height, this.maxWidth, this.keyboard);
 		this.bgLayers = this.level.bgLayers;
 		this.clouds = this.level.clouds;
 	}
@@ -100,10 +102,10 @@ export class World {
 						const currentIndex = this.level.enemies.indexOf(enemy);
 						this.level.enemies.splice(currentIndex, 1);
 					}, 1000);
-					this.character.jump(15);
+					this.character.jump(this.character.height * 0.03);
 				} else {
 					if (!this.character.isHurt()) {
-						this.character.isHit();
+						this.character.isHit(5);
 						this.level.healthBar.setPercentage(this.character.energy);
 					}
 				}
@@ -112,7 +114,7 @@ export class World {
 	}
 
 	checkThrowObjects() {
-		if (Keyboard.KEY_S) {
+		if (this.keyboard.KEY_F) {
 			const bottle = new ThrowableObject(
 				this.canvas.height,
 				this.character.xPos + this.character.width * 0.7,

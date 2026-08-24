@@ -1,6 +1,6 @@
-import { MovableObject } from "./movable-object.class.js";
+import { DrawableObject } from "./drawable-object.class.js";
 
-export class BackgroundLayer extends MovableObject {
+export class BackgroundLayer extends DrawableObject {
 	yPos = 0;
 
 	constructor(imgPath, xPos, width, height) {

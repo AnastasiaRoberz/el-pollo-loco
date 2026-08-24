@@ -24,7 +24,7 @@ export class Level {
 		this.coinBar = new StatusBar("coin", "orange", 80);
 		this.bottleBar = new StatusBar("bottle", "blue", 140);
 		this.enemies.push(new BossChicken(canvas.height, this.maxWidth));
-		this.addStartEnemies();
+		this.addStartEnemies(canvas);
 		// this.addEnemies();
 	}
 
@@ -66,10 +66,10 @@ export class Level {
 		this.clouds = cloudsArr;
 	}
 
-	addStartEnemies() {
+	addStartEnemies(canvas) {
 		for (let i = 0; i < 5; i++) {
-			this.enemies.push(new NormalChicken(canvas.width * 2, canvas.height, canvas.width));
-			this.enemies.push(new SmallChicken(canvas.width * 2, canvas.height, canvas.width));
+			this.enemies.push(new NormalChicken(canvas.width, canvas.height, canvas.width));
+			this.enemies.push(new SmallChicken(canvas.width, canvas.height, canvas.width));
 		}
 	}
 
