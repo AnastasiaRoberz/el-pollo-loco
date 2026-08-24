@@ -34,9 +34,9 @@ export class MovableObject extends DrawableObject {
 		if (!this.isDead()) this.speedY = speedY;
 	}
 
-	applyGravity() {
+	applyGravity(name) {
 		IntervalHub.startInterval(
-			"gravity",
+			`gravity_${name}`,
 			() => {
 				if (this.isAboveGround() || this.speedY > 0) {
 					this.yPos -= this.speedY;
@@ -73,7 +73,7 @@ export class MovableObject extends DrawableObject {
 		IntervalHub.pauseInterval("pepe-movement");
 		setTimeout(() => {
 			IntervalHub.resumeInterval("pepe-movement");
-		}, 1000);
+		}, 500);
 		if (this.energy < 0) this.energy = 0;
 		this.lastHit = Date.now();
 	}
