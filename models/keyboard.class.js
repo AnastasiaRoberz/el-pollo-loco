@@ -1,29 +1,25 @@
 export class Keyboard {
-	LEFT = false;
-	RIGHT = false;
-	UP = false;
-	DOWN = false;
-	SPACE = false;
-	KEY_F = false;
+	static LEFT = false;
+	static RIGHT = false;
+	static UP = false;
+	static DOWN = false;
+	static SPACE = false;
+	static KEY_F = false;
 
-	constructor() {
-		this.bindEvents();
-	}
-
-	bindEvents() {
+	static init() {
 		window.addEventListener("keydown", (event) => this.handleKeyDown(event));
 		window.addEventListener("keyup", (event) => this.handleKeyUp(event));
 	}
 
-	handleKeyDown(event) {
+	static handleKeyDown(event) {
 		this.setKeyState(event.code, true);
 	}
 
-	handleKeyUp(event) {
+	static handleKeyUp(event) {
 		this.setKeyState(event.code, false);
 	}
 
-	setKeyState(code, isPressed) {
+	static setKeyState(code, isPressed) {
 		if (code === "ArrowUp" || code === "KeyW") this.UP = isPressed;
 		if (code === "ArrowLeft" || code === "KeyA") this.LEFT = isPressed;
 		if (code === "ArrowDown" || code === "KeyS") this.DOWN = isPressed;
@@ -32,7 +28,7 @@ export class Keyboard {
 		if (code === "KeyF" || code === "KeyE") this.KEY_F = isPressed;
 	}
 
-	reset() {
+	static reset() {
 		this.LEFT = false;
 		this.RIGHT = false;
 		this.UP = false;

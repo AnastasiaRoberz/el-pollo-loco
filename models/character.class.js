@@ -1,5 +1,6 @@
 import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
+import { Keyboard } from "./keyboard.class.js";
 import { MovableObject } from "./movable-object.class.js";
 
 export class Character extends MovableObject {
@@ -7,11 +8,10 @@ export class Character extends MovableObject {
 	longIdle = false;
 	defaultYPos;
 	keyboard;
-	lastAction = Date.now() + 10000;
+	lastAction = Date.now();
 
-	constructor(canvasHeight, maxWidth, keyboard) {
+	constructor(canvasHeight, maxWidth) {
 		super();
-		this.keyboard = keyboard;
 		this.loadAllImages();
 		this.initDimensions(canvasHeight);
 		this.applyGravity();
@@ -57,13 +57,13 @@ export class Character extends MovableObject {
 	}
 
 	handleWalking(maxWidth) {
-		if (this.keyboard.RIGHT && this.xPos < maxWidth - this.width) {
+		if (Keyboard.RIGHT && this.xPos < maxWidth - this.width) {
 			this.flipDirection = false;
 			this.moveRight();
 			this.resetIdleTimer();
 		}
 
-		if (this.keyboard.LEFT && this.xPos > 0) {
+		if (Keyboard.LEFT && this.xPos > 0) {
 			this.flipDirection = true;
 			this.moveLeft();
 			this.resetIdleTimer();
@@ -71,7 +71,7 @@ export class Character extends MovableObject {
 	}
 
 	handleJumping() {
-		if ((this.keyboard.SPACE || this.keyboard.UP) && !this.isAboveGround()) {
+		if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround()) {
 			this.jump(this.height * 0.08);
 			this.resetIdleTimer();
 		}
@@ -80,6 +80,8 @@ export class Character extends MovableObject {
 	handleDead() {
 		if (this.isDead()) {
 			setTimeout(() => {
+				console.log("Pepe ist tot");
+
 				IntervalHub.stopInterval("pepe-movement");
 				return;
 			}, 1000);
@@ -89,7 +91,7 @@ export class Character extends MovableObject {
 	handleAnimations() {
 		if (this.isLongIdle()) {
 			this.showAnimation(ImageHub.PEPE.longIdle);
-		} else if ((this.keyboard.RIGHT || this.keyboard.LEFT) && !this.isAboveGround() && !this.isHurt()) {
+		} else if ((Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround() && !this.isHurt()) {
 			this.showAnimation(ImageHub.PEPE.walk);
 		} else if (this.isAboveGround()) {
 			this.showAnimation(ImageHub.PEPE.jump);
@@ -107,6 +109,6 @@ export class Character extends MovableObject {
 	}
 
 	isLongIdle() {
-		return (Date.now() - this.lastAction) / 1000 > 5;
+		return (Date.now() - this.lastAction) / 1000 > 15;
 	}
 }
