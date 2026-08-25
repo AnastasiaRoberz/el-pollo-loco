@@ -1,6 +1,8 @@
 import { BackgroundLayer } from "./background.class.js";
 import { BossChicken } from "./boss-chicken.class.js";
 import { Cloud } from "./cloud.class.js";
+import { CollectableBottle } from "./collectable-bottle.class.js";
+import { CollectableCoin } from "./collectable-coin.class.js";
 import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { NormalChicken } from "./normal-chicken.class.js";
@@ -13,9 +15,8 @@ export class Level {
 	bgLayers;
 	clouds;
 	enemies = [];
-	healthBar;
-	coinBar;
-	bottleBar;
+	bars = {};
+	colObjects = { bottles: [], coins: [] };
 
 	constructor(sections) {
 		this.maxWidth = sections * World.canvas.width;
@@ -80,5 +81,15 @@ export class Level {
 			},
 			2000,
 		);
+	}
+
+	createColObjects() {
+		for (let i = 0; i < 3; i++) {
+			this.colObjects.bottles.push(new CollectableBottle());
+		}
+
+		// for (let i = 0; i < 20; i++) {
+		// 	this.colObjects.coins.push(new CollectableCoin());
+		// }
 	}
 }

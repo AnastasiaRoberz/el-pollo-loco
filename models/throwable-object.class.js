@@ -6,27 +6,23 @@ import { World } from "./world.class.js";
 export class ThrowableObject extends MovableObject {
 	speedY = 20;
 	speedX = 20;
-	id;
-	static idCounter = 0;
 
-	constructor(xPosRight, xPosLeft, yPos, flipDirection) {
+	constructor(xPos, yPos, flipDirection) {
 		super();
 		this.height = World.canvas.height * 0.12;
 		this.width = this.height;
 		this.loadImg(ImageHub.BOTTLE.rotation[0]);
 		this.loadImages(ImageHub.BOTTLE.rotation);
 		this.loadImages(ImageHub.BOTTLE.splash);
-		this.id = ThrowableObject.idCounter;
-		ThrowableObject.idCounter++;
-		this.throw(xPosRight, xPosLeft, yPos, flipDirection);
+		this.id = World.idCounter;
+		World.idCounter++;
+		this.yPos = yPos;
+		this.xPos = xPos;
+		this.throw(flipDirection);
 	}
 
-	throw(xPosRight, xPosLeft, yPos, flipDirection) {
-		this.xPos = flipDirection ? xPosLeft : xPosRight;
-		this.yPos = yPos;
-		this.speedY = 20;
+	throw(flipDirection) {
 		this.applyGravity(`botte_${this.id}`);
-
 		IntervalHub.startInterval(
 			`bottle_${this.id}`,
 			() => {

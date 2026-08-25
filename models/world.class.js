@@ -18,6 +18,7 @@ export class World {
 	level;
 	gameOver = false;
 	gameOverImg;
+	collectedBottles = 0;
 
 	constructor(canvas) {
 		World.canvas = canvas;
@@ -53,6 +54,8 @@ export class World {
 		// this.character.drawFrame(this.ctx);
 		this.addObjectsToMap(this.level.enemies);
 		this.addObjectsToMap(this.throwableObjects);
+		this.addObjectsToMap(this.level.colObjects.bottles);
+		// this.addObjectsToMap(this.level.colObjects[coins]);
 		this.ctx.translate(-this.cameraPos, 0);
 
 		this.level.healthBar.draw(this.ctx);
@@ -81,12 +84,24 @@ export class World {
 		IntervalHub.startInterval(
 			"main-interval",
 			() => {
+				this.collectItems();
 				this.checkCollisions();
 				this.checkThrowObjects();
 				this.checkGameEnd();
 			},
 			200,
 		);
+	}
+
+	collectItems() {
+		this.level.colObjects.bottles.forEach((bottle) => {
+			if (this.character.isColliding(bottle)) {
+				this.collectedBottles++;
+				const index = this.level.colObjects.bottles.indexOf(bottle);
+				this.level.colObjects.bottles.splice(index, 1);
+				this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
+			}
+		});
 	}
 
 	checkCollisions() {
@@ -113,15 +128,14 @@ export class World {
 	}
 
 	checkThrowObjects() {
-		if (Keyboard.KEY_F) {
-			const bottle = new ThrowableObject(
-				this.canvas.height,
-				this.character.xPos + this.character.width * 0.7,
-				this.character.xPos,
-				this.character.yPos * 1.8,
-				this.character.flipDirection,
-			);
-			this.throwableObjects.push(bottle);
+		if (Keyboard.KEY_F && this.collectedBottles > 0) {
+			const xPos = this.character.flipDirection ? this.character.xPos : this.character.xPos + this.character.width;
+			const yPos = this.character.yPos * 1.8;
+
+			this.throwableObjects.push(new ThrowableObject(xPos, yPos, this.character.flipDirection));
+			this.collectedBottles--;
+			this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
+			Keyboard.KEY_F = false;
 		}
 	}
 
