@@ -1,16 +1,15 @@
 import { IntervalHub } from "./interval-hub.class.js";
 import { MovableObject } from "./movable-object.class.js";
+import { World } from "./world.class.js";
 
 export class Chicken extends MovableObject {
-	static idCounter = 0;
-	id;
 	imagesWalk = [];
 	imgDead;
 
 	constructor() {
 		super();
-		this.id = Chicken.idCounter;
-		Chicken.idCounter++;
+		this.id = World.idCounter;
+		World.idCounter++;
 		this.speedX = 0.15 + Math.random() * 0.35;
 	}
 
@@ -37,9 +36,5 @@ export class Chicken extends MovableObject {
 		IntervalHub.stopInterval(`chicken-walk-${this.id}`);
 		IntervalHub.stopInterval(`chicken-animate-${this.id}`);
 		this.loadImg(this.imgDead);
-	}
-
-	static resetIdCounter() {
-		Chicken.idCounter = 0;
 	}
 }

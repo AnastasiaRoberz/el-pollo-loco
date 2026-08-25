@@ -1,6 +1,7 @@
 import { Chicken } from "./chicken.class.js";
 import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
+import { Level } from "./level.class.js";
 import { World } from "./world.class.js";
 
 export class BossChicken extends Chicken {
@@ -9,7 +10,7 @@ export class BossChicken extends Chicken {
 		this.height = World.canvas.height * 0.85;
 		this.width = this.height * 0.85;
 		this.yPos = World.canvas.height * 0.92 - this.height;
-		this.xPos = World.maxWidth - this.width * 1.2;
+		this.xPos = Level.maxWidth - this.width * 1.2;
 		this.loadImg(ImageHub.BOSS_CHICKEN.walk[0]);
 		this.loadImagesToCache();
 		this.animate();

@@ -1,14 +1,13 @@
 import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
+import { Level } from "./level.class.js";
 import { MovableObject } from "./movable-object.class.js";
 import { World } from "./world.class.js";
 
 export class Character extends MovableObject {
 	speedX = 10;
 	longIdle = false;
-	defaultYPos;
-	keyboard;
 	lastAction = Date.now();
 
 	constructor() {
@@ -58,7 +57,7 @@ export class Character extends MovableObject {
 	}
 
 	handleWalking() {
-		if (Keyboard.RIGHT && this.xPos < World.maxWidth - this.width) {
+		if (Keyboard.RIGHT && this.xPos < Level.maxWidth - this.width) {
 			this.flipDirection = false;
 			this.moveRight();
 			this.resetIdleTimer();
