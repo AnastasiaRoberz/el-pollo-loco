@@ -19,6 +19,7 @@ export class World {
 	gameOver = false;
 	gameOverImg;
 	collectedBottles = 0;
+	collectedCoins = 0;
 
 	constructor(canvas) {
 		World.canvas = canvas;
@@ -53,7 +54,8 @@ export class World {
 		this.addObjectsToMap(this.level.enemies);
 		this.addObjectsToMap(this.throwableObjects);
 		this.addObjectsToMap(this.level.colObjects.bottles);
-		// this.addObjectsToMap(this.level.colObjects[coins]);
+
+		this.addObjectsToMap(this.level.colObjects.coins);
 		this.ctx.translate(-this.cameraPos, 0);
 
 		this.level.bars.healthBar.draw(this.ctx);
@@ -74,7 +76,7 @@ export class World {
 	addObjectsToMap(objects) {
 		objects.forEach((object) => {
 			object.draw(this.ctx);
-			// if (object instanceof Chicken) object.drawFrame(this.ctx);
+			// object.drawFrame(this.ctx);
 		});
 	}
 
@@ -83,6 +85,7 @@ export class World {
 			"main-interval",
 			() => {
 				this.collectItems();
+				this.collectCoins();
 				this.checkCollisions();
 				this.checkThrowObjects();
 				this.checkGameEnd();
@@ -98,6 +101,17 @@ export class World {
 				const index = this.level.colObjects.bottles.indexOf(bottle);
 				this.level.colObjects.bottles.splice(index, 1);
 				this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
+			}
+		});
+	}
+
+	collectCoins() {
+		this.level.colObjects.coins.forEach((coin) => {
+			if (this.character.isColliding(coin)) {
+				this.collectedCoins++;
+				const index = this.level.colObjects.coins.indexOf(coin);
+				this.level.colObjects.coins.splice(index, 1);
+				this.level.bars.coinBar.setPercentage(this.collectedCoins * 20);
 			}
 		});
 	}

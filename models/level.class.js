@@ -24,6 +24,7 @@ export class Level {
 		this.createBgLayers(sections);
 		this.createClouds(sections);
 		this.createColObjects();
+		this.createCoins();
 		this.bars["healthBar"] = new StatusBar("health", "green", 20);
 		this.bars["coinBar"] = new StatusBar("coin", "orange", 70);
 		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120);
@@ -86,9 +87,21 @@ export class Level {
 		for (let i = 0; i < 3; i++) {
 			this.colObjects.bottles.push(new CollectableBottle());
 		}
+	}
 
-		// for (let i = 0; i < 20; i++) {
-		// 	this.colObjects.coins.push(new CollectableCoin());
-		// }
+	createCoins(value = 1) {
+		let xPos = 300;
+		let yPos = World.canvas.height * 0.4;
+		this.colObjects.coins.push(new CollectableCoin(xPos, yPos));
+		const height = this.colObjects.coins[0].height;
+		console.log(height);
+
+		switch (value) {
+			case 1:
+				this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
+				this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
+				this.colObjects.coins.push(new CollectableCoin(xPos + height * 3, yPos - height));
+				this.colObjects.coins.push(new CollectableCoin(xPos + height * 4, yPos));
+		}
 	}
 }

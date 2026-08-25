@@ -146,7 +146,7 @@ export class ImageHub {
 		onGround: ["./assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png", "./assets/img/6_salsa_bottle/2_salsa_bottle_on_ground.png"],
 	});
 
-	static COIN = { coin: "./assets/img/8_coin/coin_2.png" };
+	static COIN = ["./assets/img/8_coin/coin_1.png", "./assets/img/8_coin/coin_2.png"];
 
 	// --- STATUSBARS ---
 	static STATUSBAR = Object.freeze({
