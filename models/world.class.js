@@ -8,7 +8,7 @@ import { ThrowableObject } from "./throwable-object.class.js";
 
 export class World {
 	static canvas;
-	static maxWidth;
+	static idCounter = 0;
 	ctx;
 	character;
 	bgLayers = [];
@@ -146,5 +146,9 @@ export class World {
 				IntervalHub.stopAllIntervals();
 			}, 1500);
 		}
+	}
+
+	static resetIdCounter() {
+		World.idCounter = 0;
 	}
 }

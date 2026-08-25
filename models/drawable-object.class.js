@@ -9,6 +9,7 @@ export class DrawableObject {
 	img;
 	imgCache = {};
 	currentImage = 0;
+	id;
 
 	constructor() {
 		this.loadImages(ImageHub.INTRO_OUTRO_SCREENS.won);
