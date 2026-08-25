@@ -34,24 +34,14 @@ export class Level {
 		const step = World.canvas.width;
 
 		for (let i = 0; i < sections; i++) {
+			const imgThirdLayer = ImageHub.BACKGROUND.thirdLayer[i % 2];
+			const imgSecondLayer = ImageHub.BACKGROUND.secondLayer[i % 2];
+			const imgFirstLayer = ImageHub.BACKGROUND.firstLayer[i % 2];
 			layers.push(new BackgroundLayer(ImageHub.BACKGROUND.air, i * step));
+			layers.push(new BackgroundLayer(imgThirdLayer, i * step));
+			layers.push(new BackgroundLayer(imgSecondLayer, i * step));
+			layers.push(new BackgroundLayer(imgFirstLayer, i * step));
 		}
-
-		for (let i = 0; i < sections; i++) {
-			const img = ImageHub.BACKGROUND.thirdLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step));
-		}
-
-		for (let i = 0; i < sections; i++) {
-			const img = ImageHub.BACKGROUND.secondLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step));
-		}
-
-		for (let i = 0; i < sections; i++) {
-			const img = ImageHub.BACKGROUND.firstLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step));
-		}
-
 		this.bgLayers = layers;
 	}
 
