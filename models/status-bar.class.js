@@ -5,7 +5,7 @@ export class StatusBar extends DrawableObject {
 	xPos = 20;
 	yPos;
 	width = 250;
-	height = 75;
+	height = 60;
 	percentage = 0;
 	emptyBarImg;
 	iconImg;

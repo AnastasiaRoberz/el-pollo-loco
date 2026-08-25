@@ -21,8 +21,8 @@ export class Level {
 		this.createBgLayers(canvas, sections);
 		this.createClouds(canvas, sections);
 		this.healthBar = new StatusBar("health", "green", 20);
-		this.coinBar = new StatusBar("coin", "orange", 80);
-		this.bottleBar = new StatusBar("bottle", "blue", 140);
+		this.coinBar = new StatusBar("coin", "orange", 70);
+		this.bottleBar = new StatusBar("bottle", "blue", 120);
 		this.enemies.push(new BossChicken(canvas.height, this.maxWidth));
 		this.addStartEnemies(canvas);
 		// this.addEnemies();

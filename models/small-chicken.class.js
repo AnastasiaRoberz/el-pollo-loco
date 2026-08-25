@@ -7,7 +7,7 @@ export class SmallChicken extends Chicken {
 
 	constructor(canvasWidth, canvasHeight, maxWidth) {
 		super();
-		this.height = canvasHeight * 0.1;
+		this.height = canvasHeight * 0.15;
 		this.width = this.height;
 		this.yPos = canvasHeight * 0.88 - this.height;
 		this.xPos = maxWidth + Math.random() * canvasWidth;
