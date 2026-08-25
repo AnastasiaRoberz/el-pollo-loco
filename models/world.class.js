@@ -35,7 +35,6 @@ export class World {
 	createObjects() {
 		this.character = new Character();
 		this.bgLayers = this.level.bgLayers;
-		this.clouds = this.level.clouds;
 	}
 
 	draw() {
@@ -48,7 +47,7 @@ export class World {
 		this.ctx.translate(this.cameraPos, 0);
 
 		this.addObjectsToMap(this.bgLayers);
-		this.addObjectsToMap(this.clouds);
+		this.addObjectsToMap(this.level.clouds);
 		this.character.draw(this.ctx);
 		// this.character.drawFrame(this.ctx);
 		this.addObjectsToMap(this.level.enemies);

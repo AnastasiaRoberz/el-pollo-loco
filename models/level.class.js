@@ -14,7 +14,7 @@ import { World } from "./world.class.js";
 export class Level {
 	static maxWidth;
 	bgLayers;
-	clouds;
+	clouds = [];
 	enemies = [];
 	bars = {};
 	colObjects = { bottles: [], coins: [] };
@@ -49,15 +49,12 @@ export class Level {
 	}
 
 	createClouds(sections) {
-		const cloudsArr = [];
 		const step = World.canvas.width;
 
 		for (let i = 0; i <= sections; i++) {
 			const img = ImageHub.BACKGROUND.clouds[i % 2];
-			cloudsArr.push(new Cloud(img, i * step));
+			this.clouds.push(new Cloud(img, i * step));
 		}
-
-		this.clouds = cloudsArr;
 	}
 
 	addStartEnemies() {
