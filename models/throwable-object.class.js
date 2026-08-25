@@ -1,6 +1,7 @@
 import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { MovableObject } from "./movable-object.class.js";
+import { World } from "./world.class.js";
 
 export class ThrowableObject extends MovableObject {
 	speedY = 20;
@@ -8,9 +9,9 @@ export class ThrowableObject extends MovableObject {
 	id;
 	static idCounter = 0;
 
-	constructor(canvasHeight, xPosRight, xPosLeft, yPos, flipDirection) {
+	constructor(xPosRight, xPosLeft, yPos, flipDirection) {
 		super();
-		this.height = canvasHeight * 0.12;
+		this.height = World.canvas.height * 0.12;
 		this.width = this.height;
 		this.loadImg(ImageHub.BOTTLE.rotation[0]);
 		this.loadImages(ImageHub.BOTTLE.rotation);

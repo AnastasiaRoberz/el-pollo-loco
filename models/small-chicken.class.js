@@ -1,16 +1,17 @@
 import { Chicken } from "./chicken.class.js";
 import { ImageHub } from "./img-hub.class.js";
+import { World } from "./world.class.js";
 
 export class SmallChicken extends Chicken {
 	imagesWalk = ImageHub.SMALL_CHICKEN.walk;
 	imgDead = ImageHub.SMALL_CHICKEN.dead;
 
-	constructor(canvasWidth, canvasHeight, maxWidth) {
+	constructor() {
 		super();
-		this.height = canvasHeight * 0.15;
+		this.height = World.canvas.height * 0.15;
 		this.width = this.height;
-		this.yPos = canvasHeight * 0.88 - this.height;
-		this.xPos = maxWidth + Math.random() * canvasWidth;
+		this.yPos = World.canvas.height * 0.88 - this.height;
+		this.xPos = World.maxWidth + Math.random() * World.canvas.width;
 		this.loadImg(ImageHub.SMALL_CHICKEN.walk[0]);
 		this.loadImages(this.imagesWalk);
 		this.animate();

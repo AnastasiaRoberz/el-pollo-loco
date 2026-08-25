@@ -7,7 +7,8 @@ import { Level } from "./level.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
 
 export class World {
-	canvas;
+	static canvas;
+	static maxWidth;
 	ctx;
 	character;
 	bgLayers = [];
@@ -15,15 +16,14 @@ export class World {
 	throwableObjects = [];
 	cameraPos;
 	level;
-	maxWidth;
 	gameOver = false;
 	gameOverImg;
 
 	constructor(canvas) {
-		this.canvas = canvas;
+		World.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
-		this.level = new Level(this.canvas, 2, 5);
-		this.maxWidth = this.level.maxWidth;
+		this.level = new Level(2);
+		World.maxWidth = this.level.maxWidth;
 		this.gameOverImg = new Image();
 		this.gameOverImg.src = ImageHub.INTRO_OUTRO_SCREENS.lost[5];
 		this.createObjects();
@@ -33,14 +33,14 @@ export class World {
 	}
 
 	createObjects() {
-		this.character = new Character(this.canvas.height, this.maxWidth);
+		this.character = new Character();
 		this.bgLayers = this.level.bgLayers;
 		this.clouds = this.level.clouds;
 	}
 
 	draw() {
-		const maxcameraPos = -(this.maxWidth - this.canvas.width);
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		const maxcameraPos = -(World.maxWidth - World.canvas.width);
+		this.ctx.clearRect(0, 0, World.canvas.width, World.canvas.height);
 
 		this.cameraPos = -this.character.xPos + this.character.width;
 		if (this.cameraPos > 0) this.cameraPos = 0;
@@ -60,10 +60,10 @@ export class World {
 		this.level.bottleBar.draw(this.ctx);
 
 		if (this.gameOver) {
-			const imgWidth = this.canvas.width * 0.7;
+			const imgWidth = World.canvas.width * 0.7;
 			const imgHeight = imgWidth * 0.58;
-			const imgX = (this.canvas.width - imgWidth) / 2;
-			const imgY = (this.canvas.height - imgHeight) / 2;
+			const imgX = (World.canvas.width - imgWidth) / 2;
+			const imgY = (World.canvas.height - imgHeight) / 2;
 			this.ctx.drawImage(this.gameOverImg, imgX, imgY, imgWidth, imgHeight);
 		}
 

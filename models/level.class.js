@@ -6,6 +6,7 @@ import { IntervalHub } from "./interval-hub.class.js";
 import { NormalChicken } from "./normal-chicken.class.js";
 import { SmallChicken } from "./small-chicken.class.js";
 import { StatusBar } from "./status-bar.class.js";
+import { World } from "./world.class.js";
 
 export class Level {
 	maxWidth;
@@ -16,60 +17,60 @@ export class Level {
 	coinBar;
 	bottleBar;
 
-	constructor(canvas, sections) {
-		this.maxWidth = sections * canvas.width;
-		this.createBgLayers(canvas, sections);
-		this.createClouds(canvas, sections);
+	constructor(sections) {
+		this.maxWidth = sections * World.canvas.width;
+		this.createBgLayers(sections);
+		this.createClouds(sections);
 		this.healthBar = new StatusBar("health", "green", 20);
 		this.coinBar = new StatusBar("coin", "orange", 70);
 		this.bottleBar = new StatusBar("bottle", "blue", 120);
-		this.enemies.push(new BossChicken(canvas.height, this.maxWidth));
-		this.addStartEnemies(canvas);
+		this.enemies.push(new BossChicken());
+		this.addStartEnemies();
 		// this.addEnemies();
 	}
 
-	createBgLayers(canvas, sections) {
+	createBgLayers(sections) {
 		const layers = [];
-		const step = canvas.width;
+		const step = World.canvas.width;
 
 		for (let i = 0; i < sections; i++) {
-			layers.push(new BackgroundLayer(ImageHub.BACKGROUND.air, i * step, canvas.width, canvas.height));
+			layers.push(new BackgroundLayer(ImageHub.BACKGROUND.air, i * step));
 		}
 
 		for (let i = 0; i < sections; i++) {
 			const img = ImageHub.BACKGROUND.thirdLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step, canvas.width, canvas.height));
+			layers.push(new BackgroundLayer(img, i * step));
 		}
 
 		for (let i = 0; i < sections; i++) {
 			const img = ImageHub.BACKGROUND.secondLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step, canvas.width, canvas.height));
+			layers.push(new BackgroundLayer(img, i * step));
 		}
 
 		for (let i = 0; i < sections; i++) {
 			const img = ImageHub.BACKGROUND.firstLayer[i % 2];
-			layers.push(new BackgroundLayer(img, i * step, canvas.width, canvas.height));
+			layers.push(new BackgroundLayer(img, i * step));
 		}
 
 		this.bgLayers = layers;
 	}
 
-	createClouds(canvas, sections) {
+	createClouds(sections) {
 		const cloudsArr = [];
-		const step = canvas.width;
+		const step = World.canvas.width;
 
 		for (let i = 0; i <= sections; i++) {
 			const img = ImageHub.BACKGROUND.clouds[i % 2];
-			cloudsArr.push(new Cloud(img, i * step, canvas.width, canvas.height));
+			cloudsArr.push(new Cloud(img, i * step));
 		}
 
 		this.clouds = cloudsArr;
 	}
 
-	addStartEnemies(canvas) {
+	addStartEnemies() {
 		for (let i = 0; i < 5; i++) {
-			this.enemies.push(new NormalChicken(canvas.width, canvas.height, canvas.width));
-			this.enemies.push(new SmallChicken(canvas.width, canvas.height, canvas.width));
+			this.enemies.push(new NormalChicken());
+			this.enemies.push(new SmallChicken());
 		}
 	}
 
@@ -77,7 +78,7 @@ export class Level {
 		IntervalHub.startInterval(
 			"add-normal-chicken",
 			() => {
-				this.enemies.push(new NormalChicken(canvas.width, canvas.height, this.maxWidth));
+				this.enemies.push(new NormalChicken());
 			},
 			4000,
 		);
@@ -85,7 +86,7 @@ export class Level {
 		IntervalHub.startInterval(
 			"add-small-chicken",
 			() => {
-				this.enemies.push(new SmallChicken(canvas.width, canvas.height, this.maxWidth));
+				this.enemies.push(new SmallChicken());
 			},
 			2000,
 		);
