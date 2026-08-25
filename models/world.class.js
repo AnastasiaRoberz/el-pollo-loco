@@ -23,8 +23,7 @@ export class World {
 	constructor(canvas) {
 		World.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
-		this.level = new Level(2);
-		World.maxWidth = this.level.maxWidth;
+		this.level = new Level(3);
 		this.gameOverImg = new Image();
 		this.gameOverImg.src = ImageHub.INTRO_OUTRO_SCREENS.lost[5];
 		this.createObjects();
@@ -40,7 +39,7 @@ export class World {
 	}
 
 	draw() {
-		const maxcameraPos = -(World.maxWidth - World.canvas.width);
+		const maxcameraPos = -(Level.maxWidth - World.canvas.width);
 		this.ctx.clearRect(0, 0, World.canvas.width, World.canvas.height);
 
 		this.cameraPos = -this.character.xPos + this.character.width;
@@ -58,9 +57,9 @@ export class World {
 		// this.addObjectsToMap(this.level.colObjects[coins]);
 		this.ctx.translate(-this.cameraPos, 0);
 
-		this.level.healthBar.draw(this.ctx);
-		this.level.coinBar.draw(this.ctx);
-		this.level.bottleBar.draw(this.ctx);
+		this.level.bars.healthBar.draw(this.ctx);
+		this.level.bars.coinBar.draw(this.ctx);
+		this.level.bars.bottleBar.draw(this.ctx);
 
 		if (this.gameOver) {
 			const imgWidth = World.canvas.width * 0.7;
@@ -120,7 +119,7 @@ export class World {
 				} else {
 					if (!this.character.isHurt()) {
 						this.character.isHit(5);
-						this.level.healthBar.setPercentage(this.character.energy);
+						this.level.bars.healthBar.setPercentage(this.character.energy);
 					}
 				}
 			}

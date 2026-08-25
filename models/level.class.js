@@ -5,13 +5,14 @@ import { CollectableBottle } from "./collectable-bottle.class.js";
 import { CollectableCoin } from "./collectable-coin.class.js";
 import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
+import { LevelHub } from "./level-hub.class.js";
 import { NormalChicken } from "./normal-chicken.class.js";
 import { SmallChicken } from "./small-chicken.class.js";
 import { StatusBar } from "./status-bar.class.js";
 import { World } from "./world.class.js";
 
 export class Level {
-	maxWidth;
+	static maxWidth;
 	bgLayers;
 	clouds;
 	enemies = [];
@@ -19,12 +20,13 @@ export class Level {
 	colObjects = { bottles: [], coins: [] };
 
 	constructor(sections) {
-		this.maxWidth = sections * World.canvas.width;
+		Level.maxWidth = sections * World.canvas.width;
 		this.createBgLayers(sections);
 		this.createClouds(sections);
-		this.healthBar = new StatusBar("health", "green", 20);
-		this.coinBar = new StatusBar("coin", "orange", 70);
-		this.bottleBar = new StatusBar("bottle", "blue", 120);
+		this.createColObjects();
+		this.bars["healthBar"] = new StatusBar("health", "green", 20);
+		this.bars["coinBar"] = new StatusBar("coin", "orange", 70);
+		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120);
 		this.enemies.push(new BossChicken());
 		this.addStartEnemies();
 		// this.addEnemies();
