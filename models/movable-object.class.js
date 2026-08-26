@@ -1,5 +1,6 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
+import { LevelHub } from "./level-hub.class.js";
 
 export class MovableObject extends DrawableObject {
 	flipDirection = false;
@@ -68,8 +69,8 @@ export class MovableObject extends DrawableObject {
 		return timePassed < 1;
 	}
 
-	isHit(damage) {
-		this.energy -= damage;
+	isHit() {
+		this.energy -= LevelHub.LEVEL_MEDIUM.damage;
 		IntervalHub.pauseInterval("pepe-movement");
 		setTimeout(() => {
 			IntervalHub.resumeInterval("pepe-movement");

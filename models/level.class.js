@@ -13,6 +13,7 @@ import { World } from "./world.class.js";
 
 export class Level {
 	static maxWidth;
+	config;
 	bgLayers = [];
 	clouds = [];
 	enemies = [];
@@ -21,18 +22,19 @@ export class Level {
 	colObjects = { bottles: [], coins: [] };
 	lastXPos = 300;
 
-	constructor(sections, character) {
-		Level.maxWidth = sections * World.canvas.width;
-		this.createBgLayers(sections);
-		this.createColObjects();
-		this.createCoins();
+	constructor(levelConfig) {
+		this.config = levelConfig;
+		Level.maxWidth = this.config.sections * World.canvas.width;
+		this.createBgLayers(this.config.sections);
+		this.createBottles(this.config.amountBottles);
+		this.createCoins(this.config.amountCoins);
 		this.bars["healthBar"] = new StatusBar("health", "green", 20);
 		this.bars["coinBar"] = new StatusBar("coin", "orange", 70);
 		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120);
 		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", 20);
-		this.bossChicken = new BossChicken(character);
+		this.bossChicken = new BossChicken(this.config.bossEnergy, this.config.bossSpeed, this.config.bossDamage);
 		this.addStartEnemies();
-		// this.addEnemies();
+		this.addEnemies(this.config.enemies, this.config.chickenRatio);
 	}
 
 	createBgLayers(sections) {
@@ -58,46 +60,56 @@ export class Level {
 		}
 	}
 
-	addEnemies() {
-		IntervalHub.startInterval(
-			"add-normal-chicken",
-			() => {
-				this.enemies.push(new NormalChicken());
-			},
-			4000,
-		);
+	addEnemies(amount, ratio) {
+		const startX = 500;
+		const endX = Level.maxWidth - 600;
 
-		IntervalHub.startInterval(
-			"add-small-chicken",
-			() => {
-				this.enemies.push(new SmallChicken());
-			},
-			2000,
-		);
-	}
+		for (let i = 0; i < amount; i++) {
+			const x = startX + Math.random() * (endX - startX);
+			const isSmall = Math.random() < ratio;
+			const speedX = this.config.enemySpeedMin + Math.random() * (this.config.enemySpeedMax - this.config.SpeedMin);
 
-	createColObjects() {
-		for (let i = 0; i < 3; i++) {
-			this.colObjects.bottles.push(new CollectableBottle());
+			if (isSmall) {
+				this.enemies.push(new SmallChicken(x, speedX));
+			} else {
+				this.enemies.push(new NormalChicken(x, speedX));
+			}
 		}
 	}
 
-	createCoins(value = 1) {
-		let xPos = 300;
-		let yPos = World.canvas.height * 0.4;
-		this.colObjects.coins.push(new CollectableCoin(xPos, yPos));
-		const height = this.colObjects.coins[0].height;
-
-		switch (value) {
-			case 1:
-				this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
-				this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
-				this.colObjects.coins.push(new CollectableCoin(xPos + height * 3, yPos - height));
-				this.colObjects.coins.push(new CollectableCoin(xPos + height * 4, yPos));
-
-			case 2:
-				this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
-				this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
+	createBottles(amount) {
+		const step = (Level.maxWidth - 800) / amount;
+		for (let i = 0; i < amount; i++) {
+			const x = 400 + i * step + Math.random() * 100;
+			this.colObjects.bottles.push(new CollectableBottle(x, 350));
 		}
 	}
+
+	createCoins(amount) {
+		const step = (this.maxWidth - 800) / amount;
+		for (let i = 0; i < amount; i++) {
+			const x = 350 + i * step + Math.random() * 80;
+			const y = 120 + Math.random() * 180;
+			this.colObjects.coins.push(new CollectableCoin(x, y));
+		}
+	}
+
+	// createCoins(value = 1) {
+	// 	let xPos = 300;
+	// 	let yPos = World.canvas.height * 0.4;
+	// 	this.colObjects.coins.push(new CollectableCoin(xPos, yPos));
+	// 	const height = this.colObjects.coins[0].height;
+
+	// 	switch (value) {
+	// 		case 1:
+	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
+	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
+	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 3, yPos - height));
+	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 4, yPos));
+
+	// 		case 2:
+	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
+	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
+	// 	}
+	// }
 }

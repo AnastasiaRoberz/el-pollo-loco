@@ -1,8 +1,8 @@
 import { BossChicken } from "./boss-chicken.class.js";
 import { Character } from "./character.class.js";
-import { ImageHub } from "./img-hub.class.js";
 import { IntervalHub } from "./interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
+import { LevelHub } from "./level-hub.class.js";
 import { Level } from "./level.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
 
@@ -21,13 +21,13 @@ export class World {
 	collectedBottles = 0;
 	collectedCoins = 0;
 
-	constructor(canvas, onGameOver) {
+	constructor(canvas, difficulty) {
 		World.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
 		World.character = new Character();
-		this.level = new Level(3, World.character);
+		this.level = new Level(LevelHub[`LEVEL_${difficulty}`]);
 		this.bgLayers = this.level.bgLayers;
-		this.onGameOver = onGameOver;
+		// this.onGameOver = onGameOver;
 		this.draw();
 		this.run();
 		Keyboard.init();
@@ -104,7 +104,11 @@ export class World {
 				this.collectedCoins++;
 				const index = this.level.colObjects.coins.indexOf(coin);
 				this.level.colObjects.coins.splice(index, 1);
-				this.level.bars.coinBar.setPercentage(this.collectedCoins * 20);
+				if (this.collectedCoins >= this.level.config.coinsForBottle) {
+					this.collectedCoins -= this.level.config.coinsForBottle;
+					this.collectedBottles++;
+					this.level.bars.coinBar.setPercentage(this.collectedCoins * 20);
+				}
 			}
 		});
 	}
@@ -112,15 +116,12 @@ export class World {
 	checkBottleCollision() {
 		this.throwableObjects.forEach((bottle) => {
 			if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken) && !bottle.hasHit) {
-				bottle.splash();
+				bottle.splash(this);
 				if (!this.level.bossChicken.isHurt()) {
-					this.level.bossChicken.isHit(50);
-					this.level.bars.healthEndboss.setPercentage(this.level.bossChicken.energy);
+					this.level.bossChicken.isHit(this.level.config.bottleDamage);
+					const percent = (boss.energy / boss.maxEnergy) * 100;
+					this.level.bars.healthEndboss.setPercentage(percent);
 				}
-				setTimeout(() => {
-					const id = this.throwableObjects.indexOf(bottle);
-					this.throwableObjects.splice(id, 1);
-				}, 1000);
 			}
 		});
 	}
@@ -128,7 +129,7 @@ export class World {
 	hitBossChicken() {
 		if (this.level.bossChicken.isColliding(World.character)) {
 			if (!World.character.isHurt()) {
-				World.character.isHit(5);
+				World.character.isHit();
 				this.level.bars.healthBar.setPercentage(World.character.energy);
 			}
 		}

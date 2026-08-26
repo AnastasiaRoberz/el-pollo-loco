@@ -8,8 +8,11 @@ import { World } from "./world.class.js";
 export class BossChicken extends Chicken {
 	isTriggered = false;
 
-	constructor() {
+	constructor(energy, speedX, damage) {
 		super();
+		this.energy = energy;
+		this.speedX = speedX;
+		this.damage = damage;
 		this.height = World.canvas.height * 0.85;
 		this.width = this.height * 0.85;
 		this.yPos = World.canvas.height * 0.92 - this.height;
