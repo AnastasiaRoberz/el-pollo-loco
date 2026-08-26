@@ -9,48 +9,44 @@ import { ThrowableObject } from "./throwable-object.class.js";
 export class World {
 	static canvas;
 	static idCounter = 0;
+	static character;
 	ctx;
-	character;
 	bgLayers = [];
 	clouds = [];
 	throwableObjects = [];
 	cameraPos;
 	level;
 	gameOver = false;
-	gameOverImg;
+	onGameOver;
 	collectedBottles = 0;
 	collectedCoins = 0;
 
-	constructor(canvas) {
+	constructor(canvas, onGameOver) {
 		World.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
-		this.level = new Level(3);
-		this.gameOverImg = new Image();
-		this.gameOverImg.src = ImageHub.INTRO_OUTRO_SCREENS.lost[5];
-		this.createObjects();
+		World.character = new Character();
+		this.level = new Level(3, World.character);
+		this.bgLayers = this.level.bgLayers;
+		this.onGameOver = onGameOver;
 		this.draw();
 		this.run();
 		Keyboard.init();
-	}
-
-	createObjects() {
-		this.character = new Character();
-		this.bgLayers = this.level.bgLayers;
 	}
 
 	draw() {
 		const maxcameraPos = -(Level.maxWidth - World.canvas.width);
 		this.ctx.clearRect(0, 0, World.canvas.width, World.canvas.height);
 
-		this.cameraPos = -this.character.xPos + this.character.width;
+		this.cameraPos = -World.character.xPos + World.character.width;
 		if (this.cameraPos > 0) this.cameraPos = 0;
 		if (this.cameraPos < maxcameraPos) this.cameraPos = maxcameraPos;
 		this.ctx.translate(this.cameraPos, 0);
 
 		this.addObjectsToMap(this.bgLayers);
 		this.addObjectsToMap(this.level.clouds);
-		this.character.draw(this.ctx);
-		// this.character.drawFrame(this.ctx);
+		World.character.draw(this.ctx);
+		this.level.bossChicken.draw(this.ctx);
+		// World.character.drawFrame(this.ctx);
 		this.addObjectsToMap(this.level.enemies);
 		this.addObjectsToMap(this.throwableObjects);
 		this.addObjectsToMap(this.level.colObjects.bottles);
@@ -61,13 +57,8 @@ export class World {
 		this.level.bars.healthBar.draw(this.ctx);
 		this.level.bars.coinBar.draw(this.ctx);
 		this.level.bars.bottleBar.draw(this.ctx);
-
-		if (this.gameOver) {
-			const imgWidth = World.canvas.width * 0.7;
-			const imgHeight = imgWidth * 0.58;
-			const imgX = (World.canvas.width - imgWidth) / 2;
-			const imgY = (World.canvas.height - imgHeight) / 2;
-			this.ctx.drawImage(this.gameOverImg, imgX, imgY, imgWidth, imgHeight);
+		if (this.level.bossChicken.isTriggered) {
+			this.level.bars.healthEndboss.draw(this.ctx);
 		}
 
 		requestAnimationFrame(() => this.draw());
@@ -88,6 +79,8 @@ export class World {
 				this.collectCoins();
 				this.checkCollisions();
 				this.checkThrowObjects();
+				this.hitBossChicken();
+				this.checkBottleCollision();
 				this.checkGameEnd();
 			},
 			200,
@@ -96,7 +89,7 @@ export class World {
 
 	collectItems() {
 		this.level.colObjects.bottles.forEach((bottle) => {
-			if (this.character.isColliding(bottle)) {
+			if (World.character.isColliding(bottle)) {
 				this.collectedBottles++;
 				const index = this.level.colObjects.bottles.indexOf(bottle);
 				this.level.colObjects.bottles.splice(index, 1);
@@ -107,7 +100,7 @@ export class World {
 
 	collectCoins() {
 		this.level.colObjects.coins.forEach((coin) => {
-			if (this.character.isColliding(coin)) {
+			if (World.character.isColliding(coin)) {
 				this.collectedCoins++;
 				const index = this.level.colObjects.coins.indexOf(coin);
 				this.level.colObjects.coins.splice(index, 1);
@@ -116,23 +109,48 @@ export class World {
 		});
 	}
 
+	checkBottleCollision() {
+		this.throwableObjects.forEach((bottle) => {
+			if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken) && !bottle.hasHit) {
+				bottle.splash();
+				if (!this.level.bossChicken.isHurt()) {
+					this.level.bossChicken.isHit(50);
+					this.level.bars.healthEndboss.setPercentage(this.level.bossChicken.energy);
+				}
+				setTimeout(() => {
+					const id = this.throwableObjects.indexOf(bottle);
+					this.throwableObjects.splice(id, 1);
+				}, 1000);
+			}
+		});
+	}
+
+	hitBossChicken() {
+		if (this.level.bossChicken.isColliding(World.character)) {
+			if (!World.character.isHurt()) {
+				World.character.isHit(5);
+				this.level.bars.healthBar.setPercentage(World.character.energy);
+			}
+		}
+	}
+
 	checkCollisions() {
 		this.level.enemies.forEach((enemy) => {
-			if (this.character.isColliding(enemy) && !enemy.isDead()) {
-				const isFalling = this.character.speedY < 0;
-				const isAboveEnemy = this.character.yPos < enemy.yPos + 20;
+			if (World.character.isColliding(enemy) && !enemy.isDead()) {
+				const isFalling = World.character.speedY < 0;
+				const isAboveEnemy = World.character.yPos < enemy.yPos + 20;
 
-				if (this.character.isAboveGround() && isFalling && isAboveEnemy) {
+				if (World.character.isAboveGround() && isFalling && isAboveEnemy) {
 					if (!(enemy instanceof BossChicken)) enemy.die();
 					setTimeout(() => {
 						const currentIndex = this.level.enemies.indexOf(enemy);
 						this.level.enemies.splice(currentIndex, 1);
 					}, 1000);
-					this.character.jump(this.character.height * 0.03);
+					World.character.jump(World.character.height * 0.03);
 				} else {
-					if (!this.character.isHurt()) {
-						this.character.isHit(5);
-						this.level.bars.healthBar.setPercentage(this.character.energy);
+					if (!World.character.isHurt()) {
+						World.character.isHit(30);
+						this.level.bars.healthBar.setPercentage(World.character.energy);
 					}
 				}
 			}
@@ -141,10 +159,10 @@ export class World {
 
 	checkThrowObjects() {
 		if (Keyboard.KEY_F && this.collectedBottles > 0) {
-			const xPos = this.character.flipDirection ? this.character.xPos : this.character.xPos + this.character.width;
-			const yPos = this.character.yPos * 1.8;
-
-			this.throwableObjects.push(new ThrowableObject(xPos, yPos, this.character.flipDirection));
+			const xPos = World.character.flipDirection ? World.character.xPos : World.character.xPos + World.character.width;
+			const yPos = World.character.yPos + 50;
+			const bottle = new ThrowableObject(xPos, yPos, World.character.flipDirection);
+			this.throwableObjects.push(bottle);
 			this.collectedBottles--;
 			this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
 			Keyboard.KEY_F = false;
@@ -152,15 +170,18 @@ export class World {
 	}
 
 	checkGameEnd() {
-		if (this.character.isDead() && !this.gameOver) {
+		if (World.character.isDead() && !this.gameOver) {
 			setTimeout(() => {
 				this.gameOver = true;
+				// this.onGameOver("lost");
 				IntervalHub.stopAllIntervals();
-			}, 1500);
+			}, 5000);
+		} else if (this.level.bossChicken.isDead() && !this.gameOver) {
+			setTimeout(() => {
+				this.gameOver = true;
+				// this.onGameOver("won");
+				IntervalHub.stopAllIntervals();
+			}, 3000);
 		}
-	}
-
-	static resetIdCounter() {
-		World.idCounter = 0;
 	}
 }

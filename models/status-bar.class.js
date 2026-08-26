@@ -1,5 +1,6 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { ImageHub } from "./img-hub.class.js";
+import { World } from "./world.class.js";
 
 export class StatusBar extends DrawableObject {
 	xPos = 20;
@@ -21,6 +22,10 @@ export class StatusBar extends DrawableObject {
 		this.barImg.src = ImageHub.STATUSBAR.barElements[color];
 		this.yPos = yPos;
 		if (icon === "health") this.setPercentage(100);
+		if (icon === "healthEndboss") {
+			this.xPos = World.canvas.width - this.width - 20;
+			this.setPercentage(100);
+		}
 	}
 
 	draw(ctx) {

@@ -6,6 +6,7 @@ import { World } from "./world.class.js";
 export class ThrowableObject extends MovableObject {
 	speedY = 20;
 	speedX = 20;
+	hasHit = false;
 
 	constructor(xPos, yPos, flipDirection) {
 		super();
@@ -22,12 +23,25 @@ export class ThrowableObject extends MovableObject {
 	}
 
 	throw(flipDirection) {
-		this.applyGravity(`botte_${this.id}`);
+		this.applyGravity(`bottle_${this.id}`);
 		IntervalHub.startInterval(
-			`bottle_${this.id}`,
+			`bottle_fly_${this.id}`,
 			() => {
 				this.showAnimation(ImageHub.BOTTLE.rotation);
 				flipDirection ? (this.xPos -= this.speedX) : (this.xPos += this.speedX);
+			},
+			50,
+		);
+	}
+
+	splash() {
+		this.hasHit = true;
+		IntervalHub.stopInterval(`bottle_fly_${this.id}`);
+		IntervalHub.stopInterval(`gravity_bottle_${this.id}`);
+		IntervalHub.startInterval(
+			`bottle_splash_${this.id}`,
+			() => {
+				this.showAnimationOnce(ImageHub.BOTTLE.splash);
 			},
 			50,
 		);
