@@ -42,7 +42,6 @@ export class Character extends MovableObject {
 			() => {
 				this.handleWalking();
 				this.handleJumping();
-				this.handleDead();
 			},
 			1000 / 60,
 		);
@@ -72,33 +71,22 @@ export class Character extends MovableObject {
 
 	handleJumping() {
 		if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround()) {
-			this.jump(this.height * 0.08);
+			this.jump(this.height * 0.06);
 			this.resetIdleTimer();
 		}
 	}
 
-	handleDead() {
-		if (this.isDead()) {
-			setTimeout(() => {
-				console.log("Pepe ist tot");
-
-				IntervalHub.stopInterval("pepe-movement");
-				return;
-			}, 1000);
-		}
-	}
-
 	handleAnimations() {
-		if (this.isLongIdle()) {
-			this.showAnimation(ImageHub.PEPE.longIdle);
-		} else if ((Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround() && !this.isHurt()) {
-			this.showAnimation(ImageHub.PEPE.walk);
-		} else if (this.isAboveGround()) {
-			this.showAnimation(ImageHub.PEPE.jump);
+		if (this.isDead()) {
+			this.showAnimationOnce(ImageHub.PEPE.dead);
 		} else if (this.isHurt()) {
 			this.showAnimation(ImageHub.PEPE.hurt);
-		} else if (this.isDead()) {
-			this.showAnimation(ImageHub.PEPE.dead);
+		} else if (this.isAboveGround()) {
+			this.showAnimation(ImageHub.PEPE.jump);
+		} else if (Keyboard.RIGHT || Keyboard.LEFT) {
+			this.showAnimation(ImageHub.PEPE.walk);
+		} else if (this.isLongIdle()) {
+			this.showAnimation(ImageHub.PEPE.longIdle);
 		} else {
 			this.showAnimation(ImageHub.PEPE.idle);
 		}

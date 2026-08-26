@@ -13,47 +13,40 @@ import { World } from "./world.class.js";
 
 export class Level {
 	static maxWidth;
-	bgLayers;
+	bgLayers = [];
 	clouds = [];
 	enemies = [];
+	bossChicken;
 	bars = {};
 	colObjects = { bottles: [], coins: [] };
+	lastXPos = 300;
 
-	constructor(sections) {
+	constructor(sections, character) {
 		Level.maxWidth = sections * World.canvas.width;
 		this.createBgLayers(sections);
-		this.createClouds(sections);
 		this.createColObjects();
 		this.createCoins();
 		this.bars["healthBar"] = new StatusBar("health", "green", 20);
 		this.bars["coinBar"] = new StatusBar("coin", "orange", 70);
 		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120);
-		this.enemies.push(new BossChicken());
+		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", 20);
+		this.bossChicken = new BossChicken(character);
 		this.addStartEnemies();
 		// this.addEnemies();
 	}
 
 	createBgLayers(sections) {
-		const layers = [];
 		const step = World.canvas.width;
 
 		for (let i = 0; i < sections; i++) {
 			const imgThirdLayer = ImageHub.BACKGROUND.thirdLayer[i % 2];
 			const imgSecondLayer = ImageHub.BACKGROUND.secondLayer[i % 2];
 			const imgFirstLayer = ImageHub.BACKGROUND.firstLayer[i % 2];
-			layers.push(new BackgroundLayer(ImageHub.BACKGROUND.air, i * step));
-			layers.push(new BackgroundLayer(imgThirdLayer, i * step));
-			layers.push(new BackgroundLayer(imgSecondLayer, i * step));
-			layers.push(new BackgroundLayer(imgFirstLayer, i * step));
-		}
-		this.bgLayers = layers;
-	}
-
-	createClouds(sections) {
-		const step = World.canvas.width;
-
-		for (let i = 0; i <= sections; i++) {
 			const img = ImageHub.BACKGROUND.clouds[i % 2];
+			this.bgLayers.push(new BackgroundLayer(ImageHub.BACKGROUND.air, i * step));
+			this.bgLayers.push(new BackgroundLayer(imgThirdLayer, i * step));
+			this.bgLayers.push(new BackgroundLayer(imgSecondLayer, i * step));
+			this.bgLayers.push(new BackgroundLayer(imgFirstLayer, i * step));
 			this.clouds.push(new Cloud(img, i * step));
 		}
 	}
@@ -94,7 +87,6 @@ export class Level {
 		let yPos = World.canvas.height * 0.4;
 		this.colObjects.coins.push(new CollectableCoin(xPos, yPos));
 		const height = this.colObjects.coins[0].height;
-		console.log(height);
 
 		switch (value) {
 			case 1:
@@ -102,6 +94,10 @@ export class Level {
 				this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
 				this.colObjects.coins.push(new CollectableCoin(xPos + height * 3, yPos - height));
 				this.colObjects.coins.push(new CollectableCoin(xPos + height * 4, yPos));
+
+			case 2:
+				this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
+				this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
 		}
 	}
 }

@@ -9,12 +9,8 @@ export class DrawableObject {
 	img;
 	imgCache = {};
 	currentImage = 0;
+	currentState = null;
 	id;
-
-	constructor() {
-		this.loadImages(ImageHub.INTRO_OUTRO_SCREENS.won);
-		this.loadImages(ImageHub.INTRO_OUTRO_SCREENS.lost);
-	}
 
 	offset = {
 		top: 0,
@@ -47,10 +43,29 @@ export class DrawableObject {
 	 * @param {string[]} images - Array mit Bildpfaden zu einem Zustand
 	 */
 	showAnimation(images) {
-		let i = this.currentImage % images.length;
-		let path = images[i];
-		this.img = this.imgCache[path];
+		if (this.currentState !== images) {
+			this.currentState = images;
+			this.currentImage = 0;
+		}
+
+		const i = this.currentImage % images.length;
+		this.img = this.imgCache[images[i]];
 		this.currentImage++;
+	}
+
+	showAnimationOnce(images) {
+		if (this.currentState !== images) {
+			this.currentState = images;
+			this.currentImage = 0;
+		}
+		if (this.currentImage < images.length) {
+			const path = images[this.currentImage];
+			this.img = this.imgCache[path];
+			this.currentImage++;
+		} else {
+			const lastPath = images[images.length - 1];
+			this.img = this.imgCache[lastPath];
+		}
 	}
 
 	draw(ctx) {
@@ -63,5 +78,18 @@ export class DrawableObject {
 		} else {
 			ctx.drawImage(this.img, this.xPos, this.yPos, this.width, this.height);
 		}
+	}
+
+	drawFrame(ctx) {
+		ctx.beginPath();
+		ctx.lineWidth = "2";
+		ctx.strokeStyle = "blue";
+		ctx.rect(
+			this.xPos + this.offset.left,
+			this.yPos + this.offset.top,
+			this.width - this.offset.left - this.offset.right,
+			this.height - this.offset.top - this.offset.bottom,
+		);
+		ctx.stroke();
 	}
 }
