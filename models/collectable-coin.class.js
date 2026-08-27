@@ -10,20 +10,14 @@ export class CollectableCoin extends CollectableObject {
 		this.width = this.height;
 		this.xPos = xPos;
 		this.yPos = yPos;
-		this.id = World.idCounter;
-		World.idCounter++;
 		this.loadImg(ImageHub.COIN[0]);
 		this.loadImages(ImageHub.COIN);
 		this.animate();
 	}
 
 	animate() {
-		IntervalHub.startInterval(
-			`coin_${this.id}`,
-			() => {
-				this.showAnimation(ImageHub.COIN);
-			},
-			400,
-		);
+		this.animationInterval = IntervalHub.startInterval(() => {
+			this.showAnimation(ImageHub.COIN);
+		}, 400);
 	}
 }

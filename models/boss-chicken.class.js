@@ -1,4 +1,3 @@
-import { Character } from "./character.class.js";
 import { Chicken } from "./chicken.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
 import { IntervalHub } from "../hubs/interval-hub.class.js";
@@ -7,6 +6,8 @@ import { World } from "./world.class.js";
 
 export class BossChicken extends Chicken {
 	isTriggered = false;
+	movementInterval;
+	animationInterval;
 
 	constructor(energy, speedX, damage) {
 		super();
@@ -17,7 +18,7 @@ export class BossChicken extends Chicken {
 		this.width = this.height * 0.85;
 		this.yPos = World.canvas.height * 0.92 - this.height;
 		this.xPos = Level.maxWidth - this.width * 1.2;
-		this.loadImg(ImageHub.BOSS_CHICKEN.walk[0]);
+		this.loadImg(ImageHub.BOSS_CHICKEN.walk.frames[0]);
 		this.loadImagesToCache();
 		this.animate();
 	}
@@ -31,21 +32,13 @@ export class BossChicken extends Chicken {
 	}
 
 	animate() {
-		IntervalHub.startInterval(
-			"boss_chicken_movement",
-			() => {
-				if (!this.isDead()) this.handleMovement();
-			},
-			1000 / 60,
-		);
+		this.movementInterval = IntervalHub.startInterval(() => {
+			if (!this.isDead()) this.handleMovement();
+		}, 1000 / 60);
 
-		IntervalHub.startInterval(
-			"boss-chicken-animate",
-			() => {
-				this.handleAnimations();
-			},
-			300,
-		);
+		this.animationInterval = IntervalHub.startInterval(() => {
+			this.handleAnimations();
+		}, 300);
 	}
 
 	handleMovement() {

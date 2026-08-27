@@ -9,6 +9,9 @@ export class MovableObject extends DrawableObject {
 	acceleration = 1.5;
 	energy = 100;
 	lastHit = 0;
+	movementInterval;
+	animationInterval;
+	gravityInterval;
 
 	drawFrame(ctx) {
 		ctx.beginPath();
@@ -36,19 +39,15 @@ export class MovableObject extends DrawableObject {
 	}
 
 	applyGravity(name) {
-		IntervalHub.startInterval(
-			`gravity_${name}`,
-			() => {
-				if (this.isAboveGround() || this.speedY > 0) {
-					this.yPos -= this.speedY;
-					this.speedY -= this.acceleration;
-				} else {
-					this.yPos = this.defaultYPos;
-					this.speedY = 0;
-				}
-			},
-			1000 / 25,
-		);
+		this.gravityInterval = IntervalHub.startInterval(() => {
+			if (this.isAboveGround() || this.speedY > 0) {
+				this.yPos -= this.speedY;
+				this.speedY -= this.acceleration;
+			} else {
+				this.yPos = this.defaultYPos;
+				this.speedY = 0;
+			}
+		}, 1000 / 25);
 	}
 
 	isAboveGround() {
@@ -71,10 +70,7 @@ export class MovableObject extends DrawableObject {
 
 	isHit() {
 		this.energy -= LevelHub.LEVEL_MEDIUM.damage;
-		IntervalHub.pauseInterval("pepe-movement");
-		setTimeout(() => {
-			IntervalHub.resumeInterval("pepe-movement");
-		}, 500);
+		// IntervalHub.pauseInterval(this.movementInterval, 6000);
 		if (this.energy < 0) this.energy = 0;
 		this.lastHit = Date.now();
 	}

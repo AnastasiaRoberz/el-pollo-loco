@@ -10,8 +10,6 @@ export class CollectableBottle extends CollectableObject {
 
 	constructor() {
 		super();
-		this.id = World.idCounter;
-		World.idCounter++;
 		this.height = World.canvas.height * 0.12;
 		this.width = this.height;
 		this.xPos = Math.random() * Level.maxWidth;
@@ -22,12 +20,8 @@ export class CollectableBottle extends CollectableObject {
 	}
 
 	animate() {
-		IntervalHub.startInterval(
-			`botte_on_ground_${this.id}`,
-			() => {
-				this.showAnimation(ImageHub.BOTTLE.onGround);
-			},
-			350,
-		);
+		this.animationInterval = IntervalHub.startInterval(() => {
+			this.showAnimation(ImageHub.BOTTLE.onGround);
+		}, 350);
 	}
 }

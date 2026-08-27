@@ -11,19 +11,13 @@ export class Cloud extends MovableObject {
 		this.xPos = xPos;
 		this.width = World.canvas.width;
 		this.height = World.canvas.height;
-		this.id = World.idCounter;
-		World.idCounter++;
 		this.animate();
 	}
 
 	animate() {
-		IntervalHub.startInterval(
-			`cloud_animation_${this.id}`,
-			() => {
-				this.moveLeft();
-				if (this.xPos <= -this.width) this.xPos = this.width * 2;
-			},
-			1000 / 60,
-		);
+		this.movementInterval = IntervalHub.startInterval(() => {
+			this.moveLeft();
+			if (this.xPos <= -this.width) this.xPos = this.width * 2;
+		}, 1000 / 60);
 	}
 }
