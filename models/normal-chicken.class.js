@@ -4,8 +4,8 @@ import { Level } from "./level.class.js";
 import { World } from "./world.class.js";
 
 export class NormalChicken extends Chicken {
-	imagesWalk = ImageHub.NORMAL_CHICKEN.walk;
-	imgDead = ImageHub.NORMAL_CHICKEN.dead;
+	imagesWalk = ImageHub.NORMAL_CHICKEN.walk.frames;
+	imgDead = ImageHub.NORMAL_CHICKEN.dead.frame;
 
 	constructor(xPos, speedX) {
 		super();

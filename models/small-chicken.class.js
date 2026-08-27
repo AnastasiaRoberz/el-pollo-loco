@@ -4,8 +4,8 @@ import { Level } from "./level.class.js";
 import { World } from "./world.class.js";
 
 export class SmallChicken extends Chicken {
-	imagesWalk = ImageHub.SMALL_CHICKEN.walk;
-	imgDead = ImageHub.SMALL_CHICKEN.dead;
+	imagesWalk = ImageHub.SMALL_CHICKEN.walk.frames;
+	imgDead = ImageHub.SMALL_CHICKEN.dead.frame;
 
 	constructor() {
 		super();
@@ -13,7 +13,7 @@ export class SmallChicken extends Chicken {
 		this.width = this.height;
 		this.yPos = World.canvas.height * 0.88 - this.height;
 		this.xPos = Level.maxWidth + Math.random() * World.canvas.width;
-		this.loadImg(ImageHub.SMALL_CHICKEN.walk[0]);
+		this.loadImg(this.imagesWalk[0]);
 		this.loadImages(this.imagesWalk);
 		this.animate();
 	}

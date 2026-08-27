@@ -20,12 +20,13 @@ export class Character extends MovableObject {
 
 	loadAllImages() {
 		this.loadImg(ImageHub.PEPE.idle[0]);
-		this.loadImages(ImageHub.PEPE.idle);
-		this.loadImages(ImageHub.PEPE.longIdle);
-		this.loadImages(ImageHub.PEPE.walk);
-		this.loadImages(ImageHub.PEPE.jump);
-		this.loadImages(ImageHub.PEPE.hurt);
-		this.loadImages(ImageHub.PEPE.dead);
+		this.loadImages(ImageHub.PEPE.idle.frames);
+		this.loadImages(ImageHub.PEPE.longIdle.frames);
+		this.loadImages(ImageHub.PEPE.longIdleFlip.frames);
+		this.loadImages(ImageHub.PEPE.walk.frames);
+		this.loadImages(ImageHub.PEPE.jump.frames);
+		this.loadImages(ImageHub.PEPE.hurt.frames);
+		this.loadImages(ImageHub.PEPE.dead.frames);
 	}
 
 	initDimensions() {
@@ -78,17 +79,17 @@ export class Character extends MovableObject {
 
 	handleAnimations() {
 		if (this.isDead()) {
-			this.showAnimationOnce(ImageHub.PEPE.dead);
+			this.showAnimationOnce(ImageHub.PEPE.dead.frames);
 		} else if (this.isHurt()) {
-			this.showAnimation(ImageHub.PEPE.hurt);
+			this.showAnimation(ImageHub.PEPE.hurt.frames);
 		} else if (this.isAboveGround()) {
-			this.showAnimation(ImageHub.PEPE.jump);
+			this.showAnimation(ImageHub.PEPE.jump.frames);
 		} else if (Keyboard.RIGHT || Keyboard.LEFT) {
-			this.showAnimation(ImageHub.PEPE.walk);
+			this.showAnimation(ImageHub.PEPE.walk.frames);
 		} else if (this.isLongIdle()) {
-			this.showAnimation(ImageHub.PEPE.longIdle);
+			this.showAnimation(ImageHub.PEPE.longIdle.frames);
 		} else {
-			this.showAnimation(ImageHub.PEPE.idle);
+			this.showAnimation(ImageHub.PEPE.idle.frames);
 		}
 	}
 

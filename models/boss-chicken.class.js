@@ -23,11 +23,11 @@ export class BossChicken extends Chicken {
 	}
 
 	loadImagesToCache() {
-		this.loadImages(ImageHub.BOSS_CHICKEN.walk);
-		this.loadImages(ImageHub.BOSS_CHICKEN.alert);
-		this.loadImages(ImageHub.BOSS_CHICKEN.attack);
-		this.loadImages(ImageHub.BOSS_CHICKEN.hurt);
-		this.loadImages(ImageHub.BOSS_CHICKEN.dead);
+		this.loadImages(ImageHub.BOSS_CHICKEN.walk.frames);
+		this.loadImages(ImageHub.BOSS_CHICKEN.alert.frames);
+		this.loadImages(ImageHub.BOSS_CHICKEN.attack.frames);
+		this.loadImages(ImageHub.BOSS_CHICKEN.hurt.frames);
+		this.loadImages(ImageHub.BOSS_CHICKEN.dead.frames);
 	}
 
 	animate() {
@@ -64,17 +64,17 @@ export class BossChicken extends Chicken {
 
 	handleAnimations() {
 		if (this.isDead()) {
-			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead);
+			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames);
 		} else if (this.isHurt()) {
-			this.showAnimation(ImageHub.BOSS_CHICKEN.hurt);
+			this.showAnimation(ImageHub.BOSS_CHICKEN.hurt.frames);
 		} else if (this.isAttacking()) {
-			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.attack);
+			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.attack.frames);
 		} else if (this.isMoving()) {
-			this.showAnimation(ImageHub.BOSS_CHICKEN.walk);
+			this.showAnimation(ImageHub.BOSS_CHICKEN.walk.frames);
 		} else if (this.isAlert()) {
-			this.showAnimation(ImageHub.BOSS_CHICKEN.alert);
+			this.showAnimation(ImageHub.BOSS_CHICKEN.alert.frames);
 		} else {
-			this.showAnimation(ImageHub.BOSS_CHICKEN.alert);
+			this.showAnimation(ImageHub.BOSS_CHICKEN.alert.frames);
 		}
 	}
 
