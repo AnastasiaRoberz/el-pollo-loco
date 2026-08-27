@@ -8,11 +8,8 @@ import { ThrowableObject } from "./throwable-object.class.js";
 
 export class World {
 	static canvas;
-	static idCounter = 0;
 	static character;
 	ctx;
-	bgLayers = [];
-	clouds = [];
 	throwableObjects = [];
 	cameraPos;
 	level;
@@ -26,7 +23,6 @@ export class World {
 		this.ctx = canvas.getContext("2d");
 		World.character = new Character();
 		this.level = new Level(LevelHub[`LEVEL_${difficulty}`]);
-		this.bgLayers = this.level.bgLayers;
 		// this.onGameOver = onGameOver;
 		this.draw();
 		this.run();
@@ -42,7 +38,7 @@ export class World {
 		if (this.cameraPos < maxcameraPos) this.cameraPos = maxcameraPos;
 		this.ctx.translate(this.cameraPos, 0);
 
-		this.addObjectsToMap(this.bgLayers);
+		this.addObjectsToMap(this.level.bgLayers);
 		this.addObjectsToMap(this.level.clouds);
 		World.character.draw(this.ctx);
 		this.level.bossChicken.draw(this.ctx);
@@ -119,7 +115,7 @@ export class World {
 				bottle.splash(this);
 				if (!this.level.bossChicken.isHurt()) {
 					this.level.bossChicken.isHit(this.level.config.bottleDamage);
-					const percent = (boss.energy / boss.maxEnergy) * 100;
+					const percent = (this.level.bossChicken.energy / this.level.bossChicken.maxEnergy) * 100;
 					this.level.bars.healthEndboss.setPercentage(percent);
 				}
 			}

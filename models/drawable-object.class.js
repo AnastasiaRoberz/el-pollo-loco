@@ -1,4 +1,4 @@
-import { ImageHub } from "./img-hub.class.js";
+import { World } from "./world.class.js";
 
 export class DrawableObject {
 	xPos;
@@ -10,7 +10,6 @@ export class DrawableObject {
 	imgCache = {};
 	currentImage = 0;
 	currentState = null;
-	id;
 
 	offset = {
 		top: 0,
