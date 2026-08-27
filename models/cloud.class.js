@@ -1,4 +1,4 @@
-import { IntervalHub } from "./interval-hub.class.js";
+import { IntervalHub } from "../hubs/interval-hub.class.js";
 import { MovableObject } from "./movable-object.class.js";
 import { World } from "./world.class.js";
 

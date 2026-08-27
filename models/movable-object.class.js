@@ -1,6 +1,6 @@
 import { DrawableObject } from "./drawable-object.class.js";
-import { IntervalHub } from "./interval-hub.class.js";
-import { LevelHub } from "./level-hub.class.js";
+import { IntervalHub } from "../hubs/interval-hub.class.js";
+import { LevelHub } from "../hubs/level-hub.class.js";
 
 export class MovableObject extends DrawableObject {
 	flipDirection = false;

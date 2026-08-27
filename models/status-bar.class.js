@@ -1,5 +1,5 @@
 import { DrawableObject } from "./drawable-object.class.js";
-import { ImageHub } from "./img-hub.class.js";
+import { ImageHub } from "../hubs/img-hub.class.js";
 import { World } from "./world.class.js";
 
 export class StatusBar extends DrawableObject {

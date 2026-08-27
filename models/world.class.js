@@ -1,8 +1,8 @@
 import { BossChicken } from "./boss-chicken.class.js";
 import { Character } from "./character.class.js";
-import { IntervalHub } from "./interval-hub.class.js";
+import { IntervalHub } from "../hubs/interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
-import { LevelHub } from "./level-hub.class.js";
+import { LevelHub } from "../hubs/level-hub.class.js";
 import { Level } from "./level.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
 
