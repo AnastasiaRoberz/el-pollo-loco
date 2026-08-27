@@ -68,19 +68,15 @@ export class World {
 	}
 
 	run() {
-		IntervalHub.startInterval(
-			"main-interval",
-			() => {
-				this.collectItems();
-				this.collectCoins();
-				this.checkCollisions();
-				this.checkThrowObjects();
-				this.hitBossChicken();
-				this.checkBottleCollision();
-				this.checkGameEnd();
-			},
-			200,
-		);
+		IntervalHub.startInterval(() => {
+			this.collectItems();
+			this.collectCoins();
+			this.checkCollisions();
+			this.checkThrowObjects();
+			this.hitBossChicken();
+			this.checkBottleCollision();
+			this.checkGameEnd();
+		}, 200);
 	}
 
 	collectItems() {

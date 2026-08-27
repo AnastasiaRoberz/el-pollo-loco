@@ -38,22 +38,14 @@ export class Character extends MovableObject {
 	}
 
 	animate() {
-		IntervalHub.startInterval(
-			"pepe-movement",
-			() => {
-				this.handleWalking();
-				this.handleJumping();
-			},
-			1000 / 60,
-		);
+		this.movementInterval = IntervalHub.startInterval(() => {
+			this.handleWalking();
+			this.handleJumping();
+		}, 1000 / 60);
 
-		IntervalHub.startInterval(
-			"pepe-animation",
-			() => {
-				this.handleAnimations();
-			},
-			250,
-		);
+		this.animationInterval = IntervalHub.startInterval(() => {
+			this.handleAnimations();
+		}, 250);
 	}
 
 	handleWalking() {
