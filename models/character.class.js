@@ -12,14 +12,16 @@ export class Character extends MovableObject {
 
 	constructor() {
 		super();
+		this.offset = ImageHub.PEPE.idle.offset;
 		this.loadAllImages();
 		this.initDimensions();
 		this.applyGravity();
+		this.setRealFrame();
 		this.animate();
 	}
 
 	loadAllImages() {
-		this.loadImg(ImageHub.PEPE.idle[0]);
+		this.loadImg(ImageHub.PEPE.idle.frames[0]);
 		this.loadImages(ImageHub.PEPE.idle.frames);
 		this.loadImages(ImageHub.PEPE.longIdle.frames);
 		this.loadImages(ImageHub.PEPE.longIdleFlip.frames);
@@ -31,7 +33,7 @@ export class Character extends MovableObject {
 
 	initDimensions() {
 		this.height = World.canvas.height * 0.6;
-		this.width = this.height * 0.52;
+		this.width = this.height * 0.51;
 		this.defaultYPos = World.canvas.height * 0.9 - this.height;
 		this.yPos = this.defaultYPos;
 		this.xPos = this.width;
@@ -71,16 +73,22 @@ export class Character extends MovableObject {
 
 	handleAnimations() {
 		if (this.isDead()) {
+			this.offset = ImageHub.PEPE.dead.offset;
 			this.showAnimationOnce(ImageHub.PEPE.dead.frames);
 		} else if (this.isHurt()) {
+			this.offset = ImageHub.PEPE.hurt.offset;
 			this.showAnimation(ImageHub.PEPE.hurt.frames);
 		} else if (this.isAboveGround()) {
+			this.offset = ImageHub.PEPE.jump.offset;
 			this.showAnimation(ImageHub.PEPE.jump.frames);
 		} else if (Keyboard.RIGHT || Keyboard.LEFT) {
+			this.offset = ImageHub.PEPE.walk.offset;
 			this.showAnimation(ImageHub.PEPE.walk.frames);
 		} else if (this.isLongIdle()) {
+			this.offset = ImageHub.PEPE.longIdle.offset;
 			this.showAnimation(ImageHub.PEPE.longIdle.frames);
 		} else {
+			this.offset = ImageHub.PEPE.idle.offset;
 			this.showAnimation(ImageHub.PEPE.idle.frames);
 		}
 	}

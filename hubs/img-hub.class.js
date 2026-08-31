@@ -2,9 +2,7 @@ export class ImageHub {
 	// --- CHARACTER (PEPE) ---
 	static PEPE = Object.freeze({
 		idle: {
-			heightRatio: 0.54,
-			widthRatio: 0.66,
-			offset: { topRatio: 0.2, bottomRatio: 0.1, leftRatio: 0.13, rightRatio: 0.27 },
+			offset: { topRatio: 0.52, bottomRatio: 0.05, leftRatio: 0.2, rightRatio: 0.31 },
 			frames: [
 				"./assets/img/2_character_pepe/1_idle/idle/I-1.png",
 				"./assets/img/2_character_pepe/1_idle/idle/I-2.png",
@@ -19,9 +17,7 @@ export class ImageHub {
 			],
 		},
 		longIdle: {
-			heightRatio: 0.61,
-			widthRatio: 0.58,
-			offset: { topRatio: 0.29, bottomRatio: 0.09, leftRatio: 0.13, rightRatio: 0.27 },
+			offset: { topRatio: 0.52, bottomRatio: 0.05, leftRatio: 0.2, rightRatio: 0.32 },
 			frames: [
 				"./assets/img/2_character_pepe/1_idle/long_idle/I-11.png",
 				"./assets/img/2_character_pepe/1_idle/long_idle/I-12.png",
@@ -36,9 +32,7 @@ export class ImageHub {
 			],
 		},
 		longIdleFlip: {
-			heightRatio: 0.61,
-			widthRatio: 0.58,
-			offset: { topRatio: 0.29, bottomRatio: 0.09, leftRatio: 0.13, rightRatio: 0.27 },
+			offset: { topRatio: 0.52, bottomRatio: 0.05, leftRatio: 0.32, rightRatio: 0.2 },
 			frames: [
 				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-21.png",
 				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-22.png",
@@ -53,9 +47,7 @@ export class ImageHub {
 			],
 		},
 		walk: {
-			heightRatio: 0.4,
-			widthRatio: 0.66,
-			offset: { topRatio: 0.18, bottomRatio: 0.09, leftRatio: 0.14, rightRatio: 0.26 },
+			offset: { topRatio: 0.5, bottomRatio: 0.05, leftRatio: 0.21, rightRatio: 0.31 },
 			frames: [
 				"./assets/img/2_character_pepe/2_walk/W-21.png",
 				"./assets/img/2_character_pepe/2_walk/W-22.png",
@@ -66,9 +58,7 @@ export class ImageHub {
 			],
 		},
 		jump: {
-			heightRatio: 0.59,
-			widthRatio: 0.62,
-			offset: { topRatio: 0.3, bottomRatio: 0.09, leftRatio: 0.25, rightRatio: 0.27 },
+			offset: { topRatio: 0.54, bottomRatio: 0.05, leftRatio: 0.3, rightRatio: 0.31 },
 			frames: [
 				"./assets/img/2_character_pepe/3_jump/J-31.png",
 				"./assets/img/2_character_pepe/3_jump/J-32.png",
@@ -82,9 +72,7 @@ export class ImageHub {
 			],
 		},
 		hurt: {
-			heightRatio: 0.54,
-			widthRatio: 0.69,
-			offset: { topRatio: 0.15, bottomRatio: 0.1, leftRatio: 0.22, rightRatio: 0.11 },
+			offset: { topRatio: 0.48, bottomRatio: 0.05, leftRatio: 0.26, rightRatio: 0.17 },
 			frames: [
 				"./assets/img/2_character_pepe/4_hurt/H-41.png",
 				"./assets/img/2_character_pepe/4_hurt/H-42.png",
@@ -96,8 +84,6 @@ export class ImageHub {
 			],
 		},
 		dead: {
-			heightRatio: 0.66,
-			widthRatio: 0.56,
 			offset: { topRatio: 0, bottomRatio: 0, leftRatio: 0, rightRatio: 0 },
 			frames: [
 				"./assets/img/2_character_pepe/5_dead/D-51.png",
@@ -113,8 +99,6 @@ export class ImageHub {
 	// --- ENEMIES (CHICKEN) ---
 	static NORMAL_CHICKEN = Object.freeze({
 		walk: {
-			heightRatio: 0.21,
-			widthRatio: 1.1,
 			frames: [
 				"./assets/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",
 				"./assets/img/3_enemies_chicken/chicken_normal/1_walk/2_w.png",
@@ -122,16 +106,12 @@ export class ImageHub {
 			],
 		},
 		dead: {
-			heightRatio: 0.21,
-			widthRatio: 1.1,
 			frame: ["./assets/img/3_enemies_chicken/chicken_normal/2_dead/dead.png"],
 		},
 	});
 
 	static SMALL_CHICKEN = Object.freeze({
 		walk: {
-			heightRatio: 0.14,
-			widthRatio: 1.03,
 			frames: [
 				"./assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png",
 				"./assets/img/3_enemies_chicken/chicken_small/1_walk/2_w.png",
@@ -139,17 +119,13 @@ export class ImageHub {
 			],
 		},
 		dead: {
-			heightRatio: 0.14,
-			widthRatio: 1.03,
 			frame: "./assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png",
 		},
 	});
 
 	static BOSS_CHICKEN = Object.freeze({
 		walk: {
-			heightRatio: 0.74,
-			widthRatio: 0.97,
-			offset: { topRatio: 0, bottomRatio: 0, leftRatio: 0, rightRatio: 0 },
+			offset: { topRatio: 0.18, bottomRatio: 0.08, leftRatio: 0.07, rightRatio: 0.03 },
 			frames: [
 				"./assets/img/4_enemie_boss_chicken/1_walk/G1.png",
 				"./assets/img/4_enemie_boss_chicken/1_walk/G2.png",
@@ -158,9 +134,7 @@ export class ImageHub {
 			],
 		},
 		alert: {
-			heightRatio: 0.76,
-			widthRatio: 0.99,
-			offset: { topRatio: 0, bottomRatio: 0, leftRatio: 0, rightRatio: 0 },
+			offset: { topRatio: 0.19, bottomRatio: 0.03, leftRatio: 0.07, rightRatio: 0.04 },
 			frames: [
 				"./assets/img/4_enemie_boss_chicken/2_alert/G5.png",
 				"./assets/img/4_enemie_boss_chicken/2_alert/G6.png",
@@ -173,9 +147,7 @@ export class ImageHub {
 			],
 		},
 		attack: {
-			heightRatio: 0.89,
-			widthRatio: 0.81,
-			offset: { topRatio: 0, bottomRatio: 0, leftRatio: 0, rightRatio: 0 },
+			offset: { topRatio: 0.18, bottomRatio: 0.19, leftRatio: 0.1, rightRatio: 0.03 },
 			frames: [
 				"./assets/img/4_enemie_boss_chicken/3_attack/G13.png",
 				"./assets/img/4_enemie_boss_chicken/3_attack/G14.png",
@@ -188,9 +160,7 @@ export class ImageHub {
 			],
 		},
 		hurt: {
-			heightRatio: 0.88,
-			widthRatio: 0.86,
-			offset: { topRatio: 0.12, bottomRatio: 0, leftRatio: 0.06, rightRatio: 0 },
+			offset: { topRatio: 0.16, bottomRatio: 0.1, leftRatio: 0.11, rightRatio: 0.05 },
 			frames: [
 				"./assets/img/4_enemie_boss_chicken/4_hurt/G21.png",
 				"./assets/img/4_enemie_boss_chicken/4_hurt/G22.png",
@@ -198,8 +168,6 @@ export class ImageHub {
 			],
 		},
 		dead: {
-			heightRatio: 0.82,
-			widthRatio: 0.92,
 			offset: { topRatio: 0, bottomRatio: 0, leftRatio: 0, rightRatio: 0 },
 			frames: [
 				"./assets/img/4_enemie_boss_chicken/5_dead/G24.png",

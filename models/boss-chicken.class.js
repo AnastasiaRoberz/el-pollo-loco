@@ -18,6 +18,8 @@ export class BossChicken extends Chicken {
 		this.width = this.height * 0.85;
 		this.yPos = World.canvas.height * 0.92 - this.height;
 		this.xPos = Level.maxWidth - this.width * 1.2;
+		this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
+		this.setRealFrame();
 		this.loadImg(ImageHub.BOSS_CHICKEN.walk.frames[0]);
 		this.loadImagesToCache();
 		this.animate();
@@ -57,17 +59,23 @@ export class BossChicken extends Chicken {
 
 	handleAnimations() {
 		if (this.isDead()) {
+			this.offset = ImageHub.BOSS_CHICKEN.dead.offset;
 			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames);
 		} else if (this.isHurt()) {
+			this.offset = ImageHub.BOSS_CHICKEN.hurt.offset;
 			this.showAnimation(ImageHub.BOSS_CHICKEN.hurt.frames);
 		} else if (this.isAttacking()) {
+			this.offset = ImageHub.BOSS_CHICKEN.attack.offset;
 			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.attack.frames);
 		} else if (this.isMoving()) {
+			this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
 			this.showAnimation(ImageHub.BOSS_CHICKEN.walk.frames);
 		} else if (this.isAlert()) {
+			this.offset = ImageHub.BOSS_CHICKEN.alert.offset;
 			this.showAnimation(ImageHub.BOSS_CHICKEN.alert.frames);
 		} else {
-			this.showAnimation(ImageHub.BOSS_CHICKEN.alert.frames);
+			this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
+			this.showAnimation(ImageHub.BOSS_CHICKEN.walk.frames);
 		}
 	}
 

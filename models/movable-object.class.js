@@ -13,19 +13,6 @@ export class MovableObject extends DrawableObject {
 	animationInterval;
 	gravityInterval;
 
-	drawFrame(ctx) {
-		ctx.beginPath();
-		ctx.lineWidth = "2";
-		ctx.strokeStyle = "blue";
-		ctx.rect(
-			this.xPos + this.offset.left,
-			this.yPos + this.offset.top,
-			this.width - this.offset.left - this.offset.right,
-			this.height - this.offset.top - this.offset.bottom,
-		);
-		ctx.stroke();
-	}
-
 	moveRight() {
 		if (!this.isDead()) this.xPos += this.speedX;
 	}
@@ -56,10 +43,10 @@ export class MovableObject extends DrawableObject {
 
 	isColliding(obj) {
 		return (
-			this.xPos + this.width > obj.xPos &&
-			this.yPos + this.height > obj.yPos &&
-			this.xPos < obj.xPos + obj.width &&
-			this.yPos < obj.yPos + obj.height
+			this.rxPos + this.rWidth > obj.rxPos &&
+			this.ryPos + this.rHeight > obj.ryPos &&
+			this.rxPos < obj.rxPos + obj.rWidth &&
+			this.ryPos < obj.ryPos + obj.rHeight
 		);
 	}
 

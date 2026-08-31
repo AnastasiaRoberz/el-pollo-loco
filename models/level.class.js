@@ -33,7 +33,7 @@ export class Level {
 		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120);
 		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", 20);
 		this.bossChicken = new BossChicken(this.config.bossEnergy, this.config.bossSpeed, this.config.bossDamage);
-		this.addStartEnemies();
+		// this.addStartEnemies();
 		this.addEnemies(this.config.enemies, this.config.chickenRatio);
 	}
 

@@ -7,6 +7,7 @@ export class ThrowableObject extends MovableObject {
 	speedY = 20;
 	speedX = 20;
 	hasHit = false;
+	offset = { topRatio: 0.16, bottomRatio: 0.13, leftRatio: 0.14, rightRatio: 0.14 };
 
 	constructor(xPos, yPos, flipDirection) {
 		super();

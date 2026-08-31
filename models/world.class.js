@@ -5,6 +5,8 @@ import { Keyboard } from "./keyboard.class.js";
 import { LevelHub } from "../hubs/level-hub.class.js";
 import { Level } from "./level.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
+import { Chicken } from "./chicken.class.js";
+import { CollectableObject } from "./collectable-object.class.js";
 
 export class World {
 	static canvas;
@@ -40,9 +42,15 @@ export class World {
 
 		this.addObjectsToMap(this.level.bgLayers);
 		this.addObjectsToMap(this.level.clouds);
+
 		World.character.draw(this.ctx);
 		this.level.bossChicken.draw(this.ctx);
-		// World.character.drawFrame(this.ctx);
+		this.level.bossChicken.drawFrame(this.ctx);
+		this.level.bossChicken.setRealFrame();
+		this.level.bossChicken.drawOffsetFrame(this.ctx);
+		World.character.drawFrame(this.ctx);
+		World.character.setRealFrame();
+		World.character.drawOffsetFrame(this.ctx);
 		this.addObjectsToMap(this.level.enemies);
 		this.addObjectsToMap(this.throwableObjects);
 		this.addObjectsToMap(this.level.colObjects.bottles);
@@ -62,8 +70,13 @@ export class World {
 
 	addObjectsToMap(objects) {
 		objects.forEach((object) => {
+			if (object instanceof BossChicken) console.log(object);
+			if (object instanceof Chicken || object instanceof ThrowableObject || object instanceof CollectableObject) {
+				object.drawFrame(this.ctx);
+				object.setRealFrame();
+				object.drawOffsetFrame(this.ctx);
+			}
 			object.draw(this.ctx);
-			// object.drawFrame(this.ctx);
 		});
 	}
 
@@ -167,13 +180,13 @@ export class World {
 			setTimeout(() => {
 				this.gameOver = true;
 				// this.onGameOver("lost");
-				IntervalHub.stopAllIntervals();
+				// IntervalHub.stopAllIntervals();
 			}, 5000);
 		} else if (this.level.bossChicken.isDead() && !this.gameOver) {
 			setTimeout(() => {
 				this.gameOver = true;
 				// this.onGameOver("won");
-				IntervalHub.stopAllIntervals();
+				// IntervalHub.stopAllIntervals();
 			}, 3000);
 		}
 	}

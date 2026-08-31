@@ -1,3 +1,4 @@
+import { ImageHub } from "../hubs/img-hub.class.js";
 import { World } from "./world.class.js";
 
 export class DrawableObject {
@@ -10,13 +11,11 @@ export class DrawableObject {
 	imgCache = {};
 	currentImage = 0;
 	currentState = null;
-
-	offset = {
-		top: 0,
-		bottom: 0,
-		left: 0,
-		right: 0,
-	};
+	offset = { topRatio: 0, bottomRatio: 0, leftRatio: 0, rightRatio: 0 };
+	rxPos;
+	ryPos;
+	rWidth;
+	rHeight;
 
 	loadImg(path) {
 		this.img = new Image();
@@ -34,8 +33,11 @@ export class DrawableObject {
 		});
 	}
 
-	setOffset(state) {
-		if (this.offset[state]) this.offset = this.offset[state];
+	setRealFrame() {
+		this.rxPos = this.xPos + this.offset.leftRatio * this.width;
+		this.ryPos = this.yPos + this.offset.topRatio * this.height;
+		this.rWidth = this.width - this.offset.leftRatio * this.width - this.offset.rightRatio * this.width;
+		this.rHeight = this.height - this.offset.topRatio * this.height - this.offset.bottomRatio * this.height;
 	}
 
 	/**
@@ -81,14 +83,17 @@ export class DrawableObject {
 
 	drawFrame(ctx) {
 		ctx.beginPath();
-		ctx.lineWidth = "2";
+		ctx.lineWidth = "1";
 		ctx.strokeStyle = "blue";
-		ctx.rect(
-			this.xPos + this.offset.left,
-			this.yPos + this.offset.top,
-			this.width - this.offset.left - this.offset.right,
-			this.height - this.offset.top - this.offset.bottom,
-		);
+		ctx.rect(this.xPos, this.yPos, this.width, this.height);
+		ctx.stroke();
+	}
+
+	drawOffsetFrame(ctx) {
+		ctx.beginPath();
+		ctx.lineWidth = "2";
+		ctx.strokeStyle = "red";
+		ctx.rect(this.rxPos, this.ryPos, this.rWidth, this.rHeight);
 		ctx.stroke();
 	}
 }
