@@ -19,7 +19,7 @@ export class IntervalHub {
 	}
 
 	static stopAllIntervals() {
-		Object.values(this.allIntervals.forEach((id) => clearInterval(id)));
+		Object.values(this.allIntervals).forEach((entry) => clearInterval(entry.id));
 		this.allIntervals = {};
 	}
 
