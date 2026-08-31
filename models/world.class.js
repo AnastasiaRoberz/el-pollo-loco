@@ -1,12 +1,9 @@
-import { BossChicken } from "./boss-chicken.class.js";
 import { Character } from "./character.class.js";
 import { IntervalHub } from "../hubs/interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
 import { LevelHub } from "../hubs/level-hub.class.js";
 import { Level } from "./level.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
-import { Chicken } from "./chicken.class.js";
-import { CollectableObject } from "./collectable-object.class.js";
 
 export class World {
 	static canvas;
@@ -14,6 +11,7 @@ export class World {
 	ctx;
 	throwableObjects = [];
 	cameraPos;
+	maxCameraPos;
 	level;
 	gameOver = false;
 	onGameOver;
@@ -26,101 +24,138 @@ export class World {
 		World.character = new Character();
 		this.level = new Level(LevelHub[`LEVEL_${difficulty}`]);
 		// this.onGameOver = onGameOver;
+		Keyboard.init();
+		this.maxCameraPos = -(Level.maxWidth - World.canvas.width);
 		this.draw();
 		this.run();
-		Keyboard.init();
 	}
 
 	draw() {
-		const maxcameraPos = -(Level.maxWidth - World.canvas.width);
 		this.ctx.clearRect(0, 0, World.canvas.width, World.canvas.height);
-
 		this.cameraPos = -World.character.xPos + World.character.width;
 		if (this.cameraPos > 0) this.cameraPos = 0;
-		if (this.cameraPos < maxcameraPos) this.cameraPos = maxcameraPos;
+		if (this.cameraPos < this.maxCameraPos) this.cameraPos = this.maxCameraPos;
 		this.ctx.translate(this.cameraPos, 0);
+		this.drawObjects();
+		// this.drawFrames();
+		this.drawOffsetFrames();
+		this.ctx.translate(-this.cameraPos, 0);
+		this.drawStatusbars();
+		requestAnimationFrame(() => this.draw());
+	}
 
+	drawObjects() {
 		this.addObjectsToMap(this.level.bgLayers);
 		this.addObjectsToMap(this.level.clouds);
-
-		World.character.draw(this.ctx);
-		this.level.bossChicken.draw(this.ctx);
-		this.level.bossChicken.drawFrame(this.ctx);
-		this.level.bossChicken.setRealFrame();
-		this.level.bossChicken.drawOffsetFrame(this.ctx);
-		World.character.drawFrame(this.ctx);
-		World.character.setRealFrame();
-		World.character.drawOffsetFrame(this.ctx);
 		this.addObjectsToMap(this.level.enemies);
 		this.addObjectsToMap(this.throwableObjects);
 		this.addObjectsToMap(this.level.colObjects.bottles);
-
 		this.addObjectsToMap(this.level.colObjects.coins);
-		this.ctx.translate(-this.cameraPos, 0);
+		World.character.draw(this.ctx);
+		this.level.bossChicken.draw(this.ctx);
+	}
 
+	drawFrames() {
+		World.character.drawFrame(this.ctx);
+		this.level.bossChicken.drawFrame(this.ctx);
+		this.level.enemies.forEach((enemy) => enemy.drawFrame(this.ctx));
+		this.level.colObjects.bottles.forEach((bottle) => bottle.drawFrame(this.ctx));
+		this.level.colObjects.coins.forEach((coin) => coin.drawFrame(this.ctx));
+	}
+
+	drawOffsetFrames() {
+		World.character.setRealFrame();
+		World.character.drawOffsetFrame(this.ctx);
+		this.level.bossChicken.setRealFrame();
+		this.level.bossChicken.drawOffsetFrame(this.ctx);
+		this.level.enemies.forEach((enemy) => enemy.drawOffsetFrame(this.ctx));
+		this.level.colObjects.bottles.forEach((bottle) => bottle.drawOffsetFrame(this.ctx));
+		this.level.colObjects.coins.forEach((coin) => coin.drawOffsetFrame(this.ctx));
+	}
+
+	drawStatusbars() {
 		this.level.bars.healthBar.draw(this.ctx);
 		this.level.bars.coinBar.draw(this.ctx);
 		this.level.bars.bottleBar.draw(this.ctx);
 		if (this.level.bossChicken.isTriggered) {
 			this.level.bars.healthEndboss.draw(this.ctx);
 		}
-
-		requestAnimationFrame(() => this.draw());
 	}
 
 	addObjectsToMap(objects) {
-		objects.forEach((object) => {
-			if (object instanceof BossChicken) console.log(object);
-			if (object instanceof Chicken || object instanceof ThrowableObject || object instanceof CollectableObject) {
-				object.drawFrame(this.ctx);
-				object.setRealFrame();
-				object.drawOffsetFrame(this.ctx);
-			}
-			object.draw(this.ctx);
-		});
+		objects.forEach((object) => object.draw(this.ctx));
 	}
 
 	run() {
 		IntervalHub.startInterval(() => {
-			this.collectItems();
-			this.collectCoins();
+			this.setRealFrames();
 			this.checkCollisions();
-			this.checkThrowObjects();
-			this.hitBossChicken();
-			this.checkBottleCollision();
+			this.collectItems();
+			this.throwObjects();
 			this.checkGameEnd();
-		}, 200);
+		}, 1000 / 60);
 	}
 
-	collectItems() {
-		this.level.colObjects.bottles.forEach((bottle) => {
-			if (World.character.isColliding(bottle)) {
-				this.collectedBottles++;
-				const index = this.level.colObjects.bottles.indexOf(bottle);
-				this.level.colObjects.bottles.splice(index, 1);
-				this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
-			}
+	setRealFrames() {
+		World.character.setRealFrame();
+		this.level.bossChicken.setRealFrame();
+		this.level.enemies.forEach((enemy) => enemy.setRealFrame());
+		this.level.colObjects.bottles.forEach((bottle) => bottle.setRealFrame());
+		this.level.colObjects.coins.forEach((coin) => coin.setRealFrame());
+	}
+
+	checkCollisions() {
+		this.level.enemies.forEach((enemy) => {
+			this.collisionEnemyCharacter(enemy);
+			this.collisionEnemyBottle(enemy);
 		});
+		this.collisionBossCharacter();
+		this.collisionBossBottle();
 	}
 
-	collectCoins() {
-		this.level.colObjects.coins.forEach((coin) => {
-			if (World.character.isColliding(coin)) {
-				this.collectedCoins++;
-				const index = this.level.colObjects.coins.indexOf(coin);
-				this.level.colObjects.coins.splice(index, 1);
-				if (this.collectedCoins >= this.level.config.coinsForBottle) {
-					this.collectedCoins -= this.level.config.coinsForBottle;
-					this.collectedBottles++;
-					this.level.bars.coinBar.setPercentage(this.collectedCoins * 20);
+	collisionEnemyCharacter(enemy) {
+		if (World.character.isColliding(enemy) && !enemy.isDead()) {
+			const isFalling = World.character.speedY < 0;
+			const isAboveEnemy = World.character.ryPos < enemy.ryPos;
+
+			if (World.character.isAboveGround() && isFalling && isAboveEnemy) {
+				enemy.die();
+				setTimeout(() => {
+					const currentIndex = this.level.enemies.indexOf(enemy);
+					this.level.enemies.splice(currentIndex, 1);
+				}, 1000);
+				World.character.jump(World.character.height * 0.03);
+			} else {
+				if (!World.character.isHurt()) {
+					World.character.isHit(this.level.config.damage);
+					this.level.bars.healthBar.setPercentage(World.character.energy);
 				}
 			}
+		}
+	}
+
+	collisionEnemyBottle(enemy) {
+		this.throwableObjects.forEach((bottle) => {
+			if (bottle.isColliding(enemy) && !enemy.isDead()) {
+				enemy.die();
+				bottle.splash(this);
+			}
 		});
 	}
 
-	checkBottleCollision() {
+	collisionBossCharacter() {
+		if (this.level.bossChicken.isColliding(World.character) && !this.level.bossChicken.isDead()) {
+			if (!World.character.isHurt()) {
+				World.character.isHit();
+				this.level.bars.healthBar.setPercentage(World.character.energy);
+			}
+		}
+	}
+
+	collisionBossBottle() {
 		this.throwableObjects.forEach((bottle) => {
-			if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken) && !bottle.hasHit) {
+			if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken)) {
+				console.log(bottle);
 				bottle.splash(this);
 				if (!this.level.bossChicken.isHurt()) {
 					this.level.bossChicken.isHit(this.level.config.bottleDamage);
@@ -131,39 +166,35 @@ export class World {
 		});
 	}
 
-	hitBossChicken() {
-		if (this.level.bossChicken.isColliding(World.character)) {
-			if (!World.character.isHurt()) {
-				World.character.isHit();
-				this.level.bars.healthBar.setPercentage(World.character.energy);
+	collectItems() {
+		this.level.colObjects.bottles.forEach((bottle) => this.collectBottles(bottle));
+		this.level.colObjects.coins.forEach((coin) => this.collectCoins(coin));
+	}
+
+	collectBottles(bottle) {
+		if (World.character.isColliding(bottle)) {
+			this.collectedBottles++;
+			const index = this.level.colObjects.bottles.indexOf(bottle);
+			this.level.colObjects.bottles.splice(index, 1);
+			this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
+		}
+	}
+
+	collectCoins(coin) {
+		if (World.character.isColliding(coin)) {
+			this.collectedCoins++;
+			const index = this.level.colObjects.coins.indexOf(coin);
+			this.level.colObjects.coins.splice(index, 1);
+			if (this.collectedCoins >= this.level.config.coinsForBottle) {
+				this.collectedCoins -= this.level.config.coinsForBottle;
+				this.collectedBottles++;
+				this.level.bars.coinBar.setPercentage(this.collectedCoins * 20);
+				this.level.bars.bottleBar.setPercentage(this.collectBottles * 20);
 			}
 		}
 	}
 
-	checkCollisions() {
-		this.level.enemies.forEach((enemy) => {
-			if (World.character.isColliding(enemy) && !enemy.isDead()) {
-				const isFalling = World.character.speedY < 0;
-				const isAboveEnemy = World.character.yPos < enemy.yPos + 20;
-
-				if (World.character.isAboveGround() && isFalling && isAboveEnemy) {
-					if (!(enemy instanceof BossChicken)) enemy.die();
-					setTimeout(() => {
-						const currentIndex = this.level.enemies.indexOf(enemy);
-						this.level.enemies.splice(currentIndex, 1);
-					}, 1000);
-					World.character.jump(World.character.height * 0.03);
-				} else {
-					if (!World.character.isHurt()) {
-						World.character.isHit(30);
-						this.level.bars.healthBar.setPercentage(World.character.energy);
-					}
-				}
-			}
-		});
-	}
-
-	checkThrowObjects() {
+	throwObjects() {
 		if (Keyboard.KEY_F && this.collectedBottles > 0) {
 			const xPos = World.character.flipDirection ? World.character.xPos : World.character.xPos + World.character.width;
 			const yPos = World.character.yPos + 50;

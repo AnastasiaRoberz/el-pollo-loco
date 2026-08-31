@@ -17,6 +17,10 @@ export class DrawableObject {
 	rWidth;
 	rHeight;
 
+	constructor() {
+		this.setRealFrame();
+	}
+
 	loadImg(path) {
 		this.img = new Image();
 		this.img.src = path;

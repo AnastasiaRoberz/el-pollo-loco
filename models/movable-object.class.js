@@ -14,18 +14,24 @@ export class MovableObject extends DrawableObject {
 	gravityInterval;
 
 	moveRight() {
-		if (!this.isDead()) this.xPos += this.speedX;
+		if (!this.isDead()) {
+			this.xPos += this.speedX;
+			this.setRealFrame();
+		}
 	}
 
 	moveLeft() {
-		if (!this.isDead()) this.xPos -= this.speedX;
+		if (!this.isDead()) {
+			this.xPos -= this.speedX;
+			this.setRealFrame();
+		}
 	}
 
 	jump(speedY) {
 		if (!this.isDead()) this.speedY = speedY;
 	}
 
-	applyGravity(name) {
+	applyGravity() {
 		this.gravityInterval = IntervalHub.startInterval(() => {
 			if (this.isAboveGround() || this.speedY > 0) {
 				this.yPos -= this.speedY;
@@ -34,6 +40,7 @@ export class MovableObject extends DrawableObject {
 				this.yPos = this.defaultYPos;
 				this.speedY = 0;
 			}
+			this.setRealFrame();
 		}, 1000 / 25);
 	}
 

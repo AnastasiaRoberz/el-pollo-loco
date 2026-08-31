@@ -6,39 +6,36 @@ import { World } from "./world.class.js";
 
 export class BossChicken extends Chicken {
 	isTriggered = false;
-	movementInterval;
-	animationInterval;
 
 	constructor(energy, speedX, damage) {
 		super();
 		this.energy = energy;
 		this.speedX = speedX;
 		this.damage = damage;
+		this.initDimensions();
+		this.loadAllImages();
+		this.animate();
+	}
+
+	initDimensions() {
 		this.height = World.canvas.height * 0.85;
 		this.width = this.height * 0.85;
 		this.yPos = World.canvas.height * 0.92 - this.height;
 		this.xPos = Level.maxWidth - this.width * 1.2;
-		this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
-		this.setRealFrame();
-		this.loadImg(ImageHub.BOSS_CHICKEN.walk.frames[0]);
-		this.loadImagesToCache();
-		this.animate();
 	}
 
-	loadImagesToCache() {
-		this.loadImages(ImageHub.BOSS_CHICKEN.walk.frames);
-		this.loadImages(ImageHub.BOSS_CHICKEN.alert.frames);
-		this.loadImages(ImageHub.BOSS_CHICKEN.attack.frames);
-		this.loadImages(ImageHub.BOSS_CHICKEN.hurt.frames);
-		this.loadImages(ImageHub.BOSS_CHICKEN.dead.frames);
+	loadAllImages() {
+		this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
+		this.loadImg(ImageHub.BOSS_CHICKEN.walk.frames[0]);
+		Object.values(ImageHub.BOSS_CHICKEN).forEach((state) => this.loadImages(state.frames));
 	}
 
 	animate() {
-		this.movementInterval = IntervalHub.startInterval(() => {
+		IntervalHub.startInterval(() => {
 			if (!this.isDead()) this.handleMovement();
 		}, 1000 / 60);
 
-		this.animationInterval = IntervalHub.startInterval(() => {
+		IntervalHub.startInterval(() => {
 			this.handleAnimations();
 		}, 300);
 	}

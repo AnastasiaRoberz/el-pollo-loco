@@ -9,14 +9,17 @@ export class NormalChicken extends Chicken {
 
 	constructor(xPos, speedX) {
 		super();
-		this.xPos = xPos;
+		this.initDimensions(xPos);
 		this.speedX = speedX;
-		this.height = World.canvas.height * 0.18;
-		this.width = this.height;
-		this.yPos = World.canvas.height * 0.88 - this.height;
 		this.loadImg(this.imagesWalk[0]);
 		this.loadImages(this.imagesWalk);
-		this.setRealFrame();
 		this.animate();
+	}
+
+	initDimensions(xPos) {
+		this.height = World.canvas.height * 0.18;
+		this.width = this.height;
+		this.xPos = xPos;
+		this.yPos = World.canvas.height * 0.88 - this.height;
 	}
 }

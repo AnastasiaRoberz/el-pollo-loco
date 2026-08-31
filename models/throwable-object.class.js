@@ -11,14 +11,23 @@ export class ThrowableObject extends MovableObject {
 
 	constructor(xPos, yPos, flipDirection) {
 		super();
+		this.initDiemsnions(xPos, yPos);
+		this.loadAllImages();
+		this.applyGravity();
+		this.throw(flipDirection);
+	}
+
+	initDiemsnions(xPos, yPos) {
 		this.height = World.canvas.height * 0.12;
 		this.width = this.height;
+		this.yPos = yPos;
+		this.xPos = xPos;
+	}
+
+	loadAllImages() {
 		this.loadImg(ImageHub.BOTTLE.rotation[0]);
 		this.loadImages(ImageHub.BOTTLE.rotation);
 		this.loadImages(ImageHub.BOTTLE.splash);
-		this.yPos = yPos;
-		this.xPos = xPos;
-		this.throw(flipDirection);
 	}
 
 	throw(flipDirection) {
