@@ -1,0 +1,112 @@
+:root {
+	--dark: rgb(114, 35, 39);
+	--light: rgb(244, 136, 85);
+}
+
+@font-face {
+	font-family: "Rodeo Nights";
+	src: url("../assets/fonts/Rodeo Nights Regular.woff2") format("woff2");
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 16px;
+}
+
+h1 {
+	font-family: "Rodeo Nights";
+	font-size: 5rem;
+	letter-spacing: 10%;
+	font-variant: small-caps;
+	color: var(--dark);
+}
+
+body {
+	width: 100%;
+	height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 16px;
+	background-image: url("./assets/img/5_background/bg2.jpeg");
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+button {
+	border: none;
+	cursor: pointer;
+}
+
+canvas {
+	background-color: black;
+}
+
+.start {
+	width: 960px;
+	height: 540px;
+	background-image: url("./assets/img/9_intro_outro_screens/start/startscreen_1.png");
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 32px;
+}
+
+.game-btn {
+	font-family: "Rodeo Nights";
+	padding: 16px 32px;
+	background-color: var(--light);
+	color: var(--dark);
+	border: none;
+	font-size: 2rem;
+	letter-spacing: 5%;
+	text-transform: uppercase;
+	border-radius: 16px;
+}
+
+.game-container {
+	position: relative;
+	width: 960px;
+	height: 540px;
+}
+
+.game-over {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	background-color: rgba(0, 0, 0, 0.7);
+	align-items: center;
+	padding: 32px;
+}
+
+.result-container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.result-img {
+	width: 449px;
+	height: 400px;
+}
+
+.hidden {
+	display: none;
+}
