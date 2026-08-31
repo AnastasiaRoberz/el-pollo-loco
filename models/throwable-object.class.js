@@ -15,6 +15,7 @@ export class ThrowableObject extends MovableObject {
 		this.loadAllImages();
 		this.applyGravity();
 		this.throw(flipDirection);
+		this.splash();
 	}
 
 	initDiemsnions(xPos, yPos) {
@@ -22,6 +23,7 @@ export class ThrowableObject extends MovableObject {
 		this.width = this.height;
 		this.yPos = yPos;
 		this.xPos = xPos;
+		this.defaultYPos = World.canvas.height * 0.4;
 	}
 
 	loadAllImages() {
@@ -38,15 +40,20 @@ export class ThrowableObject extends MovableObject {
 	}
 
 	splash() {
-		this.hasHit = true;
-		IntervalHub.stopInterval(this.animationInterval);
-		IntervalHub.stopInterval(this.gravityInterval);
-		IntervalHub.startInterval(() => {
-			this.showAnimationOnce(ImageHub.BOTTLE.splash);
-		}, 50);
+		if (this.bottleHitGround() || this.hasHit) {
+			IntervalHub.stopInterval(this.animationInterval);
+			IntervalHub.stopInterval(this.gravityInterval);
+			IntervalHub.startInterval(() => {
+				this.showAnimationOnce(ImageHub.BOTTLE.splash);
+			}, 50);
+		}
 	}
 
 	isAboveGround() {
 		return true;
+	}
+
+	bottleHitGround() {
+		return this.yPos >= this.defaultYPos;
 	}
 }

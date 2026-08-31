@@ -1,6 +1,3 @@
-import { ImageHub } from "../hubs/img-hub.class.js";
-import { World } from "./world.class.js";
-
 export class DrawableObject {
 	xPos;
 	yPos;

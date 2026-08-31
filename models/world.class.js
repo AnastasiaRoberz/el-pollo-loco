@@ -17,6 +17,8 @@ export class World {
 	onGameOver;
 	collectedBottles = 0;
 	collectedCoins = 0;
+	lastThrow = 0;
+	throwCooldown = 1000;
 
 	constructor(canvas, difficulty) {
 		World.canvas = canvas;
@@ -155,8 +157,7 @@ export class World {
 	collisionBossBottle() {
 		this.throwableObjects.forEach((bottle) => {
 			if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken)) {
-				console.log(bottle);
-				bottle.splash(this);
+				bottle.hasHit = true;
 				if (!this.level.bossChicken.isHurt()) {
 					this.level.bossChicken.isHit(this.level.config.bottleDamage);
 					const percent = (this.level.bossChicken.energy / this.level.bossChicken.maxEnergy) * 100;
@@ -195,14 +196,14 @@ export class World {
 	}
 
 	throwObjects() {
-		if (Keyboard.KEY_F && this.collectedBottles > 0) {
+		if (Keyboard.KEY_F && this.collectedBottles > 0 && Date.now() - this.lastThrow > this.throwCooldown) {
 			const xPos = World.character.flipDirection ? World.character.xPos : World.character.xPos + World.character.width;
 			const yPos = World.character.yPos + 50;
 			const bottle = new ThrowableObject(xPos, yPos, World.character.flipDirection);
 			this.throwableObjects.push(bottle);
 			this.collectedBottles--;
 			this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
-			Keyboard.KEY_F = false;
+			this.lastThrow = Date.now();
 		}
 	}
 
@@ -211,13 +212,13 @@ export class World {
 			setTimeout(() => {
 				this.gameOver = true;
 				// this.onGameOver("lost");
-				// IntervalHub.stopAllIntervals();
+				IntervalHub.stopAllIntervals();
 			}, 5000);
 		} else if (this.level.bossChicken.isDead() && !this.gameOver) {
 			setTimeout(() => {
 				this.gameOver = true;
 				// this.onGameOver("won");
-				// IntervalHub.stopAllIntervals();
+				IntervalHub.stopAllIntervals();
 			}, 3000);
 		}
 	}
