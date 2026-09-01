@@ -38,6 +38,7 @@ body {
 	background-position: center;
 	background-size: cover;
 	background-repeat: no-repeat;
+	padding: 0 240px;
 }
 
 button {
@@ -47,11 +48,14 @@ button {
 
 canvas {
 	background-color: black;
+	width: 100%;
+	height: 100%;
+	display: block;
 }
 
 .start {
-	width: 960px;
-	height: 540px;
+	width: 100%;
+	height: 100%;
 	background-image: url("./assets/img/9_intro_outro_screens/start/startscreen_1.png");
 	background-position: center;
 	background-size: contain;
@@ -76,8 +80,9 @@ canvas {
 
 .game-container {
 	position: relative;
-	width: 960px;
-	height: 540px;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 16 / 9;
 }
 
 .game-over {
