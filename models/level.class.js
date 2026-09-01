@@ -4,8 +4,6 @@ import { Cloud } from "./cloud.class.js";
 import { CollectableBottle } from "./collectable-bottle.class.js";
 import { CollectableCoin } from "./collectable-coin.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
-import { IntervalHub } from "../hubs/interval-hub.class.js";
-import { LevelHub } from "../hubs/level-hub.class.js";
 import { NormalChicken } from "./normal-chicken.class.js";
 import { SmallChicken } from "./small-chicken.class.js";
 import { StatusBar } from "./status-bar.class.js";
@@ -86,30 +84,23 @@ export class Level {
 	}
 
 	createCoins(amount) {
-		const step = (this.maxWidth - 800) / amount;
-		for (let i = 0; i < amount; i++) {
-			const x = 350 + i * step + Math.random() * 80;
-			const y = 120 + Math.random() * 180;
-			this.colObjects.coins.push(new CollectableCoin(x, y));
+		const startX = 300;
+		const endX = Level.maxWidth - 600;
+		const totalCoinArea = endX - startX;
+
+		const estClusters = Math.max(1, Math.floor(amount / 4));
+		const stepSize = totalCoinArea / estClusters;
+
+		let createdCoins = 0;
+
+		for (let i = 0; i < estClusters; i++) {
+			if (createdCoins <= amount) {
+				const remainingCoins = amount - createdCoins;
+				const slotX = startX + i * stepSize + Math.random() * (stepSize * 0.3);
+				const newCoins = CollectableCoin.createCluster(slotX, remainingCoins);
+				this.colObjects.coins.push(...newCoins);
+				createdCoins += newCoins.length;
+			}
 		}
 	}
-
-	// createCoins(value = 1) {
-	// 	let xPos = 300;
-	// 	let yPos = World.canvas.height * 0.4;
-	// 	this.colObjects.coins.push(new CollectableCoin(xPos, yPos));
-	// 	const height = this.colObjects.coins[0].height;
-
-	// 	switch (value) {
-	// 		case 1:
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 3, yPos - height));
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 4, yPos));
-
-	// 		case 2:
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
-	// 	}
-	// }
 }
