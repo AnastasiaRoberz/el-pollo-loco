@@ -80,13 +80,13 @@ export class Character extends MovableObject {
 			this.showAnimation(ImageHub.PEPE.walk.frames);
 		} else if (this.isLongIdle() && !this.flipDirection) {
 			this.offset = ImageHub.PEPE.longIdle.offset;
-			if (this.animationTick % 5 === 0) this.showAnimation(ImageHub.PEPE.longIdle.frames);
+			if (this.animationTick % 6 === 0) this.showAnimation(ImageHub.PEPE.longIdle.frames);
 		} else if (this.isLongIdle() && this.flipDirection) {
 			this.offset = ImageHub.PEPE.longIdleFlip.offset;
-			this.showAnimation(ImageHub.PEPE.longIdleFlip.frames);
+			if (this.animationTick % 8 === 0) this.showAnimation(ImageHub.PEPE.longIdleFlip.frames);
 		} else {
 			this.offset = ImageHub.PEPE.idle.offset;
-			if (this.animationTick % 5 === 0) this.showAnimation(ImageHub.PEPE.idle.frames);
+			if (this.animationTick % 6 === 0) this.showAnimation(ImageHub.PEPE.idle.frames);
 		}
 	}
 
