@@ -29,7 +29,7 @@ export class Level {
 		this.bars["healthBar"] = new StatusBar("health", "green", 20, 100, 100);
 		this.bars["coinBar"] = new StatusBar("coin", "orange", 70, this.config.amountCoins);
 		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120, this.config.amountBottles);
-		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", 20, this.config.bossEnergy, 100);
+		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", 20, this.config.bossEnergy, 100, World.canvas.width - this.width - 20);
 		this.bossChicken = new BossChicken(this.config.bossEnergy, this.config.bossSpeed, this.config.bossDamage);
 		this.createEnemies(this.config.enemies, this.config.chickenRatio);
 	}

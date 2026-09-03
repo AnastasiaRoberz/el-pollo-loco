@@ -3,7 +3,7 @@ import { ImageHub } from "../hubs/img-hub.class.js";
 import { World } from "./world.class.js";
 
 export class StatusBar extends DrawableObject {
-	xPos = 20;
+	xPos;
 	width = 250;
 	height = 60;
 	percentage;
@@ -12,18 +12,22 @@ export class StatusBar extends DrawableObject {
 	barImg;
 	maxValue = 100;
 
-	constructor(icon, color, yPos, maxValue, percentage = 0) {
+	constructor(icon, color, yPos, maxValue, percentage = 0, xPos = 20) {
 		super();
-		this.emptyBarImg = new Image();
-		this.emptyBarImg.src = ImageHub.STATUSBAR.barElements.empty;
-		this.iconImg = new Image();
-		this.iconImg.src = ImageHub.STATUSBAR.icons[icon];
-		this.barImg = new Image();
-		this.barImg.src = ImageHub.STATUSBAR.barElements[color];
+		this.loadAllImages(icon, color);
+		this.xPos = xPos;
 		this.yPos = yPos;
-		this.maxValue = maxValue;
 		this.percentage = percentage;
-		if (icon === "healthEndboss") this.xPos = World.canvas.width - this.width - 20;
+		this.maxValue = maxValue;
+	}
+
+	loadAllImages(icon, color) {
+		this.emptyBarImg = new Image();
+		this.iconImg = new Image();
+		this.barImg = new Image();
+		this.emptyBarImg.src = ImageHub.STATUSBAR.barElements.empty;
+		this.iconImg.src = ImageHub.STATUSBAR.icons[icon];
+		this.barImg.src = ImageHub.STATUSBAR.barElements[color];
 	}
 
 	draw(ctx) {
@@ -50,8 +54,6 @@ export class StatusBar extends DrawableObject {
 	}
 
 	setPercentage(value) {
-		console.log(value);
-
 		const calcPercentage = (value / this.maxValue) * 100;
 		this.percentage = Math.max(0, Math.min(100, calcPercentage));
 	}
