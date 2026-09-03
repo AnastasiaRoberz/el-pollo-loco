@@ -7,19 +7,19 @@ export class CollectableBottle extends CollectableObject {
 	images = ImageHub.BOTTLE.onGround;
 	offset = { topRatio: 0.2, bottomRatio: 0.1, leftRatio: 0.29, rightRatio: 0.19 };
 
-	constructor() {
+	constructor(x) {
 		super();
-		this.initDiemensions();
+		this.initDiemensions(x);
 		this.loadImg(this.images[0]);
 		this.loadImages(this.images);
 		this.animate();
 		this.setRealFrame();
 	}
 
-	initDiemensions() {
+	initDiemensions(x) {
 		this.height = World.canvas.height * 0.12;
 		this.width = this.height;
-		this.xPos = Math.random() * Level.maxWidth;
+		this.xPos = x;
 		this.yPos = World.canvas.height * 0.76;
 	}
 }

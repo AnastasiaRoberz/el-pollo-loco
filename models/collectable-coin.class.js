@@ -41,7 +41,7 @@ export class CollectableCoin extends CollectableObject {
 	}
 
 	initDimensions(xPos, yPos) {
-		this.height = World.canvas.height * 0.2;
+		this.height = World.canvas.height * 0.23;
 		this.width = this.height;
 		this.xPos = xPos;
 		this.yPos = yPos;
@@ -51,8 +51,8 @@ export class CollectableCoin extends CollectableObject {
 		const keys = Object.keys(this.coinPatterns);
 		const randomKey = keys[Math.floor(Math.random() * keys.length)];
 		const pattern = this.coinPatterns[randomKey];
-		const coinSize = World.canvas.height * 0.2 * 0.5;
-		const baseY = World.canvas.height * 0.35;
+		const coinSize = World.canvas.height * 0.23 * 0.4;
+		const baseY = World.canvas.height * 0.32;
 		const cluster = [];
 
 		for (let i = 0; i < pattern.length; i++) {
