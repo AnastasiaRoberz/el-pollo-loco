@@ -163,8 +163,7 @@ export class World {
 			bottle.hasHit = true;
 			if (!this.level.bossChicken.isHurt()) {
 				this.level.bossChicken.isHit(this.level.config.bottleDamage);
-				const percent = (this.level.bossChicken.energy / this.level.bossChicken.maxEnergy) * 100;
-				this.level.bars.healthEndboss.setPercentage(percent);
+				this.level.bars.healthEndboss.setPercentage(this.level.bossChicken.energy);
 			}
 		}
 	}
@@ -188,7 +187,7 @@ export class World {
 			this.collectedBottles++;
 			const index = this.level.colObjects.bottles.indexOf(bottle);
 			this.level.colObjects.bottles.splice(index, 1);
-			this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
+			this.level.bars.bottleBar.setPercentage(this.collectedBottles);
 		}
 	}
 
@@ -197,12 +196,13 @@ export class World {
 			this.collectedCoins++;
 			const index = this.level.colObjects.coins.indexOf(coin);
 			this.level.colObjects.coins.splice(index, 1);
-			if (this.collectedCoins >= this.level.config.coinsForBottle) {
-				this.collectedCoins -= this.level.config.coinsForBottle;
-				this.collectedBottles++;
-				this.level.bars.coinBar.setPercentage(this.collectedCoins * 20);
-				this.level.bars.bottleBar.setPercentage(this.collectBottles * 20);
-			}
+			this.level.bars.coinBar.setPercentage(this.collectedCoins);
+			// if (this.collectedCoins >= this.level.config.coinsForBottle) {
+			// 	this.collectedCoins -= this.level.config.coinsForBottle;
+			// 	this.collectedBottles++;
+			// 	this.level.bars.coinBar.setPercentage(this.collectedCoins);
+			// 	this.level.bars.bottleBar.setPercentage(this.collectBottles);
+			// }
 		}
 	}
 
@@ -213,7 +213,7 @@ export class World {
 			const bottle = new ThrowableObject(xPos, yPos, World.character.flipDirection);
 			this.throwableObjects.push(bottle);
 			this.collectedBottles--;
-			this.level.bars.bottleBar.setPercentage(this.collectedBottles * 20);
+			this.level.bars.bottleBar.setPercentage(this.collectedBottles);
 			this.lastThrow = Date.now();
 		}
 	}

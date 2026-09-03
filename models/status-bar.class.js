@@ -4,15 +4,15 @@ import { World } from "./world.class.js";
 
 export class StatusBar extends DrawableObject {
 	xPos = 20;
-	yPos;
 	width = 250;
 	height = 60;
-	percentage = 0;
+	percentage;
 	emptyBarImg;
 	iconImg;
 	barImg;
+	maxValue = 100;
 
-	constructor(icon, color, yPos) {
+	constructor(icon, color, yPos, maxValue, percentage = 0) {
 		super();
 		this.emptyBarImg = new Image();
 		this.emptyBarImg.src = ImageHub.STATUSBAR.barElements.empty;
@@ -21,11 +21,9 @@ export class StatusBar extends DrawableObject {
 		this.barImg = new Image();
 		this.barImg.src = ImageHub.STATUSBAR.barElements[color];
 		this.yPos = yPos;
-		if (icon === "health") this.setPercentage(100);
-		if (icon === "healthEndboss") {
-			this.xPos = World.canvas.width - this.width - 20;
-			this.setPercentage(100);
-		}
+		this.maxValue = maxValue;
+		this.percentage = percentage;
+		if (icon === "healthEndboss") this.xPos = World.canvas.width - this.width - 20;
 	}
 
 	draw(ctx) {
@@ -51,7 +49,10 @@ export class StatusBar extends DrawableObject {
 		ctx.drawImage(this.iconImg, this.xPos, this.yPos, iconSize, iconSize);
 	}
 
-	setPercentage(percentage) {
-		this.percentage = Math.max(0, Math.min(100, percentage));
+	setPercentage(value) {
+		console.log(value);
+
+		const calcPercentage = (value / this.maxValue) * 100;
+		this.percentage = Math.max(0, Math.min(100, calcPercentage));
 	}
 }
