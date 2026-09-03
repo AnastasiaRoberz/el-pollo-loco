@@ -37,10 +37,11 @@ export class World {
 		this.cameraPos = -World.character.xPos + World.character.width;
 		if (this.cameraPos > 0) this.cameraPos = 0;
 		if (this.cameraPos < this.maxCameraPos) this.cameraPos = this.maxCameraPos;
+
 		this.ctx.translate(this.cameraPos, 0);
 		this.drawObjects();
-		// this.drawFrames();
-		this.drawOffsetFrames();
+		this.drawFrames();
+		// this.drawOffsetFrames();
 		this.ctx.translate(-this.cameraPos, 0);
 		this.drawStatusbars();
 		requestAnimationFrame(() => this.draw());
@@ -107,12 +108,15 @@ export class World {
 	}
 
 	checkCollisions() {
+		this.collisionBossCharacter();
 		this.level.enemies.forEach((enemy) => {
 			this.collisionEnemyCharacter(enemy);
 			this.collisionEnemyBottle(enemy);
 		});
-		this.collisionBossCharacter();
-		this.collisionBossBottle();
+		this.throwableObjects.forEach((bottle) => {
+			this.collisionBossBottle(bottle);
+			this.removeBottle(bottle);
+		});
 	}
 
 	collisionEnemyCharacter(enemy) {
@@ -138,9 +142,9 @@ export class World {
 
 	collisionEnemyBottle(enemy) {
 		this.throwableObjects.forEach((bottle) => {
-			if (bottle.isColliding(enemy) && !enemy.isDead()) {
+			if (bottle.isColliding(enemy) && !enemy.isDead() && !bottle.hasHit) {
 				enemy.die();
-				bottle.splash(this);
+				bottle.hasHit = true;
 			}
 		});
 	}
@@ -154,17 +158,24 @@ export class World {
 		}
 	}
 
-	collisionBossBottle() {
-		this.throwableObjects.forEach((bottle) => {
-			if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken)) {
-				bottle.hasHit = true;
-				if (!this.level.bossChicken.isHurt()) {
-					this.level.bossChicken.isHit(this.level.config.bottleDamage);
-					const percent = (this.level.bossChicken.energy / this.level.bossChicken.maxEnergy) * 100;
-					this.level.bars.healthEndboss.setPercentage(percent);
-				}
+	collisionBossBottle(bottle) {
+		if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken) && !bottle.hasHit) {
+			bottle.hasHit = true;
+			if (!this.level.bossChicken.isHurt()) {
+				this.level.bossChicken.isHit(this.level.config.bottleDamage);
+				const percent = (this.level.bossChicken.energy / this.level.bossChicken.maxEnergy) * 100;
+				this.level.bars.healthEndboss.setPercentage(percent);
 			}
-		});
+		}
+	}
+
+	removeBottle(bottle) {
+		if (bottle.bottleHitGround() || bottle.hasHit) {
+			setTimeout(() => {
+				const bottleId = this.throwableObjects.indexOf(bottle);
+				this.throwableObjects.splice(bottleId, 1);
+			}, 300);
+		}
 	}
 
 	collectItems() {
