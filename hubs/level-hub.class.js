@@ -25,8 +25,7 @@ export class LevelHub {
 
 	static LEVEL_MEDIUM = {
 		// Welt
-		// sections: 5,
-		sections: 2,
+		sections: 5,
 		damage: 15,
 		invulnerabilityDuration: 800,
 

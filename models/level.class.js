@@ -31,7 +31,6 @@ export class Level {
 		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120);
 		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", 20);
 		this.bossChicken = new BossChicken(this.config.bossEnergy, this.config.bossSpeed, this.config.bossDamage);
-		// this.addStartEnemies();
 		this.addEnemies(this.config.enemies, this.config.chickenRatio);
 	}
 
@@ -49,29 +48,21 @@ export class Level {
 			this.bgLayers.push(new BackgroundLayer(imgFirstLayer, i * step));
 			this.clouds.push(new Cloud(img, i * step));
 		}
-	}
-
-	addStartEnemies() {
-		for (let i = 0; i < 5; i++) {
-			this.enemies.push(new NormalChicken());
-			this.enemies.push(new SmallChicken());
-		}
+		this.clouds.push(new Cloud(ImageHub.BACKGROUND.clouds[sections % 2], step * sections));
 	}
 
 	addEnemies(amount, ratio) {
-		const startX = 500;
-		const endX = Level.maxWidth - 600;
+		const startX = World.canvas.width * 0.5;
+		const endX = Level.maxWidth + World.canvas.width;
+		const stepSize = (endX - startX) / amount;
 
 		for (let i = 0; i < amount; i++) {
-			const x = startX + Math.random() * (endX - startX);
+			const slotX = startX + i * stepSize;
+			const x = slotX + Math.random() * (stepSize * 0.6);
 			const isSmall = Math.random() < ratio;
-			const speedX = this.config.enemySpeedMin + Math.random() * (this.config.enemySpeedMax - this.config.SpeedMin);
+			const speedX = this.config.enemySpeedMin + Math.random() * (this.config.enemySpeedMax - this.config.enemySpeedMin);
 
-			if (isSmall) {
-				this.enemies.push(new SmallChicken(x, speedX));
-			} else {
-				this.enemies.push(new NormalChicken(x, speedX));
-			}
+			this.enemies.push(isSmall ? new SmallChicken(x, speedX) : new NormalChicken(x, speedX));
 		}
 	}
 
