@@ -40,7 +40,7 @@ export class World {
 
 		this.ctx.translate(this.cameraPos, 0);
 		this.drawObjects();
-		this.drawFrames();
+		// this.drawFrames();
 		// this.drawOffsetFrames();
 		this.ctx.translate(-this.cameraPos, 0);
 		this.drawStatusbars();
@@ -67,9 +67,7 @@ export class World {
 	}
 
 	drawOffsetFrames() {
-		World.character.setRealFrame();
 		World.character.drawOffsetFrame(this.ctx);
-		this.level.bossChicken.setRealFrame();
 		this.level.bossChicken.drawOffsetFrame(this.ctx);
 		this.level.enemies.forEach((enemy) => enemy.drawOffsetFrame(this.ctx));
 		this.level.colObjects.bottles.forEach((bottle) => bottle.drawOffsetFrame(this.ctx));
@@ -105,6 +103,7 @@ export class World {
 		this.level.enemies.forEach((enemy) => enemy.setRealFrame());
 		this.level.colObjects.bottles.forEach((bottle) => bottle.setRealFrame());
 		this.level.colObjects.coins.forEach((coin) => coin.setRealFrame());
+		this.throwableObjects.forEach((bottle) => bottle.setRealFrame());
 	}
 
 	checkCollisions() {
@@ -121,10 +120,7 @@ export class World {
 
 	collisionEnemyCharacter(enemy) {
 		if (World.character.isColliding(enemy) && !enemy.isDead()) {
-			const isFalling = World.character.speedY < 0;
-			const isAboveEnemy = World.character.ryPos < enemy.ryPos;
-
-			if (World.character.isAboveGround() && isFalling && isAboveEnemy) {
+			if (World.character.isAboveObj() && World.character.isFalling() && World.character.isAboveObj(enemy.ryPos)) {
 				enemy.die();
 				setTimeout(() => {
 					const currentIndex = this.level.enemies.indexOf(enemy);
@@ -143,8 +139,13 @@ export class World {
 	collisionEnemyBottle(enemy) {
 		this.throwableObjects.forEach((bottle) => {
 			if (bottle.isColliding(enemy) && !enemy.isDead() && !bottle.hasHit) {
+				console.log(enemy);
 				enemy.die();
 				bottle.hasHit = true;
+				setTimeout(() => {
+					const enemyId = this.level.enemies.indexOf(enemy);
+					this.level.enemies.splice(enemyId, 1);
+				}, 250);
 			}
 		});
 	}
@@ -152,7 +153,7 @@ export class World {
 	collisionBossCharacter() {
 		if (this.level.bossChicken.isColliding(World.character) && !this.level.bossChicken.isDead()) {
 			if (!World.character.isHurt()) {
-				World.character.isHit();
+				World.character.isHit(this.level.config.damage);
 				this.level.bars.healthBar.setPercentage(World.character.energy);
 			}
 		}
@@ -162,7 +163,7 @@ export class World {
 		if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken) && !bottle.hasHit) {
 			bottle.hasHit = true;
 			if (!this.level.bossChicken.isHurt()) {
-				this.level.bossChicken.isHit(this.level.config.bottleDamage);
+				this.level.bossChicken.isHit(this.level.config.bossDamage);
 				this.level.bars.healthEndboss.setPercentage(this.level.bossChicken.energy);
 			}
 		}
@@ -208,10 +209,9 @@ export class World {
 
 	throwObjects() {
 		if (Keyboard.KEY_F && this.collectedBottles > 0 && Date.now() - this.lastThrow > this.throwCooldown) {
-			const xPos = World.character.flipDirection ? World.character.xPos : World.character.xPos + World.character.width;
-			const yPos = World.character.yPos + 50;
-			const bottle = new ThrowableObject(xPos, yPos, World.character.flipDirection);
-			this.throwableObjects.push(bottle);
+			const xPos = World.character.flipDirection ? World.character.rxPos : World.character.rxPos + World.character.rWidth;
+			const yPos = World.character.yPos + World.character.height * 0.4;
+			this.throwableObjects.push(new ThrowableObject(xPos, yPos, World.character.flipDirection));
 			this.collectedBottles--;
 			this.level.bars.bottleBar.setPercentage(this.collectedBottles);
 			this.lastThrow = Date.now();

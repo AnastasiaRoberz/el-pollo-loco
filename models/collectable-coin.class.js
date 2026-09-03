@@ -36,7 +36,6 @@ export class CollectableCoin extends CollectableObject {
 		this.initDimensions(xPos, yPos);
 		this.loadImg(this.images[0]);
 		this.loadImages(this.images);
-		this.setRealFrame();
 		this.animate();
 	}
 

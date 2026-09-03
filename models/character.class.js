@@ -12,8 +12,8 @@ export class Character extends MovableObject {
 
 	constructor() {
 		super();
-		this.initDimensions();
 		this.loadAllImages();
+		this.initDimensions();
 		this.applyGravity();
 		this.animate();
 	}
@@ -21,9 +21,9 @@ export class Character extends MovableObject {
 	initDimensions() {
 		this.height = World.canvas.height * 0.6;
 		this.width = this.height * 0.51;
-		this.defaultYPos = World.canvas.height * 0.9 - this.height;
-		this.yPos = this.defaultYPos;
 		this.xPos = this.width;
+		this.yPosGround = World.canvas.height * 0.86 - this.height + this.offset.bottomRatio * this.height;
+		this.yPos = this.yPosGround;
 	}
 
 	loadAllImages() {
@@ -45,13 +45,11 @@ export class Character extends MovableObject {
 	}
 
 	handleWalking() {
-		if (Keyboard.RIGHT && this.xPos < Level.maxWidth - this.width) {
+		if (Keyboard.RIGHT) {
 			this.flipDirection = false;
 			this.moveRight();
 			this.lastAction = Date.now();
-		}
-
-		if (Keyboard.LEFT && this.xPos > 0) {
+		} else if (Keyboard.LEFT) {
 			this.flipDirection = true;
 			this.moveLeft();
 			this.lastAction = Date.now();
@@ -59,7 +57,7 @@ export class Character extends MovableObject {
 	}
 
 	handleJumping() {
-		if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround()) {
+		if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveObj()) {
 			this.jump(this.height * 0.06);
 			this.lastAction = Date.now();
 		}
@@ -72,7 +70,7 @@ export class Character extends MovableObject {
 		} else if (this.isHurt()) {
 			this.offset = ImageHub.PEPE.hurt.offset;
 			this.showAnimation(ImageHub.PEPE.hurt.frames);
-		} else if (this.isAboveGround()) {
+		} else if (this.isAboveObj()) {
 			this.offset = ImageHub.PEPE.jump.offset;
 			if (this.animationTick % 2 === 0) this.showAnimationOnce(ImageHub.PEPE.jump.frames);
 		} else if (Keyboard.RIGHT || Keyboard.LEFT) {

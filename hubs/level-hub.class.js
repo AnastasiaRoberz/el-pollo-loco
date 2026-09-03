@@ -3,13 +3,11 @@ export class LevelHub {
 		// Welt
 		sections: 3,
 		damage: 10,
-		invulnerabilityDuration: 1000,
 
 		// Collectibles
 		amountBottles: 20,
 		amountCoins: 30,
 		coinsForBottle: 5,
-		bottleDamage: 25,
 
 		// Gegner
 		enemies: 15,
@@ -27,13 +25,11 @@ export class LevelHub {
 		// Welt
 		sections: 5,
 		damage: 15,
-		invulnerabilityDuration: 800,
 
 		// Collectibles
 		amountBottles: 15,
 		amountCoins: 20,
 		coinsForBottle: 10,
-		bottleDamage: 20,
 
 		// Gegner
 		enemies: 25,
@@ -51,13 +47,11 @@ export class LevelHub {
 		// Welt
 		sections: 7,
 		damage: 25,
-		invulnerabilityDuration: 500,
 
 		// Collectibles
 		amountBottles: 8,
 		amountCoins: 12,
 		coinsForBottle: 15,
-		bottleDamage: 15,
 
 		// Gegner
 		enemies: 40,

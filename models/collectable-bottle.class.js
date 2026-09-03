@@ -13,7 +13,6 @@ export class CollectableBottle extends CollectableObject {
 		this.loadImg(this.images[0]);
 		this.loadImages(this.images);
 		this.animate();
-		this.setRealFrame();
 	}
 
 	initDiemensions(x) {

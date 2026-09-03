@@ -1,9 +1,8 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { IntervalHub } from "../hubs/interval-hub.class.js";
-import { LevelHub } from "../hubs/level-hub.class.js";
+import { Level } from "./level.class.js";
 
 export class MovableObject extends DrawableObject {
-	flipDirection = false;
 	speedX = 0.15;
 	speedY = 0;
 	acceleration = 1.5;
@@ -14,16 +13,14 @@ export class MovableObject extends DrawableObject {
 	gravityInterval;
 
 	moveRight() {
-		if (!this.isDead()) {
+		if (!this.isDead() && this.xPos < Level.maxWidth - this.width) {
 			this.xPos += this.speedX;
-			this.setRealFrame();
 		}
 	}
 
 	moveLeft() {
-		if (!this.isDead()) {
+		if (!this.isDead() && this.xPos > 0) {
 			this.xPos -= this.speedX;
-			this.setRealFrame();
 		}
 	}
 
@@ -31,21 +28,24 @@ export class MovableObject extends DrawableObject {
 		if (!this.isDead()) this.speedY = speedY;
 	}
 
+	isFalling() {
+		return this.speedY < 0;
+	}
+
 	applyGravity() {
 		this.gravityInterval = IntervalHub.startInterval(() => {
-			if (this.isAboveGround() || this.speedY > 0) {
+			if (this.isAboveObj() || this.speedY > 0) {
 				this.yPos -= this.speedY;
 				this.speedY -= this.acceleration;
-			} else {
-				this.yPos = this.defaultYPos;
-				this.speedY = 0;
+				// } else {
+				// 	this.yPos = this.defaultYPos;
+				// 	this.speedY = 0;
 			}
-			this.setRealFrame();
 		}, 1000 / 25);
 	}
 
-	isAboveGround() {
-		return this.yPos < this.defaultYPos;
+	isAboveObj(obj = this.yPosGround) {
+		return this.yPos < obj;
 	}
 
 	isColliding(obj) {
@@ -62,8 +62,8 @@ export class MovableObject extends DrawableObject {
 		return timePassed < 1;
 	}
 
-	isHit() {
-		this.energy -= LevelHub.LEVEL_MEDIUM.damage;
+	isHit(damage) {
+		this.energy -= damage;
 		// IntervalHub.pauseInterval(this.movementInterval, 6000);
 		if (this.energy < 0) this.energy = 0;
 		this.lastHit = Date.now();

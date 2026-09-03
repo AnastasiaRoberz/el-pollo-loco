@@ -22,7 +22,7 @@ export class ThrowableObject extends MovableObject {
 		this.width = this.height;
 		this.yPos = yPos;
 		this.xPos = xPos;
-		this.defaultYPos = World.canvas.height * 0.77;
+		this.yPosGround = World.canvas.height * 0.86 - this.height + this.offset.bottomRatio * this.height;
 	}
 
 	loadAllImages() {
@@ -46,11 +46,11 @@ export class ThrowableObject extends MovableObject {
 		}, 50);
 	}
 
-	isAboveGround() {
+	isAboveObj() {
 		return true;
 	}
 
 	bottleHitGround() {
-		return this.yPos >= this.defaultYPos;
+		return this.yPos >= this.yPosGround;
 	}
 }

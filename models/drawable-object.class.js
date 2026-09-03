@@ -1,7 +1,6 @@
 export class DrawableObject {
-	xPos;
-	yPos;
-	defaultYPos;
+	xPos = 0;
+	yPos = 0;
 	width;
 	height;
 	img;
@@ -13,10 +12,8 @@ export class DrawableObject {
 	ryPos;
 	rWidth;
 	rHeight;
-
-	constructor() {
-		this.setRealFrame();
-	}
+	yPosGround;
+	flipDirection = false;
 
 	loadImg(path) {
 		this.img = new Image();
