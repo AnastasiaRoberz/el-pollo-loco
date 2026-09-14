@@ -2,6 +2,7 @@ import { GameAudio } from "../models/audio.class.js";
 
 export class AudioHub {
 	static isMuted = true;
+	static musicMuted = false;
 
 	static GAME_SOUND = new GameAudio("./assets/audio/background_music.mp3", true, 0.05);
 	static GAME_START = new GameAudio("./assets/audio/game/gameStart.mp3");
@@ -40,15 +41,10 @@ export class AudioHub {
 
 	static playOne(sound) {
 		if (sound.file.readyState > 0 || sound.isLoaded) {
+			if (!sound.file.paused && !sound.file.ended) return;
 			if (!sound.file.loop) sound.file.currentTime = 0;
 			sound.file.play();
 		}
-	}
-
-	static playEffect(sound) {
-		const clonedSound = sound.file.cloneNode();
-		clonedSound.volume = sound.file.volume;
-		clonedSound.play();
 	}
 
 	static stopOne(sound) {
@@ -66,8 +62,20 @@ export class AudioHub {
 	static toggleMute() {
 		this.isMuted = !this.isMuted;
 		AudioHub.allSounds.forEach((sound) => {
-			sound.file.muted = this.isMuted;
+			sound.file.muted = this.isMuted || (sound === AudioHub.GAME_SOUND && AudioHub.musicMuted);
 		});
 		return this.isMuted;
+	}
+
+	static setMasterVolume(volume) {
+		const normalizedVolume = Math.min(1, Math.max(0, volume));
+		AudioHub.allSounds.forEach((sound) => {
+			sound.file.volume = sound.baseVolume * normalizedVolume;
+		});
+	}
+
+	static setMusicMuted(isMuted) {
+		AudioHub.musicMuted = isMuted;
+		AudioHub.GAME_SOUND.file.muted = isMuted || AudioHub.isMuted;
 	}
 }

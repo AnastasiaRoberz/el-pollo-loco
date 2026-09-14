@@ -5,16 +5,17 @@ import { IntervalHub } from "./hubs/interval-hub.class.js";
 
 const screenRef = document.getElementById("screen-wrapper");
 const dialogRef = document.getElementById("dialog-content");
+let currentDifficulty = localStorage.getItem("game_difficulty") || "MEDIUM";
 
 window.addEventListener("load", () => {
 	showStartScreen();
-	AudioHub.playOne(AudioHub.GAME_SOUND);
 });
 
 function init() {
 	showGameScreen();
+	AudioHub.playOne(AudioHub.GAME_SOUND);
 	const canvas = document.getElementById("canvas");
-	const world = new World(canvas, showEndScreen, "EASY");
+	new World(canvas, showEndScreen, currentDifficulty);
 }
 
 function openFullscreen(element = document.documentElement) {
@@ -30,6 +31,7 @@ function openFullscreen(element = document.documentElement) {
 function toggleMuteIcon(currentScreen) {
 	event.currentTarget.blur();
 	const isMuted = AudioHub.toggleMute();
+	if (!isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
 	document.getElementById(`icon-mute-${currentScreen}`).classList.toggle("hidden", !isMuted);
 	document.getElementById(`icon-sound-${currentScreen}`).classList.toggle("hidden", isMuted);
 }
@@ -119,6 +121,7 @@ function bindDialogMenuEvents() {
 	document.getElementById("btn-restart-ingame").addEventListener("click", init);
 	document.getElementById("btn-options-ingame").addEventListener("click", () => {
 		dialogRef.innerHTML = TemplateHub.dialogOptions();
+		bindDialogOptionsEvents();
 	});
 	document.getElementById("btn-start-ingame").addEventListener("click", () => showStartScreen());
 }
@@ -133,15 +136,49 @@ function showDialogOptions() {
 }
 
 function bindDialogOptionsEvents() {
-	document.getElementById("toggle-mute-all").addEventListener("change", () => {
-		AudioHub.toggleMute();
+	const volumeSlider = document.getElementById("volume-slider");
+	const volumeValue = document.getElementById("volume-value");
+	const muteAllInput = document.getElementById("toggle-mute-all");
+	const muteMusicInput = document.getElementById("toggle-mute-music");
+
+	volumeSlider.value = String(AudioHub.GAME_SOUND.file.volume / AudioHub.GAME_SOUND.baseVolume);
+	volumeValue.textContent = `${Math.round(Number(volumeSlider.value) * 100)}%`;
+	muteAllInput.checked = AudioHub.isMuted;
+	muteMusicInput.checked = AudioHub.GAME_SOUND.file.muted && !AudioHub.isMuted;
+
+	volumeSlider.addEventListener("input", () => {
+		const volume = Number(volumeSlider.value);
+		AudioHub.setMasterVolume(volume);
+		volumeValue.textContent = `${Math.round(volume * 100)}%`;
 	});
 
-	document.getElementById("toggle-mute-music").addEventListener("change", () => {
-		AudioHub.stopOne(AudioHub.GAME_SOUND);
+	muteAllInput.addEventListener("change", () => {
+		if (muteAllInput.checked !== AudioHub.isMuted) AudioHub.toggleMute();
 	});
 
-	document.getElementById("btn-options-back").addEventListener("click", closeDialog);
+	muteMusicInput.addEventListener("change", () => {
+		AudioHub.setMusicMuted(muteMusicInput.checked);
+		if (muteMusicInput.checked) AudioHub.stopOne(AudioHub.GAME_SOUND);
+		else AudioHub.playOne(AudioHub.GAME_SOUND);
+	});
+
+	document.querySelectorAll(".btn-diff").forEach((button) => {
+		button.addEventListener("click", () => {
+			currentDifficulty = button.dataset.level;
+			localStorage.setItem("game_difficulty", currentDifficulty);
+			updateDifficultyUI(currentDifficulty);
+		});
+	});
+
+	document.getElementById("btn-options-back").addEventListener("click", () => {
+		if (document.getElementById("btn-resume-ingame")) {
+			showDialogMenu();
+		} else {
+			closeDialog();
+		}
+	});
+
+	updateDifficultyUI(currentDifficulty);
 }
 // --------------------------
 
@@ -160,6 +197,7 @@ export function setupDifficultyControls() {
 
 	gameContainer.addEventListener("click", (event) => {
 		const btn = event.target.closest(".btn-diff");
+		if (!btn) return;
 		currentDifficulty = btn.dataset.level;
 		localStorage.setItem("game_difficulty", currentDifficulty);
 		updateDifficultyUI(currentDifficulty);
