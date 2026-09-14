@@ -17,7 +17,7 @@ export class MovableObject extends DrawableObject {
 	hurtSound;
 
 	/**
-	  * Handles move right for the game.
+	 * Handles move right for the game.
 	 */
 	moveRight() {
 		if (!this.isDead()) {
@@ -26,7 +26,7 @@ export class MovableObject extends DrawableObject {
 	}
 
 	/**
-	  * Handles move left for the game.
+	 * Handles move left for the game.
 	 */
 	moveLeft() {
 		if (!this.isDead() && this.xPos > 0) {
@@ -35,7 +35,7 @@ export class MovableObject extends DrawableObject {
 	}
 
 	/**
-	  * Handles jump for the game.
+	 * Handles jump for the game.
 	 * @param {number} speedY - speedY value.
 	 */
 	jump(speedY) {
@@ -43,14 +43,14 @@ export class MovableObject extends DrawableObject {
 	}
 
 	/**
-	  * Handles is falling for the game.
+	 * Handles is falling for the game.
 	 */
 	isFalling() {
 		return this.speedY < 0;
 	}
 
 	/**
-	  * Handles apply gravity for the game.
+	 * Handles apply gravity for the game.
 	 */
 	applyGravity() {
 		this.gravityInterval = IntervalHub.startInterval(() => {
@@ -62,22 +62,24 @@ export class MovableObject extends DrawableObject {
 	}
 
 	/**
-	  * Handles is above ground for the game.
+	 * Handles is above ground for the game.
 	 */
 	isAboveGround() {
 		return this.yPos < this.yPosGround;
 	}
 
 	/**
-	  * Handles is above obj for the game.
+	 * Handles is above obj for the game.
 	 * @param {Object} obj - obj value.
 	 */
 	isAboveObj(obj) {
-		return this.ryPos < obj.ryPos;
+		const thisCenter = this.ryPos + this.rHeight / 2;
+		const objCenter = obj.ryPos + obj.rHeight / 2;
+		return ownCenter < objCenter;
 	}
 
 	/**
-	  * Handles is colliding for the game.
+	 * Handles is colliding for the game.
 	 * @param {Object} obj - obj value.
 	 */
 	isColliding(obj) {
@@ -90,7 +92,7 @@ export class MovableObject extends DrawableObject {
 	}
 
 	/**
-	  * Handles is hurt for the game.
+	 * Handles is hurt for the game.
 	 */
 	isHurt() {
 		const timePassed = (Date.now() - this.lastHit) / 1000;
@@ -98,7 +100,7 @@ export class MovableObject extends DrawableObject {
 	}
 
 	/**
-	  * Handles is hit for the game.
+	 * Handles is hit for the game.
 	 * @param {number} damage - damage value.
 	 */
 	isHit(damage) {
@@ -110,7 +112,7 @@ export class MovableObject extends DrawableObject {
 	}
 
 	/**
-	  * Handles is invulnerable for the game.
+	 * Handles is invulnerable for the game.
 	 */
 	isInvulnerable() {
 		const timePassed = (Date.now() - this.lastHit) / 1000;
@@ -118,7 +120,7 @@ export class MovableObject extends DrawableObject {
 	}
 
 	/**
-	  * Handles is dead for the game.
+	 * Handles is dead for the game.
 	 */
 	isDead() {
 		return this.energy === 0;
