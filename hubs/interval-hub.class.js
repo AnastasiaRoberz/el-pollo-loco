@@ -3,13 +3,16 @@ export class IntervalHub {
 
 	static startInterval(func, time) {
 		const id = setInterval(func, time);
-		this.allIntervals[id] = { id, func, time, isPaused: false };
+		this.allIntervals[id] = { id, handle: id, func, time, isPaused: false };
 		return id;
 	}
 
 	static stopInterval(id) {
-		clearInterval(id);
-		delete this.allIntervals[id];
+		const interval = this.findInterval(id);
+		if (!interval) return;
+
+		clearInterval(interval.id);
+		delete this.allIntervals[interval.handle];
 	}
 
 	static stopAllIntervals() {
@@ -18,7 +21,9 @@ export class IntervalHub {
 	}
 
 	static pauseInterval(id) {
-		const interval = this.allIntervals[id];
+		const interval = this.findInterval(id);
+		if (!interval || interval.isPaused) return;
+
 		clearInterval(interval.id);
 		interval.isPaused = true;
 	}
@@ -28,17 +33,18 @@ export class IntervalHub {
 	}
 
 	static resumeInterval(id) {
-		const interval = this.allIntervals[id];
-		if (interval.isPaused) {
-			const newId = setInterval(interval.func, interval.time);
-			delete this.allIntervals[id];
-			interval.id = newId;
+		const interval = this.findInterval(id);
+		if (interval && interval.isPaused) {
+			interval.id = setInterval(interval.func, interval.time);
 			interval.isPaused = false;
-			this.allIntervals[newId] = interval;
 		}
 	}
 
 	static resumeAllIntervals() {
-		Object.values(this.allIntervals).forEach((entry) => this.resumeInterval(entry.id));
+		Object.values(this.allIntervals).forEach((entry) => this.resumeInterval(entry.handle));
+	}
+
+	static findInterval(id) {
+		return Object.values(this.allIntervals).find((entry) => entry.handle === id || entry.id === id);
 	}
 }

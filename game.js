@@ -113,6 +113,9 @@ function showDialogMenu() {
 }
 
 function bindDialogMenuEvents() {
+	document.getElementById("btn-resume-ingame").addEventListener("click", () => {
+		closeDialog();
+	});
 	document.getElementById("btn-restart-ingame").addEventListener("click", init);
 	document.getElementById("btn-options-ingame").addEventListener("click", () => {
 		dialogRef.innerHTML = TemplateHub.dialogOptions();
