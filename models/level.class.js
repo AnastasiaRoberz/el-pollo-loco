@@ -24,12 +24,9 @@ export class Level {
 		this.config = levelConfig;
 		Level.maxWidth = this.config.sections * World.canvas.width;
 		this.createBgLayers(this.config.sections);
+		this.createStatusbars();
 		this.createBottles(this.config.amountBottles);
 		this.createCoins(this.config.amountCoins);
-		this.bars["healthBar"] = new StatusBar("health", "green", 20, 100, 100);
-		this.bars["coinBar"] = new StatusBar("coin", "orange", 70, this.config.amountCoins);
-		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120, this.config.amountBottles);
-		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", 20, this.config.bossEnergy, 100, World.canvas.width - this.width - 20);
 		this.bossChicken = new BossChicken(this.config.bossEnergy, this.config.bossSpeed, this.config.bossDamage);
 		this.createEnemies(this.config.enemies, this.config.chickenRatio);
 	}
@@ -49,6 +46,15 @@ export class Level {
 			this.clouds.push(new Cloud(img, i * step));
 		}
 		this.clouds.push(new Cloud(ImageHub.BACKGROUND.clouds[sections % 2], step * sections));
+	}
+
+	createStatusbars() {
+		const yPosStart = World.canvas.width * 0.02;
+		const yPosStep = World.canvas.width * 0.04;
+		this.bars["healthBar"] = new StatusBar("health", "green", yPosStart, 100, 100);
+		this.bars["coinBar"] = new StatusBar("coin", "orange", yPosStart + yPosStep, this.config.amountCoins);
+		this.bars["bottleBar"] = new StatusBar("bottle", "blue", yPosStart + yPosStep * 2, this.config.amountBottles);
+		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", yPosStart, this.config.bossEnergy, 100);
 	}
 
 	createEnemies(amount, ratio) {
