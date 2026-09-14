@@ -38,6 +38,9 @@ export class ThrowableObject extends MovableObject {
 			if (this.bottleHitGround() || this.hasHit) {
 				IntervalHub.stopInterval(this.gravityInterval);
 				this.showAnimationOnce(ImageHub.BOTTLE.splash);
+				setTimeout(() => {
+					IntervalHub.stopInterval(this.animationInterval);
+				}, 1000);
 			} else if (flipDirection) {
 				this.showAnimation(ImageHub.BOTTLE.reverseRotation);
 				this.xPos -= this.speedX;

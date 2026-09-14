@@ -46,7 +46,7 @@ export class Character extends MovableObject {
 			this.handleJumping();
 		}, 1000 / 60);
 
-		IntervalHub.startInterval(() => {
+		this.animationInterval = IntervalHub.startInterval(() => {
 			this.animationTick++;
 			this.handleAnimations();
 		}, 50);

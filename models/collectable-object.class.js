@@ -5,7 +5,7 @@ export class CollectableObject extends DrawableObject {
 	images;
 
 	animate() {
-		IntervalHub.startInterval(() => {
+		this.animationInterval = IntervalHub.startInterval(() => {
 			this.showAnimation(this.images);
 		}, 450);
 	}
