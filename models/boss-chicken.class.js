@@ -108,7 +108,7 @@ export class BossChicken extends Chicken {
 	}
 
 	isAlert() {
-		if (this.getDistance() < 400) {
+		if (this.getDistance() < World.canvas.width * 0.8) {
 			this.isTriggered = true;
 			AudioHub.playOne(AudioHub.ENDBOSS_APPROACH);
 		}

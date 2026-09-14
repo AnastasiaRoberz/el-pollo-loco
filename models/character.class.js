@@ -134,7 +134,7 @@ export class Character extends MovableObject {
 	}
 
 	handleIdleAnimation() {
-		const state = this.flipDirection ? ImageHub.PEPE.longIdleFlip : ImageHub.PEPE.longIdle;
+		const state = ImageHub.PEPE.longIdle;
 		const interval = this.flipDirection ? 8 : 6;
 		this.offset = state.offset;
 		if (this.animationTick % interval === 0) this.showAnimation(state.frames);
@@ -146,8 +146,7 @@ export class Character extends MovableObject {
 	}
 
 	showJumpAnimation(images) {
-		if (!this.isAboveGround() && this.speedY === 0 && !this.landingTriggered)
-			return this.handleJumpStart(images);
+		if (!this.isAboveGround() && this.speedY === 0 && !this.landingTriggered) return this.handleJumpStart(images);
 		if (this.speedY > 0) return this.handleJumpDescent(images);
 		if (this.speedY < 0 && this.isAboveGround()) return this.handleJumpAscent(images);
 		if (!this.isAboveGround()) this.handleJumpLanding(images);
