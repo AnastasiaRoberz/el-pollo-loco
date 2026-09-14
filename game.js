@@ -1,31 +1,297 @@
+import { AudioHub } from "./hubs/audio-hub.class.js";
 import { World } from "./models/world.class.js";
+import { TemplateHub } from "./hubs/template-hub.js";
+import { IntervalHub } from "./hubs/interval-hub.class.js";
 
-const gameOverlay = document.getElementById("game-over");
+const screenRef = document.getElementById("screen-wrapper");
+const dialogRef = document.getElementById("dialog-content");
+let currentDifficulty = localStorage.getItem("game_difficulty") || "MEDIUM";
 
-function init(difficulty = "MEDIUM") {
-	document.getElementById("start-screen").classList.add("hidden");
-	document.getElementById("game-container").classList.remove("hidden");
+window.addEventListener("load", () => {
+	showStartScreen();
+	document.getElementById("flip").addEventListener("click", rotateAndOpenFullscreen);
+});
+
+/**
+  * Handles init for the game.
+ */
+function init() {
+	showGameScreen();
+	AudioHub.playOne(AudioHub.GAME_SOUND);
 	const canvas = document.getElementById("canvas");
-	// const world = new World(canvas, handleGameOver);
-	const world = new World(canvas, difficulty);
+	new World(canvas, showEndScreen, currentDifficulty);
 }
 
-init();
-
-function handleGameOver(result) {
-	const imgRef = document.getElementById("result-container");
-	const imgSrc = result === "won" ? "./assets/img/You won, you lost/You Win A.png" : "./assets/img/You won, you lost/You lost.png";
-	gameOverlay.classList.remove("hidden");
-
-	imgRef.innerHTML = /*html*/ `
-		<img class="result-img" src="${imgSrc}" alt="">
-		`;
+/**
+  * Handles open fullscreen for the game.
+ * @param {HTMLElement} element - element value.
+ */
+function openFullscreen(element = document.documentElement) {
+	if (element.requestFullscreen) {
+		return element.requestFullscreen();
+	} else if (element.webkitRequestFullscreen) {
+		return element.webkitRequestFullscreen();
+	} else if (element.msRequestFullscreen) {
+		return element.msRequestFullscreen();
+	}
 }
 
-function restartGame() {
-	gameOverlay.classList.add("hidden");
-	init();
+/**
+  * Handles rotate and open fullscreen for the game.
+ */
+function rotateAndOpenFullscreen() {
+	const fullscreenTarget = document.getElementById("game-container");
+	openFullscreen(fullscreenTarget).then(() => {
+		if (screen.orientation && screen.orientation.lock) {
+			return screen.orientation.lock("landscape");
+		}
+	});
 }
 
-// document.getElementById("btn-start-game").addEventListener("click", init);
-// document.getElementById("btn-restart-game").addEventListener("click", restartGame);
+/**
+  * Handles toggle mute icon for the game.
+ * @param {string} currentScreen - currentScreen value.
+ */
+function toggleMuteIcon(currentScreen) {
+	event.currentTarget.blur();
+	AudioHub.toggleMute();
+	updateMuteControls();
+	if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
+}
+
+/**
+  * Handles update mute controls for the game.
+ */
+function updateMuteControls() {
+	["start", "ingame"].forEach((screen) => {
+		const muteIcon = document.getElementById(`icon-mute-${screen}`);
+		const soundIcon = document.getElementById(`icon-sound-${screen}`);
+
+		if (muteIcon && soundIcon) {
+			muteIcon.classList.toggle("hidden", !AudioHub.isMuted);
+			soundIcon.classList.toggle("hidden", AudioHub.isMuted);
+		}
+	});
+
+	const muteAllInput = document.getElementById("toggle-mute-all");
+	if (muteAllInput) muteAllInput.checked = AudioHub.isMuted;
+}
+
+//#region START SCREEN
+/**
+  * Handles show start screen for the game.
+ */
+function showStartScreen() {
+	screenRef.innerHTML = TemplateHub.startScreen();
+	closeDialog();
+
+	updateMuteControls();
+
+	bindStartScreenEvents();
+}
+
+/**
+  * Handles bind start screen events for the game.
+ */
+function bindStartScreenEvents() {
+	document.getElementById("btn-mute-start").addEventListener("click", () => toggleMuteIcon("start"));
+	document.getElementById("btn-options").addEventListener("click", showDialogOptions);
+	document.getElementById("btn-start-game").addEventListener("click", init);
+	document.getElementById("btn-impressum").addEventListener("click", showDialogImpressum);
+}
+//#endregion
+
+//#region GAME SCREEN
+/**
+  * Handles show game screen for the game.
+ */
+function showGameScreen() {
+	screenRef.innerHTML = TemplateHub.gameScreen();
+	closeDialog();
+
+	updateMuteControls();
+
+	bindGameScreenEvents();
+}
+
+/**
+  * Handles bind game screen events for the game.
+ */
+function bindGameScreenEvents() {
+	document.getElementById("btn-mute-ingame").addEventListener("click", () => toggleMuteIcon("ingame"));
+	document.getElementById("btn-pause").addEventListener("click", () => {
+		event.currentTarget.blur();
+		showDialogMenu();
+		IntervalHub.pauseAllIntervals();
+	});
+}
+//#endregion
+
+//#region END SCREEN
+/**
+  * Handles show end screen for the game.
+ * @param {*} result - result value.
+ */
+function showEndScreen(result) {
+	screenRef.insertAdjacentHTML("beforeend", TemplateHub.endScreen());
+	document.getElementById("btn-mute-ingame").classList.add("hidden");
+	document.getElementById("btn-pause").classList.add("hidden");
+	document.getElementById("mobile-btns").classList.add("hidden");
+
+	const resultImg = result === "won" ? "./assets/img/10_won_lost/end-screen-won.png" : "./assets/img/10_won_lost/end-screen-lost.png";
+	document.getElementById("game-over").style.backgroundImage = `url(${resultImg})`;
+
+	bindEndScreenEvents();
+}
+
+/**
+  * Handles bind end screen events for the game.
+ */
+function bindEndScreenEvents() {
+	document.getElementById("btn-restart-game").addEventListener("click", init);
+	document.getElementById("btn-back-to-start").addEventListener("click", showStartScreen);
+}
+//#endregion
+
+//#region DIALOG
+/**
+  * Handles open dialog for the game.
+ */
+function openDialog() {
+	document.getElementById("game-dialog").show();
+}
+
+/**
+  * Handles close dialog for the game.
+ */
+function closeDialog() {
+	document.getElementById("game-dialog").close();
+	IntervalHub.resumeAllIntervals();
+}
+// ----- MENU -----
+/**
+  * Handles show dialog menu for the game.
+ */
+function showDialogMenu() {
+	openDialog();
+	dialogRef.innerHTML = TemplateHub.dialogMenu();
+
+	bindDialogMenuEvents();
+}
+
+/**
+  * Handles bind dialog menu events for the game.
+ */
+function bindDialogMenuEvents() {
+	document.getElementById("btn-resume-ingame").addEventListener("click", () => {
+		closeDialog();
+	});
+	document.getElementById("btn-restart-ingame").addEventListener("click", init);
+	document.getElementById("btn-options-ingame").addEventListener("click", () => {
+		dialogRef.innerHTML = TemplateHub.dialogOptions();
+		bindDialogOptionsEvents();
+	});
+	document.getElementById("btn-start-ingame").addEventListener("click", () => showStartScreen());
+}
+// ----------------
+
+// ----- DIALOG OPTIONS -----
+/**
+  * Handles show dialog options for the game.
+ */
+function showDialogOptions() {
+	openDialog();
+	dialogRef.innerHTML = TemplateHub.dialogOptions();
+
+	bindDialogOptionsEvents();
+}
+
+/**
+  * Handles bind dialog options events for the game.
+ */
+function bindDialogOptionsEvents() {
+	const volumeSlider = document.getElementById("volume-slider");
+	const volumeValue = document.getElementById("volume-value");
+	const muteAllInput = document.getElementById("toggle-mute-all");
+	const muteMusicInput = document.getElementById("toggle-mute-music");
+
+	volumeSlider.value = String(AudioHub.masterVolume);
+	volumeValue.textContent = `${Math.round(AudioHub.masterVolume * 100)}%`;
+	muteAllInput.checked = AudioHub.isMuted;
+	muteMusicInput.checked = AudioHub.GAME_SOUND.file.muted && !AudioHub.isMuted;
+
+	volumeSlider.addEventListener("input", () => {
+		const volume = Number(volumeSlider.value);
+		AudioHub.setMasterVolume(volume);
+		volumeValue.textContent = `${Math.round(volume * 100)}%`;
+	});
+
+	muteAllInput.addEventListener("change", () => {
+		if (muteAllInput.checked !== AudioHub.isMuted) AudioHub.toggleMute();
+		updateMuteControls();
+		if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
+	});
+
+	muteMusicInput.addEventListener("change", () => {
+		AudioHub.setMusicMuted(muteMusicInput.checked);
+		if (muteMusicInput.checked) AudioHub.stopOne(AudioHub.GAME_SOUND);
+		else AudioHub.playOne(AudioHub.GAME_SOUND);
+	});
+
+	document.querySelectorAll(".btn-diff").forEach((button) => {
+		button.addEventListener("click", () => {
+			currentDifficulty = button.dataset.level;
+			localStorage.setItem("game_difficulty", currentDifficulty);
+			updateDifficultyUI(currentDifficulty);
+		});
+	});
+
+	document.getElementById("btn-options-back").addEventListener("click", () => {
+		if (document.getElementById("btn-resume-ingame")) {
+			showDialogMenu();
+		} else {
+			closeDialog();
+		}
+	});
+
+	updateDifficultyUI(currentDifficulty);
+}
+// --------------------------
+
+// ----- DIALOG IMPRESSUM -----
+/**
+  * Handles show dialog impressum for the game.
+ */
+function showDialogImpressum() {
+	openDialog();
+	dialogRef.innerHTML = TemplateHub.dialogImpressum();
+	document.getElementById("btn-impressum-back").addEventListener("click", closeDialog);
+}
+// ----------------------------
+//#endregion
+
+//#region OPTIONS
+export function setupDifficultyControls() {
+	const gameContainer = document.getElementById("game-container");
+
+	gameContainer.addEventListener("click", (event) => {
+		const btn = event.target.closest(".btn-diff");
+		if (!btn) return;
+		currentDifficulty = btn.dataset.level;
+		localStorage.setItem("game_difficulty", currentDifficulty);
+		updateDifficultyUI(currentDifficulty);
+	});
+}
+
+/**
+  * Handles update difficulty ui for the game.
+ * @param {string} selectedLevel - selectedLevel value.
+ */
+function updateDifficultyUI(selectedLevel) {
+	const buttons = document.querySelectorAll(".btn-diff");
+	buttons.forEach((btn) => {
+		btn.classList.toggle("active", btn.dataset.level === selectedLevel);
+	});
+}
+
+//#endregion

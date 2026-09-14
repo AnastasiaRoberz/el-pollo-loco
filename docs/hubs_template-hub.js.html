@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: hubs/template-hub.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: hubs/template-hub.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Represents the TemplateHub game object.
+ */
+export class TemplateHub {
+	/**
+	  * Handles start screen for the game.
+	 */
+	static startScreen() {
+		return /*html*/ `
+        &lt;div class="start" id="start-screen">
+            &lt;div class="start-menu">
+                &lt;div class="start-icon-btns">
+                    &lt;button class="icon-btn" id="btn-mute-start">
+                        &lt;svg class="icon" id="icon-sound-start">
+                            &lt;use href="./assets/icons.svg#icon-sound">&lt;/use>
+                        &lt;/svg>
+                        &lt;svg class="icon" id="icon-mute-start">
+                            &lt;use href="./assets/icons.svg#icon-mute">&lt;/use>
+                        &lt;/svg>
+                    &lt;/button>
+                    &lt;button class="icon-btn" id="btn-options">
+                        &lt;svg class="icon">
+                            &lt;use href="./assets/icons.svg#icon-gear">&lt;/use>
+                        &lt;/svg>
+                    &lt;/button>
+                &lt;/div>
+
+                &lt;button class="btn-start" id="btn-start-game">Start game&lt;/button>
+            &lt;/div>
+
+            &lt;div class="footer">
+                &lt;p>© 2026 Anastasia Roberz | Developer Akademie&lt;/p>
+                &lt;button class="btn-impressum" id="btn-impressum">Impressum&lt;/button>
+            &lt;/div>
+        &lt;/div>
+    `;
+	}
+
+	/**
+	  * Handles game screen for the game.
+	 */
+	static gameScreen() {
+		return /*html*/ `
+        &lt;div id="game-screen" class="game-screen">
+            &lt;canvas id="canvas" width="1280" height="720">
+                {" "}
+            &lt;/canvas>
+            &lt;div class="in-game-buttons">
+                &lt;button class="icon-btn" id="btn-mute-ingame">
+                    &lt;svg class="icon" id="icon-sound-ingame">
+                        &lt;use href="./assets/icons.svg#icon-sound">&lt;/use>
+                    &lt;/svg>
+                    &lt;svg class="icon" id="icon-mute-ingame">
+                        &lt;use href="./assets/icons.svg#icon-mute">&lt;/use>
+                    &lt;/svg>
+                &lt;/button>
+                &lt;button class="icon-btn" id="btn-pause">
+                    &lt;svg class="icon">
+                        &lt;use href="./assets/icons.svg#icon-gear">&lt;/use>
+                    &lt;/svg>
+                &lt;/button>
+            &lt;/div>
+            &lt;div class="btn-mobile-container" id="mobile-btns">
+                &lt;div class="btn-move">
+                    &lt;button class="btn-mobile" id="btn-mobile-left" aria-label="Move left">
+                        &lt;svg class="icon icon-arrow-left" aria-hidden="true">
+                            &lt;use href="./assets/icons.svg#icon-arrow-up">&lt;/use>
+                        &lt;/svg>
+                    &lt;/button>
+                    &lt;button class="btn-mobile right" id="btn-mobile-right" aria-label="Move right">
+                        &lt;svg class="icon icon-arrow-right" aria-hidden="true">
+                            &lt;use href="./assets/icons.svg#icon-arrow-up">&lt;/use>
+                        &lt;/svg>
+                    &lt;/button>
+                &lt;/div>
+                &lt;div class="btn-actions">
+                    &lt;button class="btn-mobile up" id="btn-mobile-up" aria-label="Jump">
+                        &lt;svg class="icon icon-arrow-up" aria-hidden="true">
+                            &lt;use href="./assets/icons.svg#icon-arrow-up">&lt;/use>
+                        &lt;/svg>
+                    &lt;/button>
+                    &lt;button class="btn-mobile throw" id="btn-mobile-throw" aria-label="Throw bottle">
+                        &lt;svg class="icon icon-throw" aria-hidden="true">
+                            &lt;use href="./assets/icons.svg#icon-arrow-up">&lt;/use>
+                        &lt;/svg>
+                    &lt;/button>
+                &lt;/div>
+            &lt;/div>
+        &lt;/div>
+    `;
+	}
+
+	/**
+	  * Handles end screen for the game.
+	 */
+	static endScreen() {
+		return /*html*/ `
+            &lt;div class="game-over" id="game-over">
+                &lt;button class="btn-endscreen-restart" id="btn-restart-game">
+                    Restart Game
+                &lt;/button>
+                &lt;button class="btn-endscreen-back" id="btn-back-to-start">
+                    Back to Start
+                &lt;/button>
+            &lt;/div>
+    `;
+	}
+
+	/**
+	  * Handles dialog menu for the game.
+	 */
+	static dialogMenu() {
+		return /*html*/ `
+            &lt;div class="in-game-menu" id="in-game-menu">
+                &lt;h2>Game Paused&lt;/h2>
+
+                &lt;div class="in-game-menu-buttons">
+                    &lt;!-- Neuer Zurück-Button ins laufende Spiel -->
+                    &lt;button type="button" id="btn-resume-ingame" class="menu-btn btn-resume">
+                        &lt;span class="btn-arrow">▶&lt;/span> Continue
+                    &lt;/button>
+
+                    &lt;!-- Deine bestehenden Buttons -->
+                    &lt;button type="button" id="btn-restart-ingame" class="menu-btn">Restart&lt;/button>
+                    &lt;button type="button" id="btn-options-ingame" class="menu-btn">Options&lt;/button>
+                    &lt;button type="button" id="btn-start-ingame" class="menu-btn btn-secondary">Back to Start&lt;/button>
+                &lt;/div>
+            &lt;/div>
+    `;
+	}
+
+	/**
+	  * Handles dialog options for the game.
+	 */
+	static dialogOptions() {
+		return /*html*/ `
+            &lt;div class="options-dialog" id="options">
+    &lt;h2>Options&lt;/h2>
+
+    &lt;div class="options-content">
+        &lt;fieldset class="options-group">
+            &lt;legend>Audio &amp; Sound&lt;/legend>
+            &lt;div class="volume">
+                &lt;label for="volume-slider">Volume&lt;/label>
+                &lt;div class="range-wrap">
+                    &lt;input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" />
+                    &lt;span id="volume-value">50%&lt;/span>
+                &lt;/div>
+            &lt;/div>
+
+            &lt;div class="toggle-mute">
+                &lt;label class="toggle-control">
+                    &lt;input type="checkbox" id="toggle-mute-all" />
+                    &lt;span class="toggle-slider">&lt;/span>
+                    Mute all Sounds
+                &lt;/label>
+            &lt;/div>
+
+            &lt;div class="toggle-mute">
+                &lt;label class="toggle-control">
+                    &lt;input type="checkbox" id="toggle-mute-music" />
+                    &lt;span class="toggle-slider">&lt;/span>
+                    Mute game music
+                &lt;/label>
+            &lt;/div>
+        &lt;/fieldset>
+
+        &lt;fieldset class="options-group">
+            &lt;legend>Difficulty&lt;/legend>
+            &lt;div class="difficulty-switch" role="radiogroup" aria-label="Schwierigkeitsgrad auswählen">
+                &lt;button type="button" class="btn-diff" data-level="EASY">Easy&lt;/button>
+                &lt;button type="button" class="btn-diff active" data-level="MEDIUM">Medium&lt;/button>
+                &lt;button type="button" class="btn-diff" data-level="HARD">Hard&lt;/button>
+            &lt;/div>
+        &lt;/fieldset>
+
+        &lt;fieldset class="options-group controls-hint">
+            &lt;legend>Control&lt;/legend>
+            &lt;p>&lt;span>Walk:&lt;/span> ◀ ▶ or A / D&lt;/p>
+            &lt;p>&lt;span>Jump:&lt;/span> Space or W / ▲&lt;/p>
+            &lt;p>&lt;span>Throw:&lt;/span> F or E&lt;/p>
+        &lt;/fieldset>
+    &lt;/div>
+
+    &lt;div class="options-footer">
+        &lt;button type="button" class="btn-back" id="btn-options-back" aria-label="Zurück">
+            &lt;span class="btn-arrow">◀&lt;/span> Zurück
+        &lt;/button>
+    &lt;/div>
+&lt;/div>
+    `;
+	}
+
+	/**
+	  * Handles dialog impressum for the game.
+	 */
+	static dialogImpressum() {
+		return /*html*/ `
+            &lt;div class="impressum">
+                &lt;div class="impressum-header">
+                    &lt;h2>Impressum &amp; Rechtliches&lt;/h2>
+                &lt;/div>
+
+                &lt;div class="impressum-content">
+                    &lt;p>&lt;strong class="bold">Entwickler: &lt;/strong> Anastasia Roberz&lt;/p>
+                    &lt;hr>
+                    &lt;p>
+                        &lt;strong class="bold">GitHub: &lt;/strong>
+                        &lt;a href="https://github.com/AnastasiaRoberz" target="_blank" rel="noopener noreferrer">github.com/AnastasiaRoberz&lt;/a>
+                    &lt;/p>
+                    &lt;hr>
+                    &lt;p>&lt;strong class="bold">Kontakt: &lt;/strong>anastasia.roberz@gmx.de&lt;/p>
+                &lt;/div>
+
+                &lt;!-- Zurück-Button -->
+                &lt;div class="impressum-footer">
+                    &lt;button type="button" class="btn-back" id="btn-impressum-back">
+                        &lt;span class="btn-arrow">◀&lt;/span> Zurück
+                    &lt;/button>
+                &lt;/div>
+            &lt;/div>
+        `;
+	}
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundLayer.html">BackgroundLayer</a></li><li><a href="BossChicken.html">BossChicken</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CollectableBottle.html">CollectableBottle</a></li><li><a href="CollectableCoin.html">CollectableCoin</a></li><li><a href="CollectableObject.html">CollectableObject</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="GameAudio.html">GameAudio</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="LevelHub.html">LevelHub</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="NormalChicken.html">NormalChicken</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="TemplateHub.html">TemplateHub</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindDialogMenuEvents">bindDialogMenuEvents</a></li><li><a href="global.html#bindDialogOptionsEvents">bindDialogOptionsEvents</a></li><li><a href="global.html#bindEndScreenEvents">bindEndScreenEvents</a></li><li><a href="global.html#bindGameScreenEvents">bindGameScreenEvents</a></li><li><a href="global.html#bindStartScreenEvents">bindStartScreenEvents</a></li><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#openDialog">openDialog</a></li><li><a href="global.html#openFullscreen">openFullscreen</a></li><li><a href="global.html#rotateAndOpenFullscreen">rotateAndOpenFullscreen</a></li><li><a href="global.html#showDialogImpressum">showDialogImpressum</a></li><li><a href="global.html#showDialogMenu">showDialogMenu</a></li><li><a href="global.html#showDialogOptions">showDialogOptions</a></li><li><a href="global.html#showEndScreen">showEndScreen</a></li><li><a href="global.html#showGameScreen">showGameScreen</a></li><li><a href="global.html#showStartScreen">showStartScreen</a></li><li><a href="global.html#toggleMuteIcon">toggleMuteIcon</a></li><li><a href="global.html#updateDifficultyUI">updateDifficultyUI</a></li><li><a href="global.html#updateMuteControls">updateMuteControls</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Sep 14 2026 05:39:56 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

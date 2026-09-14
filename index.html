@@ -1,26 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" , viewport-fit="cover," user-scalable="no" />
 		<title>El Pollo Loco</title>
+		<link rel="shortcut icon" href="./assets/img/favicon.png" type="image/x-icon" />
 
 		<link rel="stylesheet" href="style.css" />
 
 		<script type="module" src="game.js"></script>
 	</head>
 	<body>
-		<h1>El Pollo Loco</h1>
-		<!-- <canvas id="canvas" width="1280" height="720"></canvas> -->
-		<div class="start" id="start-screen">
-			<button class="game-btn" id="btn-start-game">Start game</button>
-		</div>
-		<div id="game-container" class="game-container hidden">
-			<canvas id="canvas" width="960" height="540"> </canvas>
-			<div class="game-over hidden" id="game-over">
-				<div class="result-container" id="result-container"></div>
-				<button class="game-btn" id="btn-restart-game">Restart Game</button>
+		<div class="rotate-overlay">
+			<div class="rotate-card">
+				<svg class="icon-rotate" aria-hidden="true">
+					<use href="./assets/icons.svg#icon-rotate"></use>
+				</svg>
+				<h2>Please rotate your phone</h2>
+				<p>For the best game experience, use landscape mode.</p>
+				<button class="btn-start" id="flip" type="button">Rotate &amp; fullscreen</button>
 			</div>
+		</div>
+
+		<div id="game-container" class="game-container">
+			<div class="screen-wrapper" id="screen-wrapper"></div>
+			<dialog id="game-dialog">
+				<div class="dialog-content" id="dialog-content"></div>
+			</dialog>
 		</div>
 	</body>
 </html>

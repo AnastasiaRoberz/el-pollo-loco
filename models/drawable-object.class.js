@@ -1,7 +1,9 @@
+/**
+ * Represents the DrawableObject game object.
+ */
 export class DrawableObject {
-	xPos;
-	yPos;
-	defaultYPos;
+	xPos = 0;
+	yPos = 0;
 	width;
 	height;
 	img;
@@ -13,11 +15,13 @@ export class DrawableObject {
 	ryPos;
 	rWidth;
 	rHeight;
+	yPosGround;
+	flipDirection = false;
 
-	constructor() {
-		this.setRealFrame();
-	}
-
+	/**
+	  * Handles load img for the game.
+	 * @param {string} path - path value.
+	 */
 	loadImg(path) {
 		this.img = new Image();
 		this.img.src = path;
@@ -34,6 +38,9 @@ export class DrawableObject {
 		});
 	}
 
+	/**
+	  * Handles set real frame for the game.
+	 */
 	setRealFrame() {
 		this.rxPos = this.xPos + this.offset.leftRatio * this.width;
 		this.ryPos = this.yPos + this.offset.topRatio * this.height;
@@ -55,6 +62,10 @@ export class DrawableObject {
 		this.currentImage++;
 	}
 
+	/**
+	  * Handles show animation once for the game.
+	 * @param {string[]} images - images value.
+	 */
 	showAnimationOnce(images) {
 		if (this.currentState !== images) {
 			this.currentState = images;
@@ -70,6 +81,10 @@ export class DrawableObject {
 		}
 	}
 
+	/**
+	  * Handles draw for the game.
+	 * @param {CanvasRenderingContext2D} ctx - ctx value.
+	 */
 	draw(ctx) {
 		if (this.flipDirection) {
 			ctx.save();
@@ -82,6 +97,10 @@ export class DrawableObject {
 		}
 	}
 
+	/**
+	  * Handles draw frame for the game.
+	 * @param {CanvasRenderingContext2D} ctx - ctx value.
+	 */
 	drawFrame(ctx) {
 		ctx.beginPath();
 		ctx.lineWidth = "1";
@@ -90,6 +109,10 @@ export class DrawableObject {
 		ctx.stroke();
 	}
 
+	/**
+	  * Handles draw offset frame for the game.
+	 * @param {CanvasRenderingContext2D} ctx - ctx value.
+	 */
 	drawOffsetFrame(ctx) {
 		ctx.beginPath();
 		ctx.lineWidth = "2";

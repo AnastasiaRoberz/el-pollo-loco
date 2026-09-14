@@ -2,56 +2,107 @@ import { DrawableObject } from "./drawable-object.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
 import { World } from "./world.class.js";
 
+/**
+ * Represents the StatusBar game object and extends DrawableObject.
+ */
 export class StatusBar extends DrawableObject {
-	xPos = 20;
-	yPos;
+	xPos = World.canvas.width * 0.02;
 	width = 250;
 	height = 60;
-	percentage = 0;
+	percentage;
 	emptyBarImg;
 	iconImg;
 	barImg;
+	maxValue = 100;
 
-	constructor(icon, color, yPos) {
+	/**
+	 * Creates and initializes the object.
+	 * @param {string} icon - icon value.
+	 * @param {string} color - color value.
+	 * @param {number} yPos - yPos value.
+	 * @param {number} maxValue - maxValue value.
+	 * @param {number} percentage - percentage value.
+	 */
+	constructor(icon, color, yPos, maxValue, percentage = 0) {
 		super();
-		this.emptyBarImg = new Image();
-		this.emptyBarImg.src = ImageHub.STATUSBAR.barElements.empty;
-		this.iconImg = new Image();
-		this.iconImg.src = ImageHub.STATUSBAR.icons[icon];
-		this.barImg = new Image();
-		this.barImg.src = ImageHub.STATUSBAR.barElements[color];
+		this.loadAllImages(icon, color);
+		if (icon === "healthEndboss") this.xPos = World.canvas.width - World.canvas.width * 0.02 - this.width;
 		this.yPos = yPos;
-		if (icon === "health") this.setPercentage(100);
-		if (icon === "healthEndboss") {
-			this.xPos = World.canvas.width - this.width - 20;
-			this.setPercentage(100);
-		}
+		this.percentage = percentage;
+		this.maxValue = maxValue;
 	}
 
+	/**
+	  * Handles load all images for the game.
+	 * @param {string} icon - icon value.
+	 * @param {string} color - color value.
+	 */
+	loadAllImages(icon, color) {
+		this.emptyBarImg = new Image();
+		this.iconImg = new Image();
+		this.barImg = new Image();
+		this.emptyBarImg.src = ImageHub.STATUSBAR.barElements.empty;
+		this.iconImg.src = ImageHub.STATUSBAR.icons[icon];
+		this.barImg.src = ImageHub.STATUSBAR.barElements[color];
+	}
+
+	/**
+	  * Handles draw for the game.
+	 * @param {CanvasRenderingContext2D} ctx - ctx value.
+	 */
 	draw(ctx) {
 		const iconSize = this.height;
 		const barOffsetX = iconSize * 0.3;
 		const barWidth = this.width - barOffsetX;
-		const currentFillWidth = barWidth * (this.percentage / 100);
+		const barX = this.xPos + barOffsetX;
 
-		ctx.drawImage(this.emptyBarImg, this.xPos + barOffsetX, this.yPos, barWidth, this.height);
-		if (currentFillWidth > 0) {
-			ctx.drawImage(
-				this.barImg,
-				0,
-				0,
-				this.barImg.width * (this.percentage / 100),
-				this.barImg.height,
-				this.xPos + barOffsetX,
-				this.yPos,
-				currentFillWidth,
-				this.height,
-			);
-		}
+		ctx.drawImage(this.emptyBarImg, barX, this.yPos, barWidth, this.height);
+		this.drawFilledBar(ctx, barX, this.yPos, barWidth, this.height);
 		ctx.drawImage(this.iconImg, this.xPos, this.yPos, iconSize, iconSize);
 	}
 
-	setPercentage(percentage) {
-		this.percentage = Math.max(0, Math.min(100, percentage));
+	/**
+	  * Handles draw filled bar for the game.
+	 * @param {CanvasRenderingContext2D} ctx - ctx value.
+	 * @param {number} xPos - xPos value.
+	 * @param {number} yPos - yPos value.
+	 * @param {number} width - width value.
+	 * @param {number} height - height value.
+	 */
+	drawFilledBar(ctx, xPos, yPos, width, height) {
+		const fillWidth = width * (this.percentage / 100);
+		if (fillWidth <= 0) return;
+		this.drawBarImage(ctx, xPos, yPos, fillWidth, height);
+	}
+
+	/**
+	  * Handles draw bar image for the game.
+	 * @param {CanvasRenderingContext2D} ctx - ctx value.
+	 * @param {number} xPos - xPos value.
+	 * @param {number} yPos - yPos value.
+	 * @param {number} fillWidth - fillWidth value.
+	 * @param {number} height - height value.
+	 */
+	drawBarImage(ctx, xPos, yPos, fillWidth, height) {
+		ctx.drawImage(
+			this.barImg,
+			0,
+			0,
+			this.barImg.width * (this.percentage / 100),
+			this.barImg.height,
+			xPos,
+			yPos,
+			fillWidth,
+			height,
+		);
+	}
+
+	/**
+	  * Handles set percentage for the game.
+	 * @param {boolean} value - value value.
+	 */
+	setPercentage(value) {
+		const calcPercentage = (value / this.maxValue) * 100;
+		this.percentage = Math.max(0, Math.min(100, calcPercentage));
 	}
 }

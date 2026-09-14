@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/boss-chicken.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/boss-chicken.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Chicken } from "./chicken.class.js";
+import { ImageHub } from "../hubs/img-hub.class.js";
+import { IntervalHub } from "../hubs/interval-hub.class.js";
+import { Level } from "./level.class.js";
+import { World } from "./world.class.js";
+import { AudioHub } from "../hubs/audio-hub.class.js";
+
+/**
+ * Represents the BossChicken game object and extends Chicken.
+ */
+export class BossChicken extends Chicken {
+	isTriggered = false;
+	attackAnimationFinished = false;
+
+	/**
+	 * Creates and initializes the object.
+	 * @param {number} energy - energy value.
+	 * @param {number} speedX - speedX value.
+	 * @param {number} damage - damage value.
+	 */
+	constructor(energy, speedX, damage) {
+		super();
+		this.energy = energy;
+		this.speedX = speedX;
+		this.damage = damage;
+		this.initDimensions();
+		this.loadAllImages();
+		this.animate();
+	}
+
+	/**
+	  * Handles init dimensions for the game.
+	 */
+	initDimensions() {
+		this.height = World.canvas.height * 0.85;
+		this.width = this.height * 0.85;
+		this.yPos = World.canvas.height * 0.92 - this.height;
+		this.xPos = Level.maxWidth - this.width * 1.2;
+	}
+
+	/**
+	  * Handles load all images for the game.
+	 */
+	loadAllImages() {
+		this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
+		this.loadImg(ImageHub.BOSS_CHICKEN.walk.frames[0]);
+		Object.values(ImageHub.BOSS_CHICKEN).forEach((state) => this.loadImages(state.frames));
+	}
+
+	/**
+	  * Handles animate for the game.
+	 */
+	animate() {
+		this.movementInterval = IntervalHub.startInterval(() => {
+			if (!this.isDead()) this.handleMovement();
+		}, 1000 / 60);
+
+		this.animationInterval = IntervalHub.startInterval(() => {
+			this.handleAnimations();
+		}, 300);
+	}
+
+	/**
+	  * Handles handle movement for the game.
+	 */
+	handleMovement() {
+		if (this.isAlert()) {
+			this.speedX = this.isAttacking() ? 6 : 2;
+
+			if (this.xPos > World.character.xPos + 50) {
+				this.flipDirection = false;
+				this.moveLeft();
+			} else if (this.xPos &lt; World.character.xPos - 50) {
+				this.flipDirection = true;
+				this.moveRight();
+			}
+		}
+	}
+
+	/**
+	  * Handles handle animations for the game.
+	 */
+	handleAnimations() {
+		if (this.isDead()) return this.startDeathSequence();
+		const state = this.getAnimationState();
+		if (state === ImageHub.BOSS_CHICKEN.attack) {
+			this.offset = state.offset;
+			this.showAnimationOnce(state.frames);
+			if (this.currentImage >= state.frames.length) this.attackAnimationFinished = true;
+			return;
+		}
+		if (!this.isAttacking()) this.attackAnimationFinished = false;
+		this.showStateAnimation(state);
+	}
+
+	/**
+	  * Handles get animation state for the game.
+	 */
+	getAnimationState() {
+		if (this.isHurt()) return ImageHub.BOSS_CHICKEN.hurt;
+		if (this.isAttacking() &amp;&amp; !this.attackAnimationFinished) return ImageHub.BOSS_CHICKEN.attack;
+		if (this.isMoving()) return ImageHub.BOSS_CHICKEN.walk;
+		if (this.isAlert()) return ImageHub.BOSS_CHICKEN.alert;
+		return ImageHub.BOSS_CHICKEN.walk;
+	}
+
+	/**
+	  * Handles show state animation for the game.
+	 * @param {Object} state - state value.
+	 */
+	showStateAnimation(state) {
+		this.offset = state.offset;
+		this.showAnimation(state.frames);
+	}
+
+	/**
+	  * Handles start death sequence for the game.
+	 */
+	startDeathSequence() {
+		this.stopBossIntervals();
+		this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames || ImageHub.BOSS_CHICKEN.dead);
+		this.startDeathFall();
+	}
+
+	/**
+	  * Handles stop boss intervals for the game.
+	 */
+	stopBossIntervals() {
+		IntervalHub.stopInterval(this.movementInterval || "boss-chicken-movement");
+		IntervalHub.stopInterval(this.animationInterval || "boss-chicken-animate");
+	}
+
+	/**
+	  * Handles start death fall for the game.
+	 */
+	startDeathFall() {
+		let bossDropSpeed = 10;
+		const gravity = 1.0;
+
+		IntervalHub.startInterval(() => {
+			this.yPos -= bossDropSpeed;
+			bossDropSpeed -= gravity;
+		}, 1000 / 40);
+	}
+
+	/**
+	  * Handles get distance for the game.
+	 */
+	getDistance() {
+		return Math.abs(this.xPos - World.character.xPos);
+	}
+
+	/**
+	  * Handles is alert for the game.
+	 */
+	isAlert() {
+		if (this.getDistance() &lt; World.canvas.width * 0.8) {
+			this.isTriggered = true;
+			AudioHub.playOne(AudioHub.ENDBOSS_APPROACH);
+		}
+		return this.isTriggered;
+	}
+
+	/**
+	  * Handles is attacking for the game.
+	 */
+	isAttacking() {
+		return this.getDistance() &lt;= 180;
+	}
+
+	/**
+	  * Handles is moving for the game.
+	 */
+	isMoving() {
+		return this.isAlert() &amp;&amp; !this.isAttacking();
+	}
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundLayer.html">BackgroundLayer</a></li><li><a href="BossChicken.html">BossChicken</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CollectableBottle.html">CollectableBottle</a></li><li><a href="CollectableCoin.html">CollectableCoin</a></li><li><a href="CollectableObject.html">CollectableObject</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="GameAudio.html">GameAudio</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="LevelHub.html">LevelHub</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="NormalChicken.html">NormalChicken</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="TemplateHub.html">TemplateHub</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindDialogMenuEvents">bindDialogMenuEvents</a></li><li><a href="global.html#bindDialogOptionsEvents">bindDialogOptionsEvents</a></li><li><a href="global.html#bindEndScreenEvents">bindEndScreenEvents</a></li><li><a href="global.html#bindGameScreenEvents">bindGameScreenEvents</a></li><li><a href="global.html#bindStartScreenEvents">bindStartScreenEvents</a></li><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#openDialog">openDialog</a></li><li><a href="global.html#openFullscreen">openFullscreen</a></li><li><a href="global.html#rotateAndOpenFullscreen">rotateAndOpenFullscreen</a></li><li><a href="global.html#showDialogImpressum">showDialogImpressum</a></li><li><a href="global.html#showDialogMenu">showDialogMenu</a></li><li><a href="global.html#showDialogOptions">showDialogOptions</a></li><li><a href="global.html#showEndScreen">showEndScreen</a></li><li><a href="global.html#showGameScreen">showGameScreen</a></li><li><a href="global.html#showStartScreen">showStartScreen</a></li><li><a href="global.html#toggleMuteIcon">toggleMuteIcon</a></li><li><a href="global.html#updateDifficultyUI">updateDifficultyUI</a></li><li><a href="global.html#updateMuteControls">updateMuteControls</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Sep 14 2026 05:39:56 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

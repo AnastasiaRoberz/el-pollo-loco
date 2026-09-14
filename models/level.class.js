@@ -4,13 +4,14 @@ import { Cloud } from "./cloud.class.js";
 import { CollectableBottle } from "./collectable-bottle.class.js";
 import { CollectableCoin } from "./collectable-coin.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
-import { IntervalHub } from "../hubs/interval-hub.class.js";
-import { LevelHub } from "../hubs/level-hub.class.js";
 import { NormalChicken } from "./normal-chicken.class.js";
 import { SmallChicken } from "./small-chicken.class.js";
 import { StatusBar } from "./status-bar.class.js";
 import { World } from "./world.class.js";
 
+/**
+ * Represents the Level game object.
+ */
 export class Level {
 	static maxWidth;
 	config;
@@ -22,94 +23,135 @@ export class Level {
 	colObjects = { bottles: [], coins: [] };
 	lastXPos = 300;
 
+	/**
+	 * Creates and initializes the object.
+	 * @param {Object} levelConfig - levelConfig value.
+	 */
 	constructor(levelConfig) {
 		this.config = levelConfig;
 		Level.maxWidth = this.config.sections * World.canvas.width;
 		this.createBgLayers(this.config.sections);
+		this.createStatusbars();
 		this.createBottles(this.config.amountBottles);
 		this.createCoins(this.config.amountCoins);
-		this.bars["healthBar"] = new StatusBar("health", "green", 20);
-		this.bars["coinBar"] = new StatusBar("coin", "orange", 70);
-		this.bars["bottleBar"] = new StatusBar("bottle", "blue", 120);
-		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", 20);
 		this.bossChicken = new BossChicken(this.config.bossEnergy, this.config.bossSpeed, this.config.bossDamage);
-		// this.addStartEnemies();
-		this.addEnemies(this.config.enemies, this.config.chickenRatio);
+		this.createEnemies(this.config.enemies, this.config.chickenRatio);
 	}
 
+	/**
+	  * Handles create bg layers for the game.
+	 * @param {*} sections - sections value.
+	 */
 	createBgLayers(sections) {
 		const step = World.canvas.width;
 
 		for (let i = 0; i < sections; i++) {
-			const imgThirdLayer = ImageHub.BACKGROUND.thirdLayer[i % 2];
-			const imgSecondLayer = ImageHub.BACKGROUND.secondLayer[i % 2];
-			const imgFirstLayer = ImageHub.BACKGROUND.firstLayer[i % 2];
-			const img = ImageHub.BACKGROUND.clouds[i % 2];
-			this.bgLayers.push(new BackgroundLayer(ImageHub.BACKGROUND.air, i * step));
-			this.bgLayers.push(new BackgroundLayer(imgThirdLayer, i * step));
-			this.bgLayers.push(new BackgroundLayer(imgSecondLayer, i * step));
-			this.bgLayers.push(new BackgroundLayer(imgFirstLayer, i * step));
-			this.clouds.push(new Cloud(img, i * step));
+			this.createBackgroundSection(i, step);
 		}
+		this.clouds.push(new Cloud(ImageHub.BACKGROUND.clouds[sections % 2], step * sections));
 	}
 
-	addStartEnemies() {
-		for (let i = 0; i < 5; i++) {
-			this.enemies.push(new NormalChicken());
-			this.enemies.push(new SmallChicken());
-		}
+	/**
+	  * Handles create background section for the game.
+	 * @param {number} index - index value.
+	 * @param {number} step - step value.
+	 */
+	createBackgroundSection(index, step) {
+		const background = ImageHub.BACKGROUND;
+		const xPos = index * step;
+		const variant = index % 2;
+
+		this.bgLayers.push(new BackgroundLayer(background.air, xPos));
+		this.bgLayers.push(new BackgroundLayer(background.thirdLayer[variant], xPos));
+		this.bgLayers.push(new BackgroundLayer(background.secondLayer[variant], xPos));
+		this.bgLayers.push(new BackgroundLayer(background.firstLayer[variant], xPos));
+		this.clouds.push(new Cloud(background.clouds[variant], xPos));
 	}
 
-	addEnemies(amount, ratio) {
-		const startX = 500;
-		const endX = Level.maxWidth - 600;
+	/**
+	  * Handles create statusbars for the game.
+	 */
+	createStatusbars() {
+		const yPosStart = World.canvas.width * 0.02;
+		const yPosStep = World.canvas.width * 0.04;
+		this.bars["healthBar"] = new StatusBar("health", "green", yPosStart, 100, 100);
+		this.bars["coinBar"] = new StatusBar("coin", "orange", yPosStart + yPosStep, this.config.amountCoins);
+		this.bars["bottleBar"] = new StatusBar("bottle", "blue", yPosStart + yPosStep * 2, this.config.amountBottles);
+		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", yPosStart, this.config.bossEnergy, 100);
+	}
+
+	/**
+	  * Handles create enemies for the game.
+	 * @param {number} amount - amount value.
+	 * @param {number} ratio - ratio value.
+	 */
+	createEnemies(amount, ratio) {
+		const startX = World.canvas.width * 0.5;
+		const { step, maxJitter } = this.getSlotParams(amount, startX, Level.maxWidth + World.canvas.width);
 
 		for (let i = 0; i < amount; i++) {
-			const x = startX + Math.random() * (endX - startX);
+			const slotX = startX + i * step + Math.random() * maxJitter;
 			const isSmall = Math.random() < ratio;
-			const speedX = this.config.enemySpeedMin + Math.random() * (this.config.enemySpeedMax - this.config.SpeedMin);
+			const speedX = this.config.enemySpeedMin + Math.random() * (this.config.enemySpeedMax - this.config.enemySpeedMin);
 
-			if (isSmall) {
-				this.enemies.push(new SmallChicken(x, speedX));
-			} else {
-				this.enemies.push(new NormalChicken(x, speedX));
-			}
+			this.enemies.push(isSmall ? new SmallChicken(slotX, speedX) : new NormalChicken(slotX, speedX));
 		}
 	}
 
+	/**
+	  * Handles create bottles for the game.
+	 * @param {number} amount - amount value.
+	 */
 	createBottles(amount) {
-		const step = (Level.maxWidth - 800) / amount;
+		const startX = 0;
+		const { step, maxJitter } = this.getSlotParams(amount, startX);
 		for (let i = 0; i < amount; i++) {
-			const x = 400 + i * step + Math.random() * 100;
-			this.colObjects.bottles.push(new CollectableBottle(x, 350));
+			const slotX = startX + i * step + Math.random() * maxJitter;
+			this.colObjects.bottles.push(new CollectableBottle(slotX));
 		}
 	}
 
+	/**
+	  * Handles create coins for the game.
+	 * @param {number} amount - amount value.
+	 */
 	createCoins(amount) {
-		const step = (this.maxWidth - 800) / amount;
-		for (let i = 0; i < amount; i++) {
-			const x = 350 + i * step + Math.random() * 80;
-			const y = 120 + Math.random() * 180;
-			this.colObjects.coins.push(new CollectableCoin(x, y));
+		const startX = 300;
+		const estClusters = Math.max(1, Math.floor(amount / 4));
+		const { step, maxJitter } = this.getSlotParams(estClusters, startX, Level.maxWidth, World.canvas.height);
+
+		let createdCoins = 0;
+
+		for (let i = 0; i < estClusters && createdCoins <= amount; i++) {
+			createdCoins += this.createCoinCluster(i, startX, step, maxJitter, amount - createdCoins);
 		}
 	}
 
-	// createCoins(value = 1) {
-	// 	let xPos = 300;
-	// 	let yPos = World.canvas.height * 0.4;
-	// 	this.colObjects.coins.push(new CollectableCoin(xPos, yPos));
-	// 	const height = this.colObjects.coins[0].height;
+	/**
+	  * Handles create coin cluster for the game.
+	 * @param {number} index - index value.
+	 * @param {number} startX - startX value.
+	 * @param {number} step - step value.
+	 * @param {number} maxJitter - maxJitter value.
+	 * @param {number} remainingCoins - remainingCoins value.
+	 */
+	createCoinCluster(index, startX, step, maxJitter, remainingCoins) {
+		const slotX = startX + index * step + Math.random() * maxJitter;
+		const newCoins = CollectableCoin.createCluster(slotX, remainingCoins);
+		this.colObjects.coins.push(...newCoins);
+		return newCoins.length;
+	}
 
-	// 	switch (value) {
-	// 		case 1:
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 3, yPos - height));
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 4, yPos));
-
-	// 		case 2:
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height, yPos - height));
-	// 			this.colObjects.coins.push(new CollectableCoin(xPos + height * 2, yPos - height * 2));
-	// 	}
-	// }
+	/**
+	  * Handles get slot params for the game.
+	 * @param {number} amount - amount value.
+	 * @param {number} startX - startX value.
+	 * @param {number} endX - endX value.
+	 * @param {*} minDistance - minDistance value.
+	 */
+	getSlotParams(amount, startX, endX = Level.maxWidth, minDistance = 50) {
+		const step = (endX - startX) / amount;
+		const maxJitter = Math.max(0, step - minDistance);
+		return { step, maxJitter };
+	}
 }

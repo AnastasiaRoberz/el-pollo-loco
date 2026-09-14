@@ -1,3 +1,6 @@
+/**
+ * Represents the ImageHub game object.
+ */
 export class ImageHub {
 	// --- CHARACTER (PEPE) ---
 	static PEPE = Object.freeze({
@@ -31,21 +34,6 @@ export class ImageHub {
 				"./assets/img/2_character_pepe/1_idle/long_idle/I-20.png",
 			],
 		},
-		longIdleFlip: {
-			offset: { topRatio: 0.52, bottomRatio: 0.05, leftRatio: 0.32, rightRatio: 0.2 },
-			frames: [
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-21.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-22.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-23.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-24.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-25.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-26.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-27.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-28.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-29.png",
-				"./assets/img/2_character_pepe/1_idle/long_idle_flip/I-30.png",
-			],
-		},
 		walk: {
 			offset: { topRatio: 0.5, bottomRatio: 0.05, leftRatio: 0.21, rightRatio: 0.31 },
 			frames: [
@@ -58,7 +46,7 @@ export class ImageHub {
 			],
 		},
 		jump: {
-			offset: { topRatio: 0.54, bottomRatio: 0.05, leftRatio: 0.3, rightRatio: 0.31 },
+			offset: { topRatio: 0.5, bottomRatio: 0.05, leftRatio: 0.3, rightRatio: 0.31 },
 			frames: [
 				"./assets/img/2_character_pepe/3_jump/J-31.png",
 				"./assets/img/2_character_pepe/3_jump/J-32.png",
@@ -193,6 +181,12 @@ export class ImageHub {
 			"./assets/img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png",
 			"./assets/img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png",
 			"./assets/img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png",
+		],
+		reverseRotation: [
+			"./assets/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
+			"./assets/img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png",
+			"./assets/img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png",
+			"./assets/img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png",
 		],
 		splash: [
 			"./assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png",

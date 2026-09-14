@@ -1,0 +1,19 @@
+{
+	"source": {
+		"include": [
+			"./game.js",
+			"./hubs",
+			"./models"
+		],
+		"includePattern": ".+\\.js$",
+		"excludePattern": "(^|\\/|\\\\)_|node_modules"
+	},
+	"plugins": [
+		"plugins/markdown"
+	],
+	"opts": {
+		"destination": "./docs/",
+		"recurse": true,
+		"charset": "utf8"
+	}
+}
