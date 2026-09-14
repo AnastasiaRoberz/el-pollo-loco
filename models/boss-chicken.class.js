@@ -58,7 +58,7 @@ export class BossChicken extends Chicken {
 	handleAnimations() {
 		if (this.isDead()) {
 			this.offset = ImageHub.BOSS_CHICKEN.dead.offset;
-			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames);
+			this.startDeathSequence();
 		} else if (this.isHurt()) {
 			this.offset = ImageHub.BOSS_CHICKEN.hurt.offset;
 			this.showAnimation(ImageHub.BOSS_CHICKEN.hurt.frames);
@@ -75,6 +75,22 @@ export class BossChicken extends Chicken {
 			this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
 			this.showAnimation(ImageHub.BOSS_CHICKEN.walk.frames);
 		}
+	}
+
+	startDeathSequence() {
+		IntervalHub.stopInterval(this.movementInterval || "boss-chicken-movement");
+		IntervalHub.stopInterval(this.animationInterval || "boss-chicken-animate");
+
+		if (this.showAnimationOnce) {
+			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames || ImageHub.BOSS_CHICKEN.dead);
+		}
+		let bossDropSpeed = 10;
+		const gravity = 1.0;
+
+		IntervalHub.startInterval(() => {
+			this.yPos -= bossDropSpeed;
+			bossDropSpeed -= gravity;
+		}, 1000 / 40);
 	}
 
 	getDistance() {

@@ -78,7 +78,8 @@ export class Character extends MovableObject {
 	}
 
 	handleWalking() {
-		if (Keyboard.RIGHT) {
+		if (this.isHurt()) return;
+		if (Keyboard.RIGHT && this.xPos < Level.maxWidth - this.width) {
 			this.flipDirection = false;
 			this.moveRight();
 			this.lastAction = Date.now();
@@ -90,8 +91,12 @@ export class Character extends MovableObject {
 	}
 
 	handleJumping() {
-		if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveObj()) {
-			this.jump(this.height * 0.06);
+		if (this.isHurt()) return;
+		if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround() && !this.isJumping) {
+			this.isJumping = true;
+			AudioHub.playOne(AudioHub.PEPE_JUMP);
+			this.currentImage = 0;
+			this.landingTriggered = false;
 			this.lastAction = Date.now();
 		}
 	}
@@ -99,11 +104,11 @@ export class Character extends MovableObject {
 	handleAnimations() {
 		if (this.isDead()) {
 			this.offset = ImageHub.PEPE.dead.offset;
-			this.showAnimationOnce(ImageHub.PEPE.dead.frames);
-		} else if (this.isHurt()) {
+			this.showDeadAnimation(ImageHub.PEPE.dead.frames);
+		} else if (this.isHurt() && !this.isJumping) {
 			this.offset = ImageHub.PEPE.hurt.offset;
 			this.showAnimation(ImageHub.PEPE.hurt.frames);
-		} else if (this.isAboveObj()) {
+		} else if (this.isJumping || this.isAboveGround()) {
 			this.offset = ImageHub.PEPE.jump.offset;
 			if (this.animationTick % 2 === 0) this.showAnimationOnce(ImageHub.PEPE.jump.frames);
 		} else if (Keyboard.RIGHT || Keyboard.LEFT) {
@@ -119,6 +124,85 @@ export class Character extends MovableObject {
 			this.offset = ImageHub.PEPE.idle.offset;
 			if (this.animationTick % 6 === 0) this.showAnimation(ImageHub.PEPE.idle.frames);
 		}
+	}
+
+	showJumpAnimation(images) {
+		if (!this.isAboveGround() && this.speedY === 0 && !this.landingTriggered) {
+			this.img = this.imgCache[images[this.currentImage]];
+
+			if (this.currentImage < 3) {
+				this.currentImage++;
+			} else if (this.currentImage === 3) {
+				this.jump(30);
+			}
+			return;
+		}
+
+		if (this.speedY > 0) {
+			this.img = this.imgCache[images[3]];
+			this.currentImage = 4;
+			return;
+		}
+
+		if (this.speedY < 0 && this.isAboveGround()) {
+			if (this.currentImage < 4 || this.currentImage > 6) {
+				this.currentImage = 4;
+			}
+			this.img = this.imgCache[images[this.currentImage]];
+			if (this.currentImage < 6) {
+				this.currentImage++;
+			}
+			return;
+		}
+
+		if (!this.isAboveGround()) {
+			this.landingTriggered = true;
+			if (this.currentImage < 7) {
+				this.currentImage = 7;
+			}
+			this.img = this.imgCache[images[this.currentImage]];
+
+			if (this.currentImage < 8) {
+				this.currentImage++;
+			} else {
+				this.isJumping = false;
+				this.landingTriggered = false;
+				this.currentImage = 0;
+				this.speedY = 0;
+			}
+		}
+	}
+
+	showDeadAnimation(images) {
+		if (this.currentAnimation !== images) {
+			this.currentAnimation = images;
+			this.currentImage = 0;
+			this.deadJumpTriggered = false;
+		}
+
+		if (this.currentImage === 3 && !this.deadJumpTriggered) {
+			this.deadJumpTriggered = true;
+			this.startDeathFall();
+		}
+
+		if (this.currentImage < images.length) {
+			this.img = this.imgCache[images[this.currentImage]];
+			this.currentImage++;
+		} else {
+			this.img = this.imgCache[images[images.length - 1]];
+		}
+	}
+
+	startDeathFall() {
+		IntervalHub.stopInterval(this.gravityInterval);
+
+		let deathSpeedY = 20;
+		const gravity = 0.9;
+
+		IntervalHub.startInterval(() => {
+			this.yPos -= deathSpeedY;
+			deathSpeedY -= gravity;
+		}, 1000 / 30);
 	}
 
 	isLongIdle() {

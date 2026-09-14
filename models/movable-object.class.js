@@ -5,7 +5,7 @@ import { AudioHub } from "../hubs/audio-hub.class.js";
 export class MovableObject extends DrawableObject {
 	speedX = 0.15;
 	speedY = 0;
-	acceleration = 1.5;
+	acceleration = 2.5;
 	energy = 100;
 	lastHit = 0;
 	movementInterval;
@@ -14,7 +14,7 @@ export class MovableObject extends DrawableObject {
 	hurtSound;
 
 	moveRight() {
-		if (!this.isDead() && this.xPos < Level.maxWidth - this.width) {
+		if (!this.isDead()) {
 			this.xPos += this.speedX;
 		}
 	}
@@ -35,18 +35,19 @@ export class MovableObject extends DrawableObject {
 
 	applyGravity() {
 		this.gravityInterval = IntervalHub.startInterval(() => {
-			if (this.isAboveObj() || this.speedY > 0) {
+			if (this.isAboveGround() || this.speedY > 0) {
 				this.yPos -= this.speedY;
 				this.speedY -= this.acceleration;
-				// } else {
-				// 	this.yPos = this.defaultYPos;
-				// 	this.speedY = 0;
 			}
 		}, 1000 / 25);
 	}
 
-	isAboveObj(obj = this.yPosGround) {
-		return this.yPos < obj;
+	isAboveGround() {
+		return this.yPos < this.yPosGround;
+	}
+
+	isAboveObj(obj) {
+		return this.ryPos < obj.ryPos;
 	}
 
 	isColliding(obj) {
