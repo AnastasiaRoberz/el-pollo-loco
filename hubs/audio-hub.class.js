@@ -51,7 +51,12 @@ export class AudioHub {
 		if (sound.file.readyState > 0 || sound.isLoaded) {
 			if (!sound.file.paused && !sound.file.ended) return;
 			if (!sound.file.loop) sound.file.currentTime = 0;
-			sound.file.play();
+			const playPromise = sound.file.play();
+			if (playPromise) {
+				playPromise.catch((error) => {
+					if (error.name !== "AbortError") console.error("Audio playback failed:", error);
+				});
+			}
 		}
 	}
 
