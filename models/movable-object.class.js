@@ -73,9 +73,7 @@ export class MovableObject extends DrawableObject {
 	 * @param {Object} obj - obj value.
 	 */
 	isAboveObj(obj) {
-		const thisCenter = this.ryPos + this.rHeight / 2;
-		const objCenter = obj.ryPos + obj.rHeight / 2;
-		return ownCenter < objCenter;
+		return this.ryPos < obj.ryPos + 20;
 	}
 
 	/**
@@ -116,7 +114,7 @@ export class MovableObject extends DrawableObject {
 	 */
 	isInvulnerable() {
 		const timePassed = (Date.now() - this.lastHit) / 1000;
-		return timePassed < 3;
+		return timePassed < 1.5;
 	}
 
 	/**

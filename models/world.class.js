@@ -287,7 +287,7 @@ export class World {
 		this.stopGameIntervals();
 		AudioHub.stopAll();
 		const result = this.showGameResult();
-		setTimeout(() => this.endScreen(result), 4000);
+		setTimeout(() => this.endScreen(result), 2000);
 	}
 
 	/**

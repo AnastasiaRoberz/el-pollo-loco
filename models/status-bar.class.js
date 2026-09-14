@@ -33,7 +33,7 @@ export class StatusBar extends DrawableObject {
 	}
 
 	/**
-	  * Handles load all images for the game.
+	 * Handles load all images for the game.
 	 * @param {string} icon - icon value.
 	 * @param {string} color - color value.
 	 */
@@ -47,58 +47,53 @@ export class StatusBar extends DrawableObject {
 	}
 
 	/**
-	  * Handles draw for the game.
+	 * Handles draw for the game.
 	 * @param {CanvasRenderingContext2D} ctx - ctx value.
 	 */
 	draw(ctx) {
 		const iconSize = this.height;
-		const barOffsetX = iconSize * 0.3;
-		const barWidth = this.width - barOffsetX;
-		const barX = this.xPos + barOffsetX;
+		const emptyBarOffsetX = iconSize * 0.3;
+		const emptyBarWidth = this.width - emptyBarOffsetX;
+		const emptyBarX = this.xPos + emptyBarOffsetX;
 
-		ctx.drawImage(this.emptyBarImg, barX, this.yPos, barWidth, this.height);
-		this.drawFilledBar(ctx, barX, this.yPos, barWidth, this.height);
+		ctx.drawImage(this.emptyBarImg, emptyBarX, this.yPos, emptyBarWidth, this.height);
+		this.drawFilledBar(ctx, emptyBarX, this.yPos, emptyBarWidth, this.height, iconSize - emptyBarOffsetX);
 		ctx.drawImage(this.iconImg, this.xPos, this.yPos, iconSize, iconSize);
 	}
 
 	/**
-	  * Handles draw filled bar for the game.
+	 * Handles draw filled bar for the game.
 	 * @param {CanvasRenderingContext2D} ctx - ctx value.
 	 * @param {number} xPos - xPos value.
 	 * @param {number} yPos - yPos value.
 	 * @param {number} width - width value.
 	 * @param {number} height - height value.
+	 * @param {number} firstFillWidth - firstFillWidth value.
 	 */
-	drawFilledBar(ctx, xPos, yPos, width, height) {
-		const fillWidth = width * (this.percentage / 100);
+	drawFilledBar(ctx, xPos, yPos, width, height, firstFillWidth) {
+		let fillWidth = width * (this.percentage / 100);
+		if (this.percentage > 0) fillWidth = Math.max(fillWidth, firstFillWidth);
+		fillWidth = Math.min(fillWidth, width);
 		if (fillWidth <= 0) return;
-		this.drawBarImage(ctx, xPos, yPos, fillWidth, height);
+		this.drawBarImage(ctx, xPos, yPos, fillWidth, width, height);
 	}
 
 	/**
-	  * Handles draw bar image for the game.
+	 * Handles draw bar image for the game.
 	 * @param {CanvasRenderingContext2D} ctx - ctx value.
 	 * @param {number} xPos - xPos value.
 	 * @param {number} yPos - yPos value.
 	 * @param {number} fillWidth - fillWidth value.
+	 * @param {number} barWidth - barWidth value.
 	 * @param {number} height - height value.
 	 */
-	drawBarImage(ctx, xPos, yPos, fillWidth, height) {
-		ctx.drawImage(
-			this.barImg,
-			0,
-			0,
-			this.barImg.width * (this.percentage / 100),
-			this.barImg.height,
-			xPos,
-			yPos,
-			fillWidth,
-			height,
-		);
+	drawBarImage(ctx, xPos, yPos, fillWidth, barWidth, height) {
+		const sourceWidth = this.barImg.width * (fillWidth / barWidth);
+		ctx.drawImage(this.barImg, 0, 0, sourceWidth, this.barImg.height, xPos, yPos, fillWidth, height);
 	}
 
 	/**
-	  * Handles set percentage for the game.
+	 * Handles set percentage for the game.
 	 * @param {boolean} value - value value.
 	 */
 	setPercentage(value) {

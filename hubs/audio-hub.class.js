@@ -44,7 +44,7 @@ export class AudioHub {
 	];
 
 	/**
-	  * Handles play one for the game.
+	 * Handles play one for the game.
 	 * @param {GameAudio} sound - sound value.
 	 */
 	static playOne(sound) {
@@ -61,7 +61,7 @@ export class AudioHub {
 	}
 
 	/**
-	  * Handles stop one for the game.
+	 * Handles stop one for the game.
 	 * @param {GameAudio} sound - sound value.
 	 */
 	static stopOne(sound) {
@@ -70,7 +70,7 @@ export class AudioHub {
 	}
 
 	/**
-	  * Handles stop all for the game.
+	 * Handles stop all for the game.
 	 */
 	static stopAll() {
 		AudioHub.allSounds.forEach((sound) => {
@@ -80,7 +80,7 @@ export class AudioHub {
 	}
 
 	/**
-	  * Handles toggle mute for the game.
+	 * Handles toggle mute for the game.
 	 */
 	static toggleMute() {
 		this.isMuted = !this.isMuted;
@@ -91,7 +91,7 @@ export class AudioHub {
 	}
 
 	/**
-	  * Handles set master volume for the game.
+	 * Handles set master volume for the game.
 	 * @param {number} volume - volume value.
 	 */
 	static setMasterVolume(volume) {
@@ -103,7 +103,7 @@ export class AudioHub {
 	}
 
 	/**
-	  * Handles set music muted for the game.
+	 * Handles set music muted for the game.
 	 * @param {boolean} isMuted - isMuted value.
 	 */
 	static setMusicMuted(isMuted) {
