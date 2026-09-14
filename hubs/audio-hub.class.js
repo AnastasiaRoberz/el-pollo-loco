@@ -3,6 +3,7 @@ import { GameAudio } from "../models/audio.class.js";
 export class AudioHub {
 	static isMuted = true;
 	static musicMuted = false;
+	static masterVolume = 0.5;
 
 	static GAME_SOUND = new GameAudio("./assets/audio/background_music.mp3", true, 0.05);
 	static GAME_START = new GameAudio("./assets/audio/game/gameStart.mp3");
@@ -19,7 +20,7 @@ export class AudioHub {
 	static COLLECT = new GameAudio("./assets/audio/collectibles/collectSound.wav");
 	static BOTTLE_COLLECT = new GameAudio("./assets/audio/collectibles/bottleCollectSound.wav");
 
-	static ENDBOSS_APPROACH = new GameAudio("./assets/audio/endboss/endbossApproach.wav", true);
+	static ENDBOSS_APPROACH = new GameAudio("./assets/audio/endboss/endbossApproach.wav", true, 1);
 
 	static BOTTLE_BREAK = new GameAudio("./assets/audio/throwable/bottleBreak.mp3");
 
@@ -69,6 +70,7 @@ export class AudioHub {
 
 	static setMasterVolume(volume) {
 		const normalizedVolume = Math.min(1, Math.max(0, volume));
+		AudioHub.masterVolume = normalizedVolume;
 		AudioHub.allSounds.forEach((sound) => {
 			sound.file.volume = sound.baseVolume * normalizedVolume;
 		});
@@ -79,3 +81,5 @@ export class AudioHub {
 		AudioHub.GAME_SOUND.file.muted = isMuted || AudioHub.isMuted;
 	}
 }
+
+AudioHub.setMasterVolume(AudioHub.masterVolume);
