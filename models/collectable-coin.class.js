@@ -50,8 +50,8 @@ export class CollectableCoin extends CollectableObject {
 		const keys = Object.keys(this.coinPatterns);
 		const randomKey = keys[Math.floor(Math.random() * keys.length)];
 		const pattern = this.coinPatterns[randomKey];
-		const coinSize = World.canvas.height * 0.23 * 0.4;
-		const baseY = World.canvas.height * 0.32;
+		const coinSize = World.canvas.height * 0.23 * 0.38;
+		const baseY = World.canvas.height * 0.38;
 		const cluster = [];
 
 		for (let i = 0; i < pattern.length && cluster.length < remainingCoins; i++) {
