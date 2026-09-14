@@ -1,6 +1,6 @@
 import { DrawableObject } from "./drawable-object.class.js";
 import { IntervalHub } from "../hubs/interval-hub.class.js";
-import { Level } from "./level.class.js";
+import { AudioHub } from "../hubs/audio-hub.class.js";
 
 export class MovableObject extends DrawableObject {
 	speedX = 0.15;
@@ -11,6 +11,7 @@ export class MovableObject extends DrawableObject {
 	movementInterval;
 	animationInterval;
 	gravityInterval;
+	hurtSound;
 
 	moveRight() {
 		if (!this.isDead() && this.xPos < Level.maxWidth - this.width) {
@@ -64,7 +65,7 @@ export class MovableObject extends DrawableObject {
 
 	isHit(damage) {
 		this.energy -= damage;
-		// IntervalHub.pauseInterval(this.movementInterval, 6000);
+		if (this.hurtSound) AudioHub.playOne(this.hurtSound);
 		if (this.energy < 0) this.energy = 0;
 		this.lastHit = Date.now();
 	}

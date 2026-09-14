@@ -1,9 +1,11 @@
+import { AudioHub } from "../hubs/audio-hub.class.js";
 import { IntervalHub } from "../hubs/interval-hub.class.js";
 import { MovableObject } from "./movable-object.class.js";
 
 export class Chicken extends MovableObject {
 	imagesWalk = [];
 	imgDead;
+	audio;
 
 	constructor() {
 		super();
@@ -25,5 +27,6 @@ export class Chicken extends MovableObject {
 		IntervalHub.stopInterval(this.movementInterval);
 		IntervalHub.stopInterval(this.animationInterval);
 		this.loadImg(this.imgDead);
+		AudioHub.playOne(this.audio);
 	}
 }

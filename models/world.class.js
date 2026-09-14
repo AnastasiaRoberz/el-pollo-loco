@@ -4,6 +4,8 @@ import { Keyboard } from "./keyboard.class.js";
 import { LevelHub } from "../hubs/level-hub.class.js";
 import { Level } from "./level.class.js";
 import { ThrowableObject } from "./throwable-object.class.js";
+import { AudioHub } from "../hubs/audio-hub.class.js";
+import { ImageHub } from "../hubs/img-hub.class.js";
 
 export class World {
 	static canvas;
@@ -139,9 +141,9 @@ export class World {
 	collisionEnemyBottle(enemy) {
 		this.throwableObjects.forEach((bottle) => {
 			if (bottle.isColliding(enemy) && !enemy.isDead() && !bottle.hasHit) {
-				console.log(enemy);
 				enemy.die();
 				bottle.hasHit = true;
+				AudioHub.playOne(AudioHub.BOTTLE_BREAK);
 				setTimeout(() => {
 					const enemyId = this.level.enemies.indexOf(enemy);
 					this.level.enemies.splice(enemyId, 1);
@@ -189,6 +191,7 @@ export class World {
 			const index = this.level.colObjects.bottles.indexOf(bottle);
 			this.level.colObjects.bottles.splice(index, 1);
 			this.level.bars.bottleBar.setPercentage(this.collectedBottles);
+			AudioHub.playOne(AudioHub.BOTTLE_COLLECT);
 		}
 	}
 
@@ -198,12 +201,7 @@ export class World {
 			const index = this.level.colObjects.coins.indexOf(coin);
 			this.level.colObjects.coins.splice(index, 1);
 			this.level.bars.coinBar.setPercentage(this.collectedCoins);
-			// if (this.collectedCoins >= this.level.config.coinsForBottle) {
-			// 	this.collectedCoins -= this.level.config.coinsForBottle;
-			// 	this.collectedBottles++;
-			// 	this.level.bars.coinBar.setPercentage(this.collectedCoins);
-			// 	this.level.bars.bottleBar.setPercentage(this.collectBottles);
-			// }
+			AudioHub.playOne(AudioHub.COLLECT);
 		}
 	}
 

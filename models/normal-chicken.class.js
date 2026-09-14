@@ -1,10 +1,12 @@
 import { Chicken } from "./chicken.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
 import { World } from "./world.class.js";
+import { AudioHub } from "../hubs/audio-hub.class.js";
 
 export class NormalChicken extends Chicken {
 	imagesWalk = ImageHub.NORMAL_CHICKEN.walk.frames;
 	imgDead = ImageHub.NORMAL_CHICKEN.dead.frame;
+	audio = AudioHub.CHICKEN_DEAD;
 	offset = { topRatio: 0.06, bottomRatio: 0.02, leftRatio: 0.02, rightRatio: 0.03 };
 
 	constructor(xPos, speedX) {

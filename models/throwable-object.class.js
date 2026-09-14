@@ -1,3 +1,4 @@
+import { AudioHub } from "../hubs/audio-hub.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
 import { IntervalHub } from "../hubs/interval-hub.class.js";
 import { MovableObject } from "./movable-object.class.js";
@@ -8,6 +9,7 @@ export class ThrowableObject extends MovableObject {
 	speedX = 20;
 	hasHit = false;
 	offset = { topRatio: 0.16, bottomRatio: 0.13, leftRatio: 0.14, rightRatio: 0.14 };
+	soundPlayed = false;
 
 	constructor(xPos, yPos, flipDirection) {
 		super();

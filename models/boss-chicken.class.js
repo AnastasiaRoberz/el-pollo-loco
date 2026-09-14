@@ -3,6 +3,7 @@ import { ImageHub } from "../hubs/img-hub.class.js";
 import { IntervalHub } from "../hubs/interval-hub.class.js";
 import { Level } from "./level.class.js";
 import { World } from "./world.class.js";
+import { AudioHub } from "../hubs/audio-hub.class.js";
 
 export class BossChicken extends Chicken {
 	isTriggered = false;

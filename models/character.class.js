@@ -1,3 +1,4 @@
+import { AudioHub } from "../hubs/audio-hub.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
 import { IntervalHub } from "../hubs/interval-hub.class.js";
 import { Keyboard } from "./keyboard.class.js";
@@ -9,6 +10,11 @@ export class Character extends MovableObject {
 	speedX = 10;
 	lastAction = Date.now();
 	animationTick = 0;
+	deadSoundPlayed = false;
+	deadJumpTriggered = false;
+	isJumping = false;
+	landingTriggered = false;
+	wasHurt = false;
 
 	constructor() {
 		super();
@@ -16,6 +22,7 @@ export class Character extends MovableObject {
 		this.initDimensions();
 		this.applyGravity();
 		this.animate();
+		this.hurtSound = AudioHub.PEPE_DAMAGE;
 	}
 
 	initDimensions() {
@@ -34,6 +41,7 @@ export class Character extends MovableObject {
 
 	animate() {
 		this.movementInterval = IntervalHub.startInterval(() => {
+			this.handleAudio();
 			this.handleWalking();
 			this.handleJumping();
 		}, 1000 / 60);
@@ -42,6 +50,31 @@ export class Character extends MovableObject {
 			this.animationTick++;
 			this.handleAnimations();
 		}, 50);
+	}
+
+	handleAudio() {
+		if (this.isDead()) {
+			AudioHub.stopOne(AudioHub.PEPE_RUN);
+			AudioHub.stopOne(AudioHub.PEPE_SNORING);
+			AudioHub.stopOne(AudioHub.PEPE_DAMAGE);
+			if (!this.deadSoundPlayed) {
+				this.deadSoundPlayed = true;
+				AudioHub.playOne(AudioHub.PEPE_DEAD);
+			}
+			return;
+		}
+
+		if ((Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround()) {
+			AudioHub.playOne(AudioHub.PEPE_RUN);
+		} else {
+			AudioHub.stopOne(AudioHub.PEPE_RUN);
+		}
+
+		if (this.isLongIdle()) {
+			AudioHub.playOne(AudioHub.PEPE_SNORING);
+		} else {
+			AudioHub.stopOne(AudioHub.PEPE_SNORING);
+		}
 	}
 
 	handleWalking() {
