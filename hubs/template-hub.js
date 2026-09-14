@@ -3,7 +3,7 @@
  */
 export class TemplateHub {
 	/**
-	  * Handles start screen for the game.
+	 * Handles start screen for the game.
 	 */
 	static startScreen() {
 		return /*html*/ `
@@ -37,7 +37,7 @@ export class TemplateHub {
 	}
 
 	/**
-	  * Handles game screen for the game.
+	 * Handles game screen for the game.
 	 */
 	static gameScreen() {
 		return /*html*/ `
@@ -56,7 +56,7 @@ export class TemplateHub {
                 </button>
                 <button class="icon-btn" id="btn-pause">
                     <svg class="icon">
-                        <use href="./assets/icons.svg#icon-gear"></use>
+                        <use href="./assets/icons.svg#icon-pause"></use>
                     </svg>
                 </button>
             </div>
@@ -91,7 +91,7 @@ export class TemplateHub {
 	}
 
 	/**
-	  * Handles end screen for the game.
+	 * Handles end screen for the game.
 	 */
 	static endScreen() {
 		return /*html*/ `
@@ -107,7 +107,7 @@ export class TemplateHub {
 	}
 
 	/**
-	  * Handles dialog menu for the game.
+	 * Handles dialog menu for the game.
 	 */
 	static dialogMenu() {
 		return /*html*/ `
@@ -130,7 +130,7 @@ export class TemplateHub {
 	}
 
 	/**
-	  * Handles dialog options for the game.
+	 * Handles dialog options for the game.
 	 */
 	static dialogOptions() {
 		return /*html*/ `
@@ -192,7 +192,7 @@ export class TemplateHub {
 	}
 
 	/**
-	  * Handles dialog impressum for the game.
+	 * Handles dialog impressum for the game.
 	 */
 	static dialogImpressum() {
 		return /*html*/ `
