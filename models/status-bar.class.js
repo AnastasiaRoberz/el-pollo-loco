@@ -34,23 +34,31 @@ export class StatusBar extends DrawableObject {
 		const iconSize = this.height;
 		const barOffsetX = iconSize * 0.3;
 		const barWidth = this.width - barOffsetX;
-		const currentFillWidth = barWidth * (this.percentage / 100);
+		const barX = this.xPos + barOffsetX;
 
-		ctx.drawImage(this.emptyBarImg, this.xPos + barOffsetX, this.yPos, barWidth, this.height);
-		if (currentFillWidth > 0) {
-			ctx.drawImage(
-				this.barImg,
-				0,
-				0,
-				this.barImg.width * (this.percentage / 100),
-				this.barImg.height,
-				this.xPos + barOffsetX,
-				this.yPos,
-				currentFillWidth,
-				this.height,
-			);
-		}
+		ctx.drawImage(this.emptyBarImg, barX, this.yPos, barWidth, this.height);
+		this.drawFilledBar(ctx, barX, this.yPos, barWidth, this.height);
 		ctx.drawImage(this.iconImg, this.xPos, this.yPos, iconSize, iconSize);
+	}
+
+	drawFilledBar(ctx, xPos, yPos, width, height) {
+		const fillWidth = width * (this.percentage / 100);
+		if (fillWidth <= 0) return;
+		this.drawBarImage(ctx, xPos, yPos, fillWidth, height);
+	}
+
+	drawBarImage(ctx, xPos, yPos, fillWidth, height) {
+		ctx.drawImage(
+			this.barImg,
+			0,
+			0,
+			this.barImg.width * (this.percentage / 100),
+			this.barImg.height,
+			xPos,
+			yPos,
+			fillWidth,
+			height,
+		);
 	}
 
 	setPercentage(value) {

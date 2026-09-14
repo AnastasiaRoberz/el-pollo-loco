@@ -35,17 +35,21 @@ export class Level {
 		const step = World.canvas.width;
 
 		for (let i = 0; i < sections; i++) {
-			const imgThirdLayer = ImageHub.BACKGROUND.thirdLayer[i % 2];
-			const imgSecondLayer = ImageHub.BACKGROUND.secondLayer[i % 2];
-			const imgFirstLayer = ImageHub.BACKGROUND.firstLayer[i % 2];
-			const img = ImageHub.BACKGROUND.clouds[i % 2];
-			this.bgLayers.push(new BackgroundLayer(ImageHub.BACKGROUND.air, i * step));
-			this.bgLayers.push(new BackgroundLayer(imgThirdLayer, i * step));
-			this.bgLayers.push(new BackgroundLayer(imgSecondLayer, i * step));
-			this.bgLayers.push(new BackgroundLayer(imgFirstLayer, i * step));
-			this.clouds.push(new Cloud(img, i * step));
+			this.createBackgroundSection(i, step);
 		}
 		this.clouds.push(new Cloud(ImageHub.BACKGROUND.clouds[sections % 2], step * sections));
+	}
+
+	createBackgroundSection(index, step) {
+		const background = ImageHub.BACKGROUND;
+		const xPos = index * step;
+		const variant = index % 2;
+
+		this.bgLayers.push(new BackgroundLayer(background.air, xPos));
+		this.bgLayers.push(new BackgroundLayer(background.thirdLayer[variant], xPos));
+		this.bgLayers.push(new BackgroundLayer(background.secondLayer[variant], xPos));
+		this.bgLayers.push(new BackgroundLayer(background.firstLayer[variant], xPos));
+		this.clouds.push(new Cloud(background.clouds[variant], xPos));
 	}
 
 	createStatusbars() {
@@ -86,15 +90,16 @@ export class Level {
 
 		let createdCoins = 0;
 
-		for (let i = 0; i < estClusters; i++) {
-			if (createdCoins <= amount) {
-				const remainingCoins = amount - createdCoins;
-				const slotX = startX + i * step + Math.random() * maxJitter;
-				const newCoins = CollectableCoin.createCluster(slotX, remainingCoins);
-				this.colObjects.coins.push(...newCoins);
-				createdCoins += newCoins.length;
-			}
+		for (let i = 0; i < estClusters && createdCoins <= amount; i++) {
+			createdCoins += this.createCoinCluster(i, startX, step, maxJitter, amount - createdCoins);
 		}
+	}
+
+	createCoinCluster(index, startX, step, maxJitter, remainingCoins) {
+		const slotX = startX + index * step + Math.random() * maxJitter;
+		const newCoins = CollectableCoin.createCluster(slotX, remainingCoins);
+		this.colObjects.coins.push(...newCoins);
+		return newCoins.length;
 	}
 
 	getSlotParams(amount, startX, endX = Level.maxWidth, minDistance = 50) {

@@ -54,16 +54,24 @@ export class Character extends MovableObject {
 
 	handleAudio() {
 		if (this.isDead()) {
-			AudioHub.stopOne(AudioHub.PEPE_RUN);
-			AudioHub.stopOne(AudioHub.PEPE_SNORING);
-			AudioHub.stopOne(AudioHub.PEPE_DAMAGE);
-			if (!this.deadSoundPlayed) {
-				this.deadSoundPlayed = true;
-				AudioHub.playOne(AudioHub.PEPE_DEAD);
-			}
+			this.handleDeadAudio();
 			return;
 		}
 
+		this.handleMovementAudio();
+	}
+
+	handleDeadAudio() {
+		AudioHub.stopOne(AudioHub.PEPE_RUN);
+		AudioHub.stopOne(AudioHub.PEPE_SNORING);
+		AudioHub.stopOne(AudioHub.PEPE_DAMAGE);
+		if (!this.deadSoundPlayed) {
+			this.deadSoundPlayed = true;
+			AudioHub.playOne(AudioHub.PEPE_DEAD);
+		}
+	}
+
+	handleMovementAudio() {
 		if ((Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround()) {
 			AudioHub.playOne(AudioHub.PEPE_RUN);
 		} else {
@@ -102,89 +110,104 @@ export class Character extends MovableObject {
 	}
 
 	handleAnimations() {
-		if (this.isDead()) {
-			this.offset = ImageHub.PEPE.dead.offset;
-			this.showDeadAnimation(ImageHub.PEPE.dead.frames);
-		} else if (this.isHurt() && !this.isJumping) {
-			this.offset = ImageHub.PEPE.hurt.offset;
-			this.showAnimation(ImageHub.PEPE.hurt.frames);
-		} else if (this.isJumping || this.isAboveGround()) {
-			this.offset = ImageHub.PEPE.jump.offset;
-			this.showJumpAnimation(ImageHub.PEPE.jump.frames);
-		} else if (Keyboard.RIGHT || Keyboard.LEFT) {
-			this.offset = ImageHub.PEPE.walk.offset;
-			this.showAnimation(ImageHub.PEPE.walk.frames);
-		} else if (this.isLongIdle() && !this.flipDirection) {
-			this.offset = ImageHub.PEPE.longIdle.offset;
-			if (this.animationTick % 6 === 0) this.showAnimation(ImageHub.PEPE.longIdle.frames);
-		} else if (this.isLongIdle() && this.flipDirection) {
-			this.offset = ImageHub.PEPE.longIdleFlip.offset;
-			if (this.animationTick % 8 === 0) this.showAnimation(ImageHub.PEPE.longIdleFlip.frames);
-		} else {
-			this.offset = ImageHub.PEPE.idle.offset;
-			if (this.animationTick % 6 === 0) this.showAnimation(ImageHub.PEPE.idle.frames);
-		}
+		if (this.isDead()) return this.handleDeadAnimation();
+		if (this.isHurt() && !this.isJumping) return this.handleHurtAnimation();
+		if (this.isJumping || this.isAboveGround()) return this.handleJumpAnimation();
+		if (Keyboard.RIGHT || Keyboard.LEFT) return this.handleWalkAnimation();
+		if (this.isLongIdle()) return this.handleIdleAnimation();
+		this.showIdleAnimation();
+	}
+
+	handleJumpAnimation() {
+		this.offset = ImageHub.PEPE.jump.offset;
+		this.showJumpAnimation(ImageHub.PEPE.jump.frames);
+	}
+
+	handleDeadAnimation() {
+		this.offset = ImageHub.PEPE.dead.offset;
+		this.showDeadAnimation(ImageHub.PEPE.dead.frames);
+	}
+
+	handleHurtAnimation() {
+		this.offset = ImageHub.PEPE.hurt.offset;
+		this.showAnimation(ImageHub.PEPE.hurt.frames);
+	}
+
+	handleWalkAnimation() {
+		this.offset = ImageHub.PEPE.walk.offset;
+		this.showAnimation(ImageHub.PEPE.walk.frames);
+	}
+
+	handleIdleAnimation() {
+		const state = this.flipDirection ? ImageHub.PEPE.longIdleFlip : ImageHub.PEPE.longIdle;
+		const interval = this.flipDirection ? 8 : 6;
+		this.offset = state.offset;
+		if (this.animationTick % interval === 0) this.showAnimation(state.frames);
+	}
+
+	showIdleAnimation() {
+		this.offset = ImageHub.PEPE.idle.offset;
+		if (this.animationTick % 6 === 0) this.showAnimation(ImageHub.PEPE.idle.frames);
 	}
 
 	showJumpAnimation(images) {
-		if (!this.isAboveGround() && this.speedY === 0 && !this.landingTriggered) {
-			this.img = this.imgCache[images[this.currentImage]];
+		if (!this.isAboveGround() && this.speedY === 0 && !this.landingTriggered)
+			return this.handleJumpStart(images);
+		if (this.speedY > 0) return this.handleJumpDescent(images);
+		if (this.speedY < 0 && this.isAboveGround()) return this.handleJumpAscent(images);
+		if (!this.isAboveGround()) this.handleJumpLanding(images);
+	}
 
-			if (this.currentImage < 3) {
-				this.currentImage++;
-			} else if (this.currentImage === 3) {
-				this.jump(30);
-			}
-			return;
-		}
+	handleJumpStart(images) {
+		this.img = this.imgCache[images[this.currentImage]];
+		if (this.currentImage < 3) this.currentImage++;
+		else if (this.currentImage === 3) this.jump(30);
+	}
 
-		if (this.speedY > 0) {
-			this.img = this.imgCache[images[3]];
-			this.currentImage = 4;
-			return;
-		}
+	handleJumpDescent(images) {
+		this.img = this.imgCache[images[3]];
+		this.currentImage = 4;
+	}
 
-		if (this.speedY < 0 && this.isAboveGround()) {
-			if (this.currentImage < 4 || this.currentImage > 6) {
-				this.currentImage = 4;
-			}
-			this.img = this.imgCache[images[this.currentImage]];
-			if (this.currentImage < 6) {
-				this.currentImage++;
-			}
-			return;
-		}
+	handleJumpAscent(images) {
+		if (this.currentImage < 4 || this.currentImage > 6) this.currentImage = 4;
+		this.img = this.imgCache[images[this.currentImage]];
+		if (this.currentImage < 6) this.currentImage++;
+	}
 
-		if (!this.isAboveGround()) {
-			this.landingTriggered = true;
-			if (this.currentImage < 7) {
-				this.currentImage = 7;
-			}
-			this.img = this.imgCache[images[this.currentImage]];
+	handleJumpLanding(images) {
+		this.landingTriggered = true;
+		if (this.currentImage < 7) this.currentImage = 7;
+		this.img = this.imgCache[images[this.currentImage]];
+		if (this.currentImage < 8) this.currentImage++;
+		else this.resetJump();
+	}
 
-			if (this.currentImage < 8) {
-				this.currentImage++;
-			} else {
-				this.isJumping = false;
-				this.landingTriggered = false;
-				this.currentImage = 0;
-				this.speedY = 0;
-			}
-		}
+	resetJump() {
+		this.isJumping = false;
+		this.landingTriggered = false;
+		this.currentImage = 0;
+		this.speedY = 0;
 	}
 
 	showDeadAnimation(images) {
+		this.resetDeadAnimation(images);
+		if (this.currentImage === 3 && !this.deadJumpTriggered) {
+			this.deadJumpTriggered = true;
+			this.startDeathFall();
+		}
+		this.showDeadFrame(images);
+	}
+
+	resetDeadAnimation(images) {
 		if (this.currentAnimation !== images) {
 			this.currentAnimation = images;
 			this.currentImage = 0;
 			this.deadJumpTriggered = false;
 		}
+	}
 
-		if (this.currentImage === 3 && !this.deadJumpTriggered) {
-			this.deadJumpTriggered = true;
-			this.startDeathFall();
-		}
-
+	showDeadFrame(images) {
 		if (this.currentImage < images.length) {
 			this.img = this.imgCache[images[this.currentImage]];
 			this.currentImage++;

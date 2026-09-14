@@ -121,21 +121,30 @@ export class World {
 	}
 
 	collisionEnemyCharacter(enemy) {
-		if (World.character.isColliding(enemy) && !enemy.isDead()) {
-			if (World.character.isAboveGround() && World.character.isFalling() && World.character.isAboveObj(enemy)) {
-				enemy.die();
-				setTimeout(() => {
-					const currentIndex = this.level.enemies.indexOf(enemy);
-					this.level.enemies.splice(currentIndex, 1);
-				}, 1000);
-				World.character.jump((World.character.height / 2) * 0.01);
-			} else {
-				if (!World.character.isInvulnerable()) {
-					World.character.isHit(this.level.config.damage);
-					this.level.bars.healthBar.setPercentage(World.character.energy);
-				}
-			}
+		if (!World.character.isColliding(enemy) || enemy.isDead()) return;
+
+		const isStomp = World.character.isAboveGround() && World.character.isFalling() && World.character.isAboveObj(enemy);
+
+		if (isStomp) {
+			this.handleEnemyStomp(enemy);
+		} else {
+			this.handleEnemyDamage();
 		}
+	}
+
+	handleEnemyStomp(enemy) {
+		enemy.die();
+		setTimeout(() => {
+			const currentIndex = this.level.enemies.indexOf(enemy);
+			this.level.enemies.splice(currentIndex, 1);
+		}, 1000);
+		World.character.jump((World.character.height / 2) * 0.01);
+	}
+
+	handleEnemyDamage() {
+		if (World.character.isInvulnerable()) return;
+		World.character.isHit(this.level.config.damage);
+		this.level.bars.healthBar.setPercentage(World.character.energy);
 	}
 
 	collisionEnemyBottle(enemy) {
@@ -217,29 +226,35 @@ export class World {
 	}
 
 	checkGameEnd() {
-		let result = "won";
-		if ((World.character.isDead() || this.level.bossChicken.isDead()) && !this.gameOver) {
-			this.gameOver = true;
-			IntervalHub.stopInterval(World.character.movementInterval);
-			IntervalHub.stopInterval(this.level.bossChicken.movementInterval);
-			this.level.enemies.forEach((enemy) => {
-				IntervalHub.stopInterval(enemy.movementInterval);
-				IntervalHub.stopInterval(enemy.animationInterval);
-			});
-			this.level.colObjects.bottles.forEach((bottle) => IntervalHub.stopInterval(bottle.animationInterval));
-			this.level.colObjects.coins.forEach((coin) => IntervalHub.stopInterval(coin.animationInterval));
-			if (World.character.isDead()) {
-				result = "lost";
-				World.character.showAnimationOnce(ImageHub.PEPE.dead.frames);
-				IntervalHub.stopInterval(this.level.bossChicken.animationInterval);
-			} else {
-				this.level.bossChicken.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames);
-				IntervalHub.stopInterval(World.character.animationInterval);
-			}
+		if (this.gameOver || (!World.character.isDead() && !this.level.bossChicken.isDead())) return;
 
-			setTimeout(() => {
-				this.endScreen(result);
-			}, 4000);
+		this.gameOver = true;
+		this.stopGameIntervals();
+		AudioHub.stopAll();
+		const result = this.showGameResult();
+		setTimeout(() => this.endScreen(result), 4000);
+	}
+
+	stopGameIntervals() {
+		IntervalHub.stopInterval(World.character.movementInterval);
+		IntervalHub.stopInterval(this.level.bossChicken.movementInterval);
+		this.level.enemies.forEach((enemy) => {
+			IntervalHub.stopInterval(enemy.movementInterval);
+			IntervalHub.stopInterval(enemy.animationInterval);
+		});
+		this.level.colObjects.bottles.forEach((bottle) => IntervalHub.stopInterval(bottle.animationInterval));
+		this.level.colObjects.coins.forEach((coin) => IntervalHub.stopInterval(coin.animationInterval));
+	}
+
+	showGameResult() {
+		if (World.character.isDead()) {
+			World.character.showAnimationOnce(ImageHub.PEPE.dead.frames);
+			IntervalHub.stopInterval(this.level.bossChicken.animationInterval);
+			return "lost";
 		}
+
+		this.level.bossChicken.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames);
+		IntervalHub.stopInterval(World.character.animationInterval);
+		return "won";
 	}
 }

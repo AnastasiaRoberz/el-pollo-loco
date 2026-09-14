@@ -54,14 +54,16 @@ export class CollectableCoin extends CollectableObject {
 		const baseY = World.canvas.height * 0.32;
 		const cluster = [];
 
-		for (let i = 0; i < pattern.length; i++) {
-			if (cluster.length < remainingCoins) {
-				const x = startX + pattern[i][0] * coinSize;
-				const y = baseY + pattern[i][1] * coinSize;
-				cluster.push(new CollectableCoin(x, y));
-			}
+		for (let i = 0; i < pattern.length && cluster.length < remainingCoins; i++) {
+			cluster.push(this.createCoin(startX, coinSize, pattern[i], baseY));
 		}
 
 		return cluster;
+	}
+
+	static createCoin(startX, coinSize, position, baseY) {
+		const x = startX + position[0] * coinSize;
+		const y = baseY + position[1] * coinSize;
+		return new CollectableCoin(x, y);
 	}
 }

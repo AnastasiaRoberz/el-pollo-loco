@@ -39,19 +39,18 @@ export class Keyboard {
 	static bindButton(id, key) {
 		const btn = document.getElementById(id);
 
-		btn.addEventListener("touchstart", (event) => {
-			event.preventDefault();
-			this[key] = true;
-		});
+		this.bindButtonEvent(btn, "touchstart", key, true, true);
+		this.bindButtonEvent(btn, "touchend", key, false, true);
+		this.bindButtonEvent(btn, "mousedown", key, true);
+		this.bindButtonEvent(btn, "mouseup", key, false);
+		this.bindButtonEvent(btn, "mouseleave", key, false);
+	}
 
-		btn.addEventListener("touchend", (event) => {
-			event.preventDefault();
-			this[key] = false;
+	static bindButtonEvent(btn, eventName, key, value, preventDefault = false) {
+		btn.addEventListener(eventName, (event) => {
+			if (preventDefault) event.preventDefault();
+			this[key] = value;
 		});
-
-		btn.addEventListener("mousedown", () => (this[key] = true));
-		btn.addEventListener("mouseup", () => (this[key] = false));
-		btn.addEventListener("mouseleave", () => (this[key] = false));
 	}
 
 	static reset() {

@@ -56,34 +56,40 @@ export class BossChicken extends Chicken {
 	}
 
 	handleAnimations() {
-		if (this.isDead()) {
-			this.offset = ImageHub.BOSS_CHICKEN.dead.offset;
-			this.startDeathSequence();
-		} else if (this.isHurt()) {
-			this.offset = ImageHub.BOSS_CHICKEN.hurt.offset;
-			this.showAnimation(ImageHub.BOSS_CHICKEN.hurt.frames);
-		} else if (this.isAttacking()) {
-			this.offset = ImageHub.BOSS_CHICKEN.attack.offset;
-			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.attack.frames);
-		} else if (this.isMoving()) {
-			this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
-			this.showAnimation(ImageHub.BOSS_CHICKEN.walk.frames);
-		} else if (this.isAlert()) {
-			this.offset = ImageHub.BOSS_CHICKEN.alert.offset;
-			this.showAnimation(ImageHub.BOSS_CHICKEN.alert.frames);
-		} else {
-			this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
-			this.showAnimation(ImageHub.BOSS_CHICKEN.walk.frames);
+		if (this.isDead()) return this.startDeathSequence();
+		const state = this.getAnimationState();
+		if (state === ImageHub.BOSS_CHICKEN.attack) {
+			this.offset = state.offset;
+			return this.showAnimationOnce(state.frames);
 		}
+		this.showStateAnimation(state);
+	}
+
+	getAnimationState() {
+		if (this.isHurt()) return ImageHub.BOSS_CHICKEN.hurt;
+		if (this.isAttacking()) return ImageHub.BOSS_CHICKEN.attack;
+		if (this.isMoving()) return ImageHub.BOSS_CHICKEN.walk;
+		if (this.isAlert()) return ImageHub.BOSS_CHICKEN.alert;
+		return ImageHub.BOSS_CHICKEN.walk;
+	}
+
+	showStateAnimation(state) {
+		this.offset = state.offset;
+		this.showAnimation(state.frames);
 	}
 
 	startDeathSequence() {
+		this.stopBossIntervals();
+		this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames || ImageHub.BOSS_CHICKEN.dead);
+		this.startDeathFall();
+	}
+
+	stopBossIntervals() {
 		IntervalHub.stopInterval(this.movementInterval || "boss-chicken-movement");
 		IntervalHub.stopInterval(this.animationInterval || "boss-chicken-animate");
+	}
 
-		if (this.showAnimationOnce) {
-			this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames || ImageHub.BOSS_CHICKEN.dead);
-		}
+	startDeathFall() {
 		let bossDropSpeed = 10;
 		const gravity = 1.0;
 

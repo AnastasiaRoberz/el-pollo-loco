@@ -36,19 +36,25 @@ export class ThrowableObject extends MovableObject {
 	throw(flipDirection) {
 		this.animationInterval = IntervalHub.startInterval(() => {
 			if (this.bottleHitGround() || this.hasHit) {
-				IntervalHub.stopInterval(this.gravityInterval);
-				this.showAnimationOnce(ImageHub.BOTTLE.splash);
-				setTimeout(() => {
-					IntervalHub.stopInterval(this.animationInterval);
-				}, 1000);
-			} else if (flipDirection) {
-				this.showAnimation(ImageHub.BOTTLE.reverseRotation);
-				this.xPos -= this.speedX;
+				this.handleBottleImpact();
 			} else {
-				this.showAnimation(ImageHub.BOTTLE.rotation);
-				this.xPos += this.speedX;
+				this.moveBottle(flipDirection);
 			}
 		}, 50);
+	}
+
+	handleBottleImpact() {
+		IntervalHub.stopInterval(this.gravityInterval);
+		this.showAnimationOnce(ImageHub.BOTTLE.splash);
+		setTimeout(() => {
+			IntervalHub.stopInterval(this.animationInterval);
+		}, 1000);
+	}
+
+	moveBottle(flipDirection) {
+		const images = flipDirection ? ImageHub.BOTTLE.reverseRotation : ImageHub.BOTTLE.rotation;
+		this.showAnimation(images);
+		this.xPos += flipDirection ? -this.speedX : this.speedX;
 	}
 
 	isAboveGround() {
