@@ -1,117 +1,990 @@
+/*
+ * Global styling for the El Pollo Loco game.
+ * Controls layout, responsiveness, and visual presentation.
+ */
+
 :root {
 	--dark: rgb(114, 35, 39);
+	--dark-surface: rgba(114, 35, 39, 0.93);
 	--light: rgb(244, 136, 85);
+	--light-hover: rgb(255, 155, 107);
+	--light-transparent: rgba(244, 136, 85, 0.5);
+	--shadow-base: #54171a;
 }
 
 @font-face {
 	font-family: "Rodeo Nights";
-	src: url("../assets/fonts/Rodeo Nights Regular.woff2") format("woff2");
+	src: url("../assets/fonts/Rodeo%20Nights%20Regular.woff2") format("woff2");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
 }
 
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+
+	font-family: "Rodeo Nights", Arial, sans-serif;
+	font-size: 1.2rem;
+	letter-spacing: 1.5px;
 }
 
 html {
 	font-size: 16px;
+	width: 100%;
+	height: 100%;
 }
 
-h1 {
-	font-family: "Rodeo Nights";
-	font-size: 5rem;
-	letter-spacing: 10%;
-	font-variant: small-caps;
-	color: var(--dark);
+h2 {
+	color: var(--light);
+	font-size: 1.8rem;
+	text-shadow: 0 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+button {
+	border: none;
+	background: none;
+	cursor: pointer;
+	z-index: 3;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
+	touch-action: manipulation;
 }
 
 body {
 	width: 100%;
 	height: 100dvh;
+	min-height: 100lvh;
+	max-width: 100vw;
+	max-height: 100dvh;
+	background: #000 url("./assets/img/5_background/bg2.jpeg") no-repeat bottom / cover;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 16px;
-	background-image: url("./assets/img/5_background/bg2.jpeg");
-	background-position: center;
-	background-size: cover;
-	background-repeat: no-repeat;
-	padding: 0 240px;
 }
 
-button {
-	border: none;
-	cursor: pointer;
+/* ==========================================================================
+   2. GAME CONTAINER & CANVAS
+   ========================================================================== */
+.game-container {
+	position: relative;
+	width: min(100vw, calc(100dvh * 16 / 9));
+	height: min(100dvh, calc(100vw * 9 / 16));
+	max-width: 100vw;
+	max-height: 100dvh;
+	aspect-ratio: 16 / 9;
 }
 
 canvas {
-	background-color: black;
+	background-color: #000;
 	width: 100%;
 	height: 100%;
 	display: block;
 }
 
-.start {
+.screen-wrapper {
 	width: 100%;
 	height: 100%;
-	background-image: url("./assets/img/9_intro_outro_screens/start/startscreen_1.png");
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat;
+}
+
+/* ==========================================================================
+   3. GEMEINSAME BUTTON- & ICON-KOMPONENTEN
+   ========================================================================== */
+.icon-btn {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background: rgba(114, 35, 39, 0.85);
+	border: 2px solid var(--light);
 	display: flex;
 	justify-content: center;
-	align-items: flex-start;
-	padding: 32px;
+	align-items: center;
+	box-shadow:
+		0 4px 8px rgba(0, 0, 0, 0.5),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	transition:
+		transform 0.15s ease,
+		background-color 0.15s ease,
+		box-shadow 0.15s ease;
+
+	.icon {
+		width: 60%;
+		height: 60%;
+		fill: var(--light);
+		transition: fill 0.15s ease;
+	}
+
+	&:hover {
+		background: var(--dark);
+		border-color: var(--light-hover);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 12px rgba(244, 136, 85, 0.4);
+
+		.icon {
+			fill: #fff;
+		}
+	}
 }
 
-.game-btn {
-	font-family: "Rodeo Nights";
-	padding: 16px 32px;
-	background-color: var(--light);
-	color: var(--dark);
-	border: none;
-	font-size: 2rem;
-	letter-spacing: 5%;
+.btn-start,
+.btn-endscreen-restart,
+.btn-endscreen-back,
+.menu-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 10px 24px;
+
 	text-transform: uppercase;
-	border-radius: 16px;
+	border: 2px solid #fff;
+	user-select: none;
+	-webkit-touch-callout: none;
+	transition:
+		transform 0.15s ease,
+		background-color 0.15s ease,
+		box-shadow 0.15s ease;
 }
 
-.game-container {
+.btn-start,
+.btn-endscreen-restart,
+.btn-endscreen-back,
+.menu-btn.btn-resume,
+.btn-back {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 10px 24px;
+	background-color: rgb(244, 136, 85);
+	color: rgb(114, 35, 39);
+	font-family: "Rodeo Nights", Arial, sans-serif;
+	font-size: 1.1rem;
+	font-weight: bold;
+	letter-spacing: 1px;
+	border: 2px solid #ffffff;
+	border-radius: 8px;
+	cursor: pointer;
+	box-shadow:
+		0 4px 0 #54171a,
+		0 6px 12px rgba(0, 0, 0, 0.4);
+	transition:
+		transform 0.15s ease,
+		background-color 0.15s ease,
+		box-shadow 0.15s ease;
+
+	&:hover {
+		background-color: var(--light-hover);
+		transform: translateY(-2px);
+		box-shadow:
+			0 7px 0 var(--shadow-base),
+			0 10px 20px rgba(244, 136, 85, 0.4);
+	}
+
+	&:active {
+		transform: translateY(3px);
+		box-shadow: 0 2px 0 var(--shadow-base);
+	}
+}
+
+.btn-endscreen-restart,
+.menu-btn.btn-secondary {
+	background: var(--dark-surface);
+	color: rgba(255, 255, 255, 0.85);
+	border-color: rgba(244, 136, 85, 0.7);
+	box-shadow:
+		0 4px 0 #3b1013,
+		0 6px 14px rgba(0, 0, 0, 0.4);
+
+	&:hover {
+		background-color: var(--dark);
+		border-color: var(--light);
+		color: #fff;
+		transform: translateY(-2px);
+		box-shadow:
+			0 6px 0 #3b1013,
+			0 8px 18px rgba(0, 0, 0, 0.5);
+	}
+
+	&:active {
+		transform: translateY(2px);
+		box-shadow: 0 2px 0 #3b1013;
+	}
+}
+
+.btn-arrow {
+	font-size: 0.95rem;
+	transition: transform 0.15s ease;
+}
+
+.btn-back:hover .btn-arrow {
+	transform: translateX(-3px);
+}
+.menu-btn.btn-resume:hover .btn-arrow {
+	transform: translateX(3px);
+}
+
+/* ==========================================================================
+   4. START-SCREEN
+   ========================================================================== */
+.start {
 	position: relative;
 	width: 100%;
-	height: auto;
-	aspect-ratio: 16 / 9;
-}
-
-.game-over {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
 	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	overflow: hidden;
+	background: url("./assets/img/9_intro_outro_screens/start/startscreen.jpg") center / cover no-repeat;
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-end;
-	background-color: rgba(0, 0, 0, 0.7);
+	justify-content: space-between;
 	align-items: center;
-	padding: 32px;
+	padding: 16px;
+	gap: 32px;
+
+	.start-menu {
+		width: 100%;
+		height: 75%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+		min-height: 0;
+	}
+
+	.start-icon-btns {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		gap: 18px;
+	}
+
+	.btn-start {
+		font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+		border-radius: 14px;
+		padding: 16px 32px;
+		max-width: 100%;
+	}
+
+	.footer {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px 12px;
+		font-family: Arial, sans-serif;
+		font-size: 0.82rem;
+		color: rgba(255, 255, 255, 0.75);
+		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+		z-index: 2;
+
+		p {
+			margin: 0;
+			max-width: 100%;
+		}
+	}
+
+	.btn-impressum {
+		background: rgba(0, 0, 0, 0.25);
+		border: 1px solid rgba(244, 136, 85, 0.4);
+		border-radius: 6px;
+		color: rgba(255, 255, 255, 0.75);
+		font-size: 0.82rem;
+		padding: 4px 10px;
+		transition: all 0.2s ease;
+
+		&:hover {
+			background: rgba(244, 136, 85, 0.85);
+			color: var(--dark);
+			border-color: var(--light);
+		}
+	}
 }
 
-.result-container {
+/* ==========================================================================
+   5. IN-GAME OVERLAYS & CONTROLS
+   ========================================================================== */
+.in-game-buttons {
+	position: absolute;
+	top: 16px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 24px;
+	padding: 0;
+	z-index: 5;
+}
+
+.btn-mute {
+	width: clamp(34px, 3.5vw, 46px);
+	height: clamp(34px, 3.5vw, 46px);
+	border-radius: 50%;
+	background-color: var(--light-transparent);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.icon-volume {
+		fill: var(--dark);
+		width: 60%;
+		height: 60%;
+	}
+}
+
+/* ==========================================================================
+   6. DIALOGE & MENÜS (GLASMORPHISMUS CONTAINER)
+   ========================================================================== */
+dialog[open] {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100dvh;
+	max-width: 100vw;
+	max-height: 100dvh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 5;
+	border: none;
+	background-color: rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(5px);
+	padding: 0;
+	overflow: hidden;
+}
+
+.dialog-content {
+	position: relative;
+	width: min(80vw, 900px);
+	height: calc(100dvh - 24px);
+	max-width: calc(100vw - 24px);
+	max-height: calc(100dvh - 24px);
+	min-height: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 40px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.options-dialog,
+.impressum,
+.in-game-menu {
+	width: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	min-height: 0;
+	background: var(--dark-surface);
+	border: 2px solid var(--light);
+	border-radius: 16px;
+	box-shadow:
+		0 12px 36px rgba(0, 0, 0, 0.6),
+		inset 0 1px 0 rgba(255, 255, 255, 0.15);
+	backdrop-filter: blur(8px);
+	color: #f5f5f5;
+	font-family: Arial, sans-serif;
+	box-sizing: border-box;
+
+	h2 {
+		font-family: "Rodeo Nights", sans-serif;
+		color: var(--light);
+		font-size: 1.8rem;
+		letter-spacing: 1.5px;
+		text-align: center;
+		margin-bottom: 20px;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+	}
+}
+
+.in-game-menu {
+	display: flex;
+	align-items: center;
+	gap: 32px;
+}
+
+.in-game-menu .in-game-menu-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	align-items: center;
+	width: 100%;
+}
+
+.in-game-menu .menu-btn {
+	width: 100%;
+	max-width: 250px;
+	padding: 12px 14px;
+	border-radius: 12px;
+	font-family: "Rodeo Nights", Arial, sans-serif;
+	font-size: 1.15rem;
+	letter-spacing: 1.5px;
+	text-transform: uppercase;
+	color: #ffffff;
+	background: #622326;
+	border: 2px solid #8c3f3f;
+	box-shadow:
+		0 5px 0 #3a1315,
+		0 6px 12px rgba(0, 0, 0, 0.4);
+	transition:
+		transform 0.15s ease,
+		background-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+.in-game-menu .menu-btn:hover {
+	background-color: #732a2e;
+	border-color: var(--light);
+	transform: translateY(-2px);
+	box-shadow:
+		0 7px 0 #3a1315,
+		0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.in-game-menu .menu-btn:active {
+	transform: translateY(3px);
+	box-shadow: 0 2px 0 #3a1315;
+}
+
+.in-game-menu .menu-btn.btn-resume {
+	background: var(--light);
+	color: var(--dark);
+	border: 2px solid #ffb088;
+	box-shadow:
+		0 5px 0 #3a1315,
+		0 0 16px rgba(244, 136, 85, 0.4);
+	font-weight: bold;
+}
+
+.in-game-menu .menu-btn.btn-resume:hover {
+	background: var(--light-hover);
+	transform: translateY(-2px);
+	box-shadow:
+		0 7px 0 #3a1315,
+		0 0 22px rgba(244, 136, 85, 0.6);
+}
+
+.in-game-menu .menu-btn.btn-resume:active {
+	transform: translateY(3px);
+	box-shadow: 0 2px 0 #3a1315;
+}
+
+.options-dialog {
+	max-width: min(520px, calc(100vw - 32px));
+	width: min(100%, 520px);
+	max-height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: clamp(14px, 4vh, 24px) clamp(14px, 5vw, 32px);
+
+	.options-group {
+		border: 1px solid rgba(244, 136, 85, 0.4);
+		border-radius: 10px;
+		padding: 14px 18px;
+		margin-bottom: 16px;
+		background: rgba(0, 0, 0, 0.2);
+
+		legend {
+			font-family: "Rodeo Nights", sans-serif;
+			color: var(--light);
+			padding: 0 8px;
+			font-size: 1.1rem;
+		}
+	}
+
+	.volume {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 16px;
+		font-size: 0.95rem;
+
+		.range-wrap {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			width: min(65%, 300px);
+			min-width: 0;
+
+			input[type="range"] {
+				flex-grow: 1;
+				accent-color: var(--light);
+				cursor: pointer;
+			}
+		}
+
+		#volume-value {
+			width: 42px;
+			text-align: right;
+			font-family: monospace;
+			font-weight: bold;
+			color: var(--light);
+		}
+	}
+
+	.toggle-mute {
+		margin-top: 12px;
+
+		.toggle-control {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			cursor: pointer;
+			font-size: 0.95rem;
+
+			input {
+				display: none;
+			}
+		}
+
+		.toggle-slider {
+			width: 42px;
+			height: 22px;
+			background-color: rgba(255, 255, 255, 0.2);
+			border-radius: 20px;
+			position: relative;
+			transition: background-color 0.2s ease;
+			flex-shrink: 0;
+
+			&::before {
+				content: "";
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
+				left: 3px;
+				top: 3px;
+				background-color: #fff;
+				transition: transform 0.2s ease;
+			}
+		}
+
+		.toggle-control input:checked + .toggle-slider {
+			background-color: var(--light);
+
+			&::before {
+				transform: translateX(20px);
+			}
+		}
+	}
+
+	.difficulty-switch {
+		display: flex;
+		gap: 8px;
+		margin-top: 6px;
+
+		.btn-diff {
+			flex: 1;
+			padding: 8px 12px;
+			background: rgba(255, 255, 255, 0.1);
+			border: 1px solid rgba(244, 136, 85, 0.5);
+			color: #fff;
+			border-radius: 8px;
+			font-weight: bold;
+			transition: all 0.2s ease;
+
+			&:hover {
+				background: rgba(244, 136, 85, 0.3);
+			}
+
+			&.active {
+				background: var(--light);
+				color: var(--dark);
+				border-color: var(--light);
+				box-shadow: 0 0 12px rgba(244, 136, 85, 0.5);
+			}
+		}
+	}
+
+	.controls-hint p {
+		font-size: 0.9rem;
+		margin: 6px 0;
+		color: #e0e0e0;
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		flex-wrap: wrap;
+
+		span {
+			color: var(--light);
+			font-weight: bold;
+		}
+	}
+
+	.options-footer {
+		margin-top: 24px;
+		display: flex;
+		justify-content: center;
+	}
+}
+
+@media (max-width: 560px), (max-height: 560px) {
+	.dialog-content {
+		width: calc(100vw - 16px);
+		max-width: calc(100vw - 16px);
+		max-height: calc(100dvh - 16px);
+	}
+
+	.options-dialog {
+		max-width: 100%;
+		padding: 12px;
+
+		h2 {
+			font-size: clamp(1.25rem, 6vw, 1.8rem);
+			margin-bottom: 12px;
+		}
+
+		.options-group {
+			padding: 10px;
+			margin-bottom: 10px;
+
+			legend {
+				font-size: 0.95rem;
+			}
+		}
+
+		.volume {
+			align-items: flex-start;
+			flex-wrap: wrap;
+			margin-bottom: 10px;
+
+			.range-wrap {
+				width: 100%;
+				order: 2;
+			}
+		}
+
+		.toggle-mute {
+			margin-top: 8px;
+
+			.toggle-control {
+				gap: 8px;
+				font-size: 0.82rem;
+			}
+		}
+
+		.difficulty-switch {
+			gap: 4px;
+
+			.btn-diff {
+				min-width: 0;
+				padding: 7px 4px;
+				font-size: 0.85rem;
+			}
+		}
+
+		.controls-hint p {
+			font-size: 0.78rem;
+			gap: 4px;
+		}
+
+		.options-footer {
+			margin-top: 12px;
+		}
+	}
+}
+
+.impressum {
+	max-width: min(480px, calc(100vw - 32px));
+	width: min(100%, 480px);
+	padding: 28px 32px;
+
+	.impressum-content {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		font-size: 0.95rem;
+		max-width: 100%;
+
+		p {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 8px;
+			max-width: 100%;
+		}
+
+		.bold {
+			color: var(--light);
+			font-weight: 600;
+		}
+
+		hr {
+			border: none;
+			height: 1px;
+			background: linear-gradient(90deg, transparent 0%, rgba(244, 136, 85, 0.4) 50%, transparent 100%);
+			margin: 4px 0;
+		}
+
+		a {
+			color: #fff;
+			text-decoration: none;
+			background: rgba(255, 255, 255, 0.08);
+			padding: 3px 8px;
+			border-radius: 6px;
+			border: 1px solid rgba(244, 136, 85, 0.3);
+			transition: all 0.2s ease;
+			word-break: break-word;
+			overflow-wrap: anywhere;
+			max-width: 100%;
+			display: inline-block;
+
+			&:hover {
+				color: var(--dark);
+				background-color: var(--light);
+				border-color: var(--light);
+				box-shadow: 0 0 10px rgba(244, 136, 85, 0.5);
+			}
+		}
+	}
+
+	.impressum-footer {
+		margin-top: 24px;
+		display: flex;
+		justify-content: center;
+	}
+
+	.impressum .btn-back {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		padding: 8px 20px;
+		background-color: var(--light);
+		color: var(--dark);
+		font-family: "Rodeo Nights", Arial, sans-serif;
+		font-size: 1.1rem;
+		font-weight: bold;
+		letter-spacing: 1px;
+		border: 2px solid #ffffff;
+		border-radius: 8px;
+		box-shadow:
+			0 4px 0 #54171a,
+			0 6px 12px rgba(0, 0, 0, 0.4);
+		transition:
+			transform 0.15s ease,
+			background-color 0.15s ease,
+			box-shadow 0.15s ease;
+		width: auto;
+		max-width: none;
+	}
+
+	.impressum .btn-back:hover {
+		background-color: var(--light-hover);
+		transform: translateY(-2px);
+		box-shadow:
+			0 6px 0 #54171a,
+			0 8px 16px rgba(244, 136, 85, 0.4);
+	}
+
+	.impressum .btn-back .btn-arrow {
+		font-size: 0.9rem;
+		transition: transform 0.15s ease;
+	}
+
+	.impressum .btn-back:hover .btn-arrow {
+		transform: translateX(-3px);
+	}
+}
+
+.in-game-menu {
+	max-width: 400px;
+	padding: 28px 32px;
+	text-align: center;
+
+	.in-game-menu-buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		align-items: center;
+		width: 100%;
+	}
+
+	.menu-btn {
+		width: 100%;
+		max-width: 280px;
+		gap: 10px;
+		padding: 12px 20px;
+		background-color: rgba(255, 255, 255, 0.12);
+		color: #fff;
+		font-size: 1.15rem;
+		border-radius: 10px;
+		border-color: rgba(244, 136, 85, 0.6);
+		box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
+
+		&:hover {
+			background-color: rgba(244, 136, 85, 0.25);
+			border-color: var(--light);
+			transform: translateY(-2px);
+		}
+
+		&:active {
+			transform: translateY(2px);
+			box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+		}
+	}
+}
+
+/* ==========================================================================
+   7. ENDSCREEN (GAME OVER / WON / LOST)
+   ========================================================================== */
+.game-over {
+	position: absolute;
+	inset: 0;
 	width: 100%;
 	height: 100%;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-end;
+	gap: 16px;
+	padding-bottom: clamp(24px, 6vh, 48px);
+	z-index: 10;
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: rgba(0, 0, 0, 0.45);
+	backdrop-filter: blur(5px);
+	animation: fadeInEndscreen 0.35s ease-out forwards;
+
+	.game-btn {
+		width: 100%;
+		max-width: 260px;
+		padding: 12px 28px;
+		border-radius: 12px;
+		font-size: clamp(1.1rem, 2.4vw, 1.4rem);
+	}
 }
 
-.result-img {
-	width: 449px;
-	height: 400px;
+@keyframes fadeInEndscreen {
+	from {
+		opacity: 0;
+		transform: scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/* ==========================================================================
+   8. MEDIA QUERIES & RESPONSIVE DESIGN
+   ========================================================================== */
+@media (hover: hover) {
+	.btn-mobile-container,
+	.rotate-overlay {
+		display: none !important;
+	}
+}
+
+@media (hover: none) and (orientation: landscape) {
+	body {
+		width: 100%;
+		height: 100dvh;
+		max-width: 100vw;
+		max-height: 100dvh;
+		background-image: none;
+		background-color: black;
+	}
+
+	.rotate-overlay {
+		display: none !important;
+	}
+
+	.game-container {
+		width: min(100vw, calc(100dvh * 16 / 9));
+		height: min(100dvh, calc(100vw * 9 / 16));
+		max-width: 100vw;
+		max-height: 100dvh;
+		aspect-ratio: 16 / 9;
+	}
+
+	.screen-wrapper {
+		width: 100%;
+		height: 100%;
+	}
+
+	.start {
+		width: 100%;
+		background-size: contain;
+		background-position: center 25%;
+
+		.start-icon-btns {
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		.start-menu {
+			height: 85%;
+		}
+	}
+
+	.btn-mobile-container {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		position: absolute;
+		bottom: 12px;
+		left: 0;
+		padding: 0 20px;
+		z-index: 3;
+
+		.btn-move,
+		.btn-actions {
+			display: flex;
+			gap: 16px;
+		}
+
+		.btn-mobile {
+			width: clamp(44px, 7vw, 60px);
+			height: clamp(44px, 7vw, 60px);
+			background-color: var(--light-transparent);
+			border: 2px solid #fff;
+			border-radius: 50%;
+			backdrop-filter: blur(4px);
+			color: #fff;
+			font-size: 1.2rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			&:active {
+				background-color: var(--light);
+				transform: scale(0.92);
+			}
+		}
+	}
+}
+
+@media (hover: none) and (orientation: portrait) {
+	.rotate-overlay {
+		position: fixed;
+		inset: 0;
+		background-color: rgba(0, 0, 0, 0.85);
+		backdrop-filter: blur(6px);
+		color: #fff;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		gap: 16px;
+		z-index: 1000;
+		font-size: 1.2rem;
+	}
+
+	h1,
+	.game-container {
+		display: none !important;
+	}
 }
 
 .hidden {
-	display: none;
+	display: none !important;
 }
