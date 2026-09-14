@@ -248,6 +248,7 @@ export class World {
 
 	showGameResult() {
 		if (World.character.isDead()) {
+			AudioHub.playOne(AudioHub.PEPE_DEAD);
 			World.character.showAnimationOnce(ImageHub.PEPE.dead.frames);
 			IntervalHub.stopInterval(this.level.bossChicken.animationInterval);
 			return "lost";

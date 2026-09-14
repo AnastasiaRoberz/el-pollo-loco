@@ -10,7 +10,6 @@ export class Character extends MovableObject {
 	speedX = 10;
 	lastAction = Date.now();
 	animationTick = 0;
-	deadSoundPlayed = false;
 	deadJumpTriggered = false;
 	isJumping = false;
 	landingTriggered = false;
@@ -65,10 +64,6 @@ export class Character extends MovableObject {
 		AudioHub.stopOne(AudioHub.PEPE_RUN);
 		AudioHub.stopOne(AudioHub.PEPE_SNORING);
 		AudioHub.stopOne(AudioHub.PEPE_DAMAGE);
-		if (!this.deadSoundPlayed) {
-			this.deadSoundPlayed = true;
-			AudioHub.playOne(AudioHub.PEPE_DEAD);
-		}
 	}
 
 	handleMovementAudio() {

@@ -7,6 +7,7 @@ import { AudioHub } from "../hubs/audio-hub.class.js";
 
 export class BossChicken extends Chicken {
 	isTriggered = false;
+	attackAnimationFinished = false;
 
 	constructor(energy, speedX, damage) {
 		super();
@@ -32,11 +33,11 @@ export class BossChicken extends Chicken {
 	}
 
 	animate() {
-		IntervalHub.startInterval(() => {
+		this.movementInterval = IntervalHub.startInterval(() => {
 			if (!this.isDead()) this.handleMovement();
 		}, 1000 / 60);
 
-		IntervalHub.startInterval(() => {
+		this.animationInterval = IntervalHub.startInterval(() => {
 			this.handleAnimations();
 		}, 300);
 	}
@@ -60,14 +61,17 @@ export class BossChicken extends Chicken {
 		const state = this.getAnimationState();
 		if (state === ImageHub.BOSS_CHICKEN.attack) {
 			this.offset = state.offset;
-			return this.showAnimationOnce(state.frames);
+			this.showAnimationOnce(state.frames);
+			if (this.currentImage >= state.frames.length) this.attackAnimationFinished = true;
+			return;
 		}
+		if (!this.isAttacking()) this.attackAnimationFinished = false;
 		this.showStateAnimation(state);
 	}
 
 	getAnimationState() {
 		if (this.isHurt()) return ImageHub.BOSS_CHICKEN.hurt;
-		if (this.isAttacking()) return ImageHub.BOSS_CHICKEN.attack;
+		if (this.isAttacking() && !this.attackAnimationFinished) return ImageHub.BOSS_CHICKEN.attack;
 		if (this.isMoving()) return ImageHub.BOSS_CHICKEN.walk;
 		if (this.isAlert()) return ImageHub.BOSS_CHICKEN.alert;
 		return ImageHub.BOSS_CHICKEN.walk;
