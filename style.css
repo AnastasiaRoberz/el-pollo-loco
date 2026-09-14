@@ -63,9 +63,10 @@ body {
 
 .game-container {
 	position: relative;
-	width: auto;
-	height: 100%;
+	width: min(80vw, calc(80dvh * 16 / 9));
+	height: auto;
 	max-height: 80dvh;
+	max-width: 80vw;
 	aspect-ratio: 16 / 9;
 }
 
@@ -82,8 +83,8 @@ canvas {
 }
 
 .icon-btn {
-	width: 50px;
-	height: 50px;
+	width: clamp(30px, calc(24.286px + 1.786vw), 50px);
+	height: clamp(30px, calc(24.286px + 1.786vw), 50px);
 	border-radius: 50%;
 	background: rgba(114, 35, 39, 0.85);
 	border: 2px solid var(--light);
@@ -222,7 +223,7 @@ canvas {
 	max-width: 100%;
 	max-height: 100%;
 	overflow: hidden;
-	background: url("./assets/img/9_intro_outro_screens/start/startscreen.jpg") center / contain no-repeat;
+	background: url("./assets/img/9_intro_outro_screens/start/startscreen.jpg") bottom / contain no-repeat;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -250,7 +251,7 @@ canvas {
 	.btn-start {
 		font-size: clamp(1.4rem, 3.2vw, 2.2rem);
 		border-radius: 14px;
-		padding: 16px 32px;
+		padding: clamp(8px, calc(5.714px + 0.714vw), 16px) clamp(16px, calc(11.429px + 1.429vw), 32px);
 		max-width: 100%;
 	}
 
@@ -261,13 +262,12 @@ canvas {
 		align-items: center;
 		flex-wrap: wrap;
 		gap: 8px 12px;
-		font-family: Arial, sans-serif;
-		font-size: 0.82rem;
 		color: rgba(255, 255, 255, 0.75);
 		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 		z-index: 2;
 
 		p {
+			font-size: clamp(1rem, calc(0.857rem + 0.714vw), 1.5rem);
 			margin: 0;
 			max-width: 100%;
 		}
@@ -278,7 +278,7 @@ canvas {
 		border: 1px solid rgba(244, 136, 85, 0.4);
 		border-radius: 6px;
 		color: rgba(255, 255, 255, 0.75);
-		font-size: 0.82rem;
+		font-size: clamp(1rem, calc(0.857rem + 0.714vw), 1.5rem);
 		padding: 4px 10px;
 		transition: all 0.2s ease;
 
