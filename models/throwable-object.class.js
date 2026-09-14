@@ -5,7 +5,7 @@ import { MovableObject } from "./movable-object.class.js";
 import { World } from "./world.class.js";
 
 export class ThrowableObject extends MovableObject {
-	speedY = 20;
+	speedY = 30;
 	speedX = 20;
 	hasHit = false;
 	offset = { topRatio: 0.16, bottomRatio: 0.13, leftRatio: 0.14, rightRatio: 0.14 };
@@ -13,13 +13,13 @@ export class ThrowableObject extends MovableObject {
 
 	constructor(xPos, yPos, flipDirection) {
 		super();
-		this.initDiemsnions(xPos, yPos);
+		this.initDimensions(xPos, yPos);
 		this.loadAllImages();
 		this.applyGravity();
 		this.throw(flipDirection);
 	}
 
-	initDiemsnions(xPos, yPos) {
+	initDimensions(xPos, yPos) {
 		this.height = World.canvas.height * 0.12;
 		this.width = this.height;
 		this.yPos = yPos;
@@ -51,11 +51,16 @@ export class ThrowableObject extends MovableObject {
 		}, 50);
 	}
 
-	isAboveObj() {
+	isAboveGround() {
 		return true;
 	}
 
 	bottleHitGround() {
-		return this.yPos >= this.yPosGround;
+		const check = this.yPos >= this.yPosGround;
+		if (check && !this.soundPlayed) {
+			this.soundPlayed = true;
+			AudioHub.playOne(AudioHub.BOTTLE_BREAK);
+		}
+		return check;
 	}
 }

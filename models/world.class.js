@@ -20,7 +20,7 @@ export class World {
 	collectedBottles = 0;
 	collectedCoins = 0;
 	lastThrow = 0;
-	throwCooldown = 1000;
+	throwCooldown = 400;
 
 	constructor(canvas, endScreen, difficulty) {
 		World.canvas = canvas;
