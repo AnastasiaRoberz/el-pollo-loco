@@ -9,7 +9,7 @@
 
 @font-face {
 	font-family: "Rodeo Nights";
-	src: url("../assets/fonts/Rodeo%20Nights%20Regular.woff2") format("woff2");
+	src: url("./assets/fonts/rodeo-nights-regular.woff2") format("woff2");
 	font-weight: normal;
 	font-style: normal;
 	font-display: swap;
@@ -20,7 +20,7 @@
 	padding: 0;
 	box-sizing: border-box;
 
-	font-family: "Rodeo Nights", Arial, sans-serif;
+	font-family: "Rodeo Nights";
 	font-size: 1.2rem;
 	letter-spacing: 1.5px;
 }
