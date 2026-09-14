@@ -1,5 +1,8 @@
 import { GameAudio } from "../models/audio.class.js";
 
+/**
+ * Represents the AudioHub game object.
+ */
 export class AudioHub {
 	static isMuted = true;
 	static musicMuted = false;
@@ -40,6 +43,10 @@ export class AudioHub {
 		AudioHub.BOTTLE_BREAK,
 	];
 
+	/**
+	  * Handles play one for the game.
+	 * @param {GameAudio} sound - sound value.
+	 */
 	static playOne(sound) {
 		if (sound.file.readyState > 0 || sound.isLoaded) {
 			if (!sound.file.paused && !sound.file.ended) return;
@@ -48,11 +55,18 @@ export class AudioHub {
 		}
 	}
 
+	/**
+	  * Handles stop one for the game.
+	 * @param {GameAudio} sound - sound value.
+	 */
 	static stopOne(sound) {
 		sound.file.pause();
 		sound.file.currentTime = 0;
 	}
 
+	/**
+	  * Handles stop all for the game.
+	 */
 	static stopAll() {
 		AudioHub.allSounds.forEach((sound) => {
 			sound.file.pause();
@@ -60,6 +74,9 @@ export class AudioHub {
 		});
 	}
 
+	/**
+	  * Handles toggle mute for the game.
+	 */
 	static toggleMute() {
 		this.isMuted = !this.isMuted;
 		AudioHub.allSounds.forEach((sound) => {
@@ -68,6 +85,10 @@ export class AudioHub {
 		return this.isMuted;
 	}
 
+	/**
+	  * Handles set master volume for the game.
+	 * @param {number} volume - volume value.
+	 */
 	static setMasterVolume(volume) {
 		const normalizedVolume = Math.min(1, Math.max(0, volume));
 		AudioHub.masterVolume = normalizedVolume;
@@ -76,6 +97,10 @@ export class AudioHub {
 		});
 	}
 
+	/**
+	  * Handles set music muted for the game.
+	 * @param {boolean} isMuted - isMuted value.
+	 */
 	static setMusicMuted(isMuted) {
 		AudioHub.musicMuted = isMuted;
 		AudioHub.GAME_SOUND.file.muted = isMuted || AudioHub.isMuted;

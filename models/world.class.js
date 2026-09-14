@@ -7,6 +7,9 @@ import { ThrowableObject } from "./throwable-object.class.js";
 import { AudioHub } from "../hubs/audio-hub.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
 
+/**
+ * Represents the World game object.
+ */
 export class World {
 	static canvas;
 	static character;
@@ -22,6 +25,12 @@ export class World {
 	lastThrow = 0;
 	throwCooldown = 400;
 
+	/**
+	 * Creates and initializes the object.
+	 * @param {*} canvas - canvas value.
+	 * @param {Function} endScreen - endScreen value.
+	 * @param {string} difficulty - difficulty value.
+	 */
 	constructor(canvas, endScreen, difficulty) {
 		World.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
@@ -34,6 +43,9 @@ export class World {
 		this.run();
 	}
 
+	/**
+	  * Handles draw for the game.
+	 */
 	draw() {
 		this.ctx.clearRect(0, 0, World.canvas.width, World.canvas.height);
 		this.cameraPos = -World.character.xPos + World.character.width;
@@ -49,6 +61,9 @@ export class World {
 		requestAnimationFrame(() => this.draw());
 	}
 
+	/**
+	  * Handles draw objects for the game.
+	 */
 	drawObjects() {
 		this.addObjectsToMap(this.level.bgLayers);
 		this.addObjectsToMap(this.level.clouds);
@@ -60,6 +75,9 @@ export class World {
 		this.level.bossChicken.draw(this.ctx);
 	}
 
+	/**
+	  * Handles draw frames for the game.
+	 */
 	drawFrames() {
 		World.character.drawFrame(this.ctx);
 		this.level.bossChicken.drawFrame(this.ctx);
@@ -68,6 +86,9 @@ export class World {
 		this.level.colObjects.coins.forEach((coin) => coin.drawFrame(this.ctx));
 	}
 
+	/**
+	  * Handles draw offset frames for the game.
+	 */
 	drawOffsetFrames() {
 		World.character.drawOffsetFrame(this.ctx);
 		this.level.bossChicken.drawOffsetFrame(this.ctx);
@@ -76,6 +97,9 @@ export class World {
 		this.level.colObjects.coins.forEach((coin) => coin.drawOffsetFrame(this.ctx));
 	}
 
+	/**
+	  * Handles draw statusbars for the game.
+	 */
 	drawStatusbars() {
 		this.level.bars.healthBar.draw(this.ctx);
 		this.level.bars.coinBar.draw(this.ctx);
@@ -85,10 +109,17 @@ export class World {
 		}
 	}
 
+	/**
+	  * Handles add objects to map for the game.
+	 * @param {*} objects - objects value.
+	 */
 	addObjectsToMap(objects) {
 		objects.forEach((object) => object.draw(this.ctx));
 	}
 
+	/**
+	  * Handles run for the game.
+	 */
 	run() {
 		IntervalHub.startInterval(() => {
 			this.setRealFrames();
@@ -99,6 +130,9 @@ export class World {
 		}, 1000 / 60);
 	}
 
+	/**
+	  * Handles set real frames for the game.
+	 */
 	setRealFrames() {
 		World.character.setRealFrame();
 		this.level.bossChicken.setRealFrame();
@@ -108,6 +142,9 @@ export class World {
 		this.throwableObjects.forEach((bottle) => bottle.setRealFrame());
 	}
 
+	/**
+	  * Handles check collisions for the game.
+	 */
 	checkCollisions() {
 		this.collisionBossCharacter();
 		this.level.enemies.forEach((enemy) => {
@@ -120,6 +157,10 @@ export class World {
 		});
 	}
 
+	/**
+	  * Handles collision enemy character for the game.
+	 * @param {*} enemy - enemy value.
+	 */
 	collisionEnemyCharacter(enemy) {
 		if (!World.character.isColliding(enemy) || enemy.isDead()) return;
 
@@ -132,6 +173,10 @@ export class World {
 		}
 	}
 
+	/**
+	  * Handles handle enemy stomp for the game.
+	 * @param {*} enemy - enemy value.
+	 */
 	handleEnemyStomp(enemy) {
 		enemy.die();
 		setTimeout(() => {
@@ -141,12 +186,19 @@ export class World {
 		World.character.jump((World.character.height / 2) * 0.01);
 	}
 
+	/**
+	  * Handles handle enemy damage for the game.
+	 */
 	handleEnemyDamage() {
 		if (World.character.isInvulnerable()) return;
 		World.character.isHit(this.level.config.damage);
 		this.level.bars.healthBar.setPercentage(World.character.energy);
 	}
 
+	/**
+	  * Handles collision enemy bottle for the game.
+	 * @param {*} enemy - enemy value.
+	 */
 	collisionEnemyBottle(enemy) {
 		this.throwableObjects.forEach((bottle) => {
 			if (bottle.isColliding(enemy) && !enemy.isDead() && !bottle.hasHit) {
@@ -160,6 +212,9 @@ export class World {
 		});
 	}
 
+	/**
+	  * Handles collision boss character for the game.
+	 */
 	collisionBossCharacter() {
 		if (this.level.bossChicken.isColliding(World.character) && !this.level.bossChicken.isDead()) {
 			if (!World.character.isInvulnerable()) {
@@ -169,6 +224,10 @@ export class World {
 		}
 	}
 
+	/**
+	  * Handles collision boss bottle for the game.
+	 * @param {*} bottle - bottle value.
+	 */
 	collisionBossBottle(bottle) {
 		if (!this.level.bossChicken.isDead() && bottle.isColliding(this.level.bossChicken) && !bottle.hasHit) {
 			bottle.hasHit = true;
@@ -179,6 +238,10 @@ export class World {
 		}
 	}
 
+	/**
+	  * Handles remove bottle for the game.
+	 * @param {*} bottle - bottle value.
+	 */
 	removeBottle(bottle) {
 		if (bottle.bottleHitGround() || bottle.hasHit) {
 			setTimeout(() => {
@@ -188,11 +251,18 @@ export class World {
 		}
 	}
 
+	/**
+	  * Handles collect items for the game.
+	 */
 	collectItems() {
 		this.level.colObjects.bottles.forEach((bottle) => this.collectBottles(bottle));
 		this.level.colObjects.coins.forEach((coin) => this.collectCoins(coin));
 	}
 
+	/**
+	  * Handles collect bottles for the game.
+	 * @param {*} bottle - bottle value.
+	 */
 	collectBottles(bottle) {
 		if (World.character.isColliding(bottle)) {
 			this.collectedBottles++;
@@ -203,6 +273,10 @@ export class World {
 		}
 	}
 
+	/**
+	  * Handles collect coins for the game.
+	 * @param {*} coin - coin value.
+	 */
 	collectCoins(coin) {
 		if (World.character.isColliding(coin)) {
 			this.collectedCoins++;
@@ -213,6 +287,9 @@ export class World {
 		}
 	}
 
+	/**
+	  * Handles throw objects for the game.
+	 */
 	throwObjects() {
 		if (Keyboard.KEY_F && this.collectedBottles > 0 && Date.now() - this.lastThrow > this.throwCooldown) {
 			const xPos = World.character.flipDirection ? World.character.rxPos : World.character.rxPos + World.character.rWidth;
@@ -224,6 +301,9 @@ export class World {
 		}
 	}
 
+	/**
+	  * Handles check game end for the game.
+	 */
 	checkGameEnd() {
 		if (this.gameOver || (!World.character.isDead() && !this.level.bossChicken.isDead())) return;
 
@@ -234,6 +314,9 @@ export class World {
 		setTimeout(() => this.endScreen(result), 4000);
 	}
 
+	/**
+	  * Handles stop game intervals for the game.
+	 */
 	stopGameIntervals() {
 		IntervalHub.stopInterval(World.character.movementInterval);
 		IntervalHub.stopInterval(this.level.bossChicken.movementInterval);
@@ -245,6 +328,9 @@ export class World {
 		this.level.colObjects.coins.forEach((coin) => IntervalHub.stopInterval(coin.animationInterval));
 	}
 
+	/**
+	  * Handles show game result for the game.
+	 */
 	showGameResult() {
 		if (World.character.isDead()) {
 			AudioHub.playOne(AudioHub.PEPE_DEAD);

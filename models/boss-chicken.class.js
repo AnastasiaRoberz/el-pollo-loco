@@ -5,10 +5,19 @@ import { Level } from "./level.class.js";
 import { World } from "./world.class.js";
 import { AudioHub } from "../hubs/audio-hub.class.js";
 
+/**
+ * Represents the BossChicken game object and extends Chicken.
+ */
 export class BossChicken extends Chicken {
 	isTriggered = false;
 	attackAnimationFinished = false;
 
+	/**
+	 * Creates and initializes the object.
+	 * @param {number} energy - energy value.
+	 * @param {number} speedX - speedX value.
+	 * @param {number} damage - damage value.
+	 */
 	constructor(energy, speedX, damage) {
 		super();
 		this.energy = energy;
@@ -19,6 +28,9 @@ export class BossChicken extends Chicken {
 		this.animate();
 	}
 
+	/**
+	  * Handles init dimensions for the game.
+	 */
 	initDimensions() {
 		this.height = World.canvas.height * 0.85;
 		this.width = this.height * 0.85;
@@ -26,12 +38,18 @@ export class BossChicken extends Chicken {
 		this.xPos = Level.maxWidth - this.width * 1.2;
 	}
 
+	/**
+	  * Handles load all images for the game.
+	 */
 	loadAllImages() {
 		this.offset = ImageHub.BOSS_CHICKEN.walk.offset;
 		this.loadImg(ImageHub.BOSS_CHICKEN.walk.frames[0]);
 		Object.values(ImageHub.BOSS_CHICKEN).forEach((state) => this.loadImages(state.frames));
 	}
 
+	/**
+	  * Handles animate for the game.
+	 */
 	animate() {
 		this.movementInterval = IntervalHub.startInterval(() => {
 			if (!this.isDead()) this.handleMovement();
@@ -42,6 +60,9 @@ export class BossChicken extends Chicken {
 		}, 300);
 	}
 
+	/**
+	  * Handles handle movement for the game.
+	 */
 	handleMovement() {
 		if (this.isAlert()) {
 			this.speedX = this.isAttacking() ? 6 : 2;
@@ -56,6 +77,9 @@ export class BossChicken extends Chicken {
 		}
 	}
 
+	/**
+	  * Handles handle animations for the game.
+	 */
 	handleAnimations() {
 		if (this.isDead()) return this.startDeathSequence();
 		const state = this.getAnimationState();
@@ -69,6 +93,9 @@ export class BossChicken extends Chicken {
 		this.showStateAnimation(state);
 	}
 
+	/**
+	  * Handles get animation state for the game.
+	 */
 	getAnimationState() {
 		if (this.isHurt()) return ImageHub.BOSS_CHICKEN.hurt;
 		if (this.isAttacking() && !this.attackAnimationFinished) return ImageHub.BOSS_CHICKEN.attack;
@@ -77,22 +104,35 @@ export class BossChicken extends Chicken {
 		return ImageHub.BOSS_CHICKEN.walk;
 	}
 
+	/**
+	  * Handles show state animation for the game.
+	 * @param {Object} state - state value.
+	 */
 	showStateAnimation(state) {
 		this.offset = state.offset;
 		this.showAnimation(state.frames);
 	}
 
+	/**
+	  * Handles start death sequence for the game.
+	 */
 	startDeathSequence() {
 		this.stopBossIntervals();
 		this.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames || ImageHub.BOSS_CHICKEN.dead);
 		this.startDeathFall();
 	}
 
+	/**
+	  * Handles stop boss intervals for the game.
+	 */
 	stopBossIntervals() {
 		IntervalHub.stopInterval(this.movementInterval || "boss-chicken-movement");
 		IntervalHub.stopInterval(this.animationInterval || "boss-chicken-animate");
 	}
 
+	/**
+	  * Handles start death fall for the game.
+	 */
 	startDeathFall() {
 		let bossDropSpeed = 10;
 		const gravity = 1.0;
@@ -103,10 +143,16 @@ export class BossChicken extends Chicken {
 		}, 1000 / 40);
 	}
 
+	/**
+	  * Handles get distance for the game.
+	 */
 	getDistance() {
 		return Math.abs(this.xPos - World.character.xPos);
 	}
 
+	/**
+	  * Handles is alert for the game.
+	 */
 	isAlert() {
 		if (this.getDistance() < World.canvas.width * 0.8) {
 			this.isTriggered = true;
@@ -115,10 +161,16 @@ export class BossChicken extends Chicken {
 		return this.isTriggered;
 	}
 
+	/**
+	  * Handles is attacking for the game.
+	 */
 	isAttacking() {
 		return this.getDistance() <= 180;
 	}
 
+	/**
+	  * Handles is moving for the game.
+	 */
 	isMoving() {
 		return this.isAlert() && !this.isAttacking();
 	}

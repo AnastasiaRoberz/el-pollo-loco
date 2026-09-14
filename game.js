@@ -12,6 +12,9 @@ window.addEventListener("load", () => {
 	document.getElementById("flip").addEventListener("click", rotateAndOpenFullscreen);
 });
 
+/**
+  * Handles init for the game.
+ */
 function init() {
 	showGameScreen();
 	AudioHub.playOne(AudioHub.GAME_SOUND);
@@ -19,6 +22,10 @@ function init() {
 	new World(canvas, showEndScreen, currentDifficulty);
 }
 
+/**
+  * Handles open fullscreen for the game.
+ * @param {HTMLElement} element - element value.
+ */
 function openFullscreen(element = document.documentElement) {
 	if (element.requestFullscreen) {
 		return element.requestFullscreen();
@@ -29,6 +36,9 @@ function openFullscreen(element = document.documentElement) {
 	}
 }
 
+/**
+  * Handles rotate and open fullscreen for the game.
+ */
 function rotateAndOpenFullscreen() {
 	const fullscreenTarget = document.getElementById("game-container");
 	openFullscreen(fullscreenTarget).then(() => {
@@ -38,6 +48,10 @@ function rotateAndOpenFullscreen() {
 	});
 }
 
+/**
+  * Handles toggle mute icon for the game.
+ * @param {string} currentScreen - currentScreen value.
+ */
 function toggleMuteIcon(currentScreen) {
 	event.currentTarget.blur();
 	AudioHub.toggleMute();
@@ -45,6 +59,9 @@ function toggleMuteIcon(currentScreen) {
 	if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
 }
 
+/**
+  * Handles update mute controls for the game.
+ */
 function updateMuteControls() {
 	["start", "ingame"].forEach((screen) => {
 		const muteIcon = document.getElementById(`icon-mute-${screen}`);
@@ -61,6 +78,9 @@ function updateMuteControls() {
 }
 
 //#region START SCREEN
+/**
+  * Handles show start screen for the game.
+ */
 function showStartScreen() {
 	screenRef.innerHTML = TemplateHub.startScreen();
 	closeDialog();
@@ -70,6 +90,9 @@ function showStartScreen() {
 	bindStartScreenEvents();
 }
 
+/**
+  * Handles bind start screen events for the game.
+ */
 function bindStartScreenEvents() {
 	document.getElementById("btn-mute-start").addEventListener("click", () => toggleMuteIcon("start"));
 	document.getElementById("btn-options").addEventListener("click", showDialogOptions);
@@ -79,6 +102,9 @@ function bindStartScreenEvents() {
 //#endregion
 
 //#region GAME SCREEN
+/**
+  * Handles show game screen for the game.
+ */
 function showGameScreen() {
 	screenRef.innerHTML = TemplateHub.gameScreen();
 	closeDialog();
@@ -88,6 +114,9 @@ function showGameScreen() {
 	bindGameScreenEvents();
 }
 
+/**
+  * Handles bind game screen events for the game.
+ */
 function bindGameScreenEvents() {
 	document.getElementById("btn-mute-ingame").addEventListener("click", () => toggleMuteIcon("ingame"));
 	document.getElementById("btn-pause").addEventListener("click", () => {
@@ -99,6 +128,10 @@ function bindGameScreenEvents() {
 //#endregion
 
 //#region END SCREEN
+/**
+  * Handles show end screen for the game.
+ * @param {*} result - result value.
+ */
 function showEndScreen(result) {
 	screenRef.insertAdjacentHTML("beforeend", TemplateHub.endScreen());
 	document.getElementById("btn-mute-ingame").classList.add("hidden");
@@ -111,6 +144,9 @@ function showEndScreen(result) {
 	bindEndScreenEvents();
 }
 
+/**
+  * Handles bind end screen events for the game.
+ */
 function bindEndScreenEvents() {
 	document.getElementById("btn-restart-game").addEventListener("click", init);
 	document.getElementById("btn-back-to-start").addEventListener("click", showStartScreen);
@@ -118,15 +154,24 @@ function bindEndScreenEvents() {
 //#endregion
 
 //#region DIALOG
+/**
+  * Handles open dialog for the game.
+ */
 function openDialog() {
 	document.getElementById("game-dialog").show();
 }
 
+/**
+  * Handles close dialog for the game.
+ */
 function closeDialog() {
 	document.getElementById("game-dialog").close();
 	IntervalHub.resumeAllIntervals();
 }
 // ----- MENU -----
+/**
+  * Handles show dialog menu for the game.
+ */
 function showDialogMenu() {
 	openDialog();
 	dialogRef.innerHTML = TemplateHub.dialogMenu();
@@ -134,6 +179,9 @@ function showDialogMenu() {
 	bindDialogMenuEvents();
 }
 
+/**
+  * Handles bind dialog menu events for the game.
+ */
 function bindDialogMenuEvents() {
 	document.getElementById("btn-resume-ingame").addEventListener("click", () => {
 		closeDialog();
@@ -148,6 +196,9 @@ function bindDialogMenuEvents() {
 // ----------------
 
 // ----- DIALOG OPTIONS -----
+/**
+  * Handles show dialog options for the game.
+ */
 function showDialogOptions() {
 	openDialog();
 	dialogRef.innerHTML = TemplateHub.dialogOptions();
@@ -155,6 +206,9 @@ function showDialogOptions() {
 	bindDialogOptionsEvents();
 }
 
+/**
+  * Handles bind dialog options events for the game.
+ */
 function bindDialogOptionsEvents() {
 	const volumeSlider = document.getElementById("volume-slider");
 	const volumeValue = document.getElementById("volume-value");
@@ -205,6 +259,9 @@ function bindDialogOptionsEvents() {
 // --------------------------
 
 // ----- DIALOG IMPRESSUM -----
+/**
+  * Handles show dialog impressum for the game.
+ */
 function showDialogImpressum() {
 	openDialog();
 	dialogRef.innerHTML = TemplateHub.dialogImpressum();
@@ -226,6 +283,10 @@ export function setupDifficultyControls() {
 	});
 }
 
+/**
+  * Handles update difficulty ui for the game.
+ * @param {string} selectedLevel - selectedLevel value.
+ */
 function updateDifficultyUI(selectedLevel) {
 	const buttons = document.querySelectorAll(".btn-diff");
 	buttons.forEach((btn) => {

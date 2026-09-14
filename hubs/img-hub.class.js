@@ -1,3 +1,6 @@
+/**
+ * Represents the ImageHub game object.
+ */
 export class ImageHub {
 	// --- CHARACTER (PEPE) ---
 	static PEPE = Object.freeze({

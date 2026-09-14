@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: game.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: game.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { AudioHub } from "./hubs/audio-hub.class.js";
+import { World } from "./models/world.class.js";
+import { TemplateHub } from "./hubs/template-hub.js";
+import { IntervalHub } from "./hubs/interval-hub.class.js";
+
+const screenRef = document.getElementById("screen-wrapper");
+const dialogRef = document.getElementById("dialog-content");
+let currentDifficulty = localStorage.getItem("game_difficulty") || "MEDIUM";
+
+window.addEventListener("load", () => {
+	showStartScreen();
+	document.getElementById("flip").addEventListener("click", rotateAndOpenFullscreen);
+});
+
+/**
+  * Handles init for the game.
+ */
+function init() {
+	showGameScreen();
+	AudioHub.playOne(AudioHub.GAME_SOUND);
+	const canvas = document.getElementById("canvas");
+	new World(canvas, showEndScreen, currentDifficulty);
+}
+
+/**
+  * Handles open fullscreen for the game.
+ * @param {HTMLElement} element - element value.
+ */
+function openFullscreen(element = document.documentElement) {
+	if (element.requestFullscreen) {
+		return element.requestFullscreen();
+	} else if (element.webkitRequestFullscreen) {
+		return element.webkitRequestFullscreen();
+	} else if (element.msRequestFullscreen) {
+		return element.msRequestFullscreen();
+	}
+}
+
+/**
+  * Handles rotate and open fullscreen for the game.
+ */
+function rotateAndOpenFullscreen() {
+	const fullscreenTarget = document.getElementById("game-container");
+	openFullscreen(fullscreenTarget).then(() => {
+		if (screen.orientation &amp;&amp; screen.orientation.lock) {
+			return screen.orientation.lock("landscape");
+		}
+	});
+}
+
+/**
+  * Handles toggle mute icon for the game.
+ * @param {string} currentScreen - currentScreen value.
+ */
+function toggleMuteIcon(currentScreen) {
+	event.currentTarget.blur();
+	AudioHub.toggleMute();
+	updateMuteControls();
+	if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
+}
+
+/**
+  * Handles update mute controls for the game.
+ */
+function updateMuteControls() {
+	["start", "ingame"].forEach((screen) => {
+		const muteIcon = document.getElementById(`icon-mute-${screen}`);
+		const soundIcon = document.getElementById(`icon-sound-${screen}`);
+
+		if (muteIcon &amp;&amp; soundIcon) {
+			muteIcon.classList.toggle("hidden", !AudioHub.isMuted);
+			soundIcon.classList.toggle("hidden", AudioHub.isMuted);
+		}
+	});
+
+	const muteAllInput = document.getElementById("toggle-mute-all");
+	if (muteAllInput) muteAllInput.checked = AudioHub.isMuted;
+}
+
+//#region START SCREEN
+/**
+  * Handles show start screen for the game.
+ */
+function showStartScreen() {
+	screenRef.innerHTML = TemplateHub.startScreen();
+	closeDialog();
+
+	updateMuteControls();
+
+	bindStartScreenEvents();
+}
+
+/**
+  * Handles bind start screen events for the game.
+ */
+function bindStartScreenEvents() {
+	document.getElementById("btn-mute-start").addEventListener("click", () => toggleMuteIcon("start"));
+	document.getElementById("btn-options").addEventListener("click", showDialogOptions);
+	document.getElementById("btn-start-game").addEventListener("click", init);
+	document.getElementById("btn-impressum").addEventListener("click", showDialogImpressum);
+}
+//#endregion
+
+//#region GAME SCREEN
+/**
+  * Handles show game screen for the game.
+ */
+function showGameScreen() {
+	screenRef.innerHTML = TemplateHub.gameScreen();
+	closeDialog();
+
+	updateMuteControls();
+
+	bindGameScreenEvents();
+}
+
+/**
+  * Handles bind game screen events for the game.
+ */
+function bindGameScreenEvents() {
+	document.getElementById("btn-mute-ingame").addEventListener("click", () => toggleMuteIcon("ingame"));
+	document.getElementById("btn-pause").addEventListener("click", () => {
+		event.currentTarget.blur();
+		showDialogMenu();
+		IntervalHub.pauseAllIntervals();
+	});
+}
+//#endregion
+
+//#region END SCREEN
+/**
+  * Handles show end screen for the game.
+ * @param {*} result - result value.
+ */
+function showEndScreen(result) {
+	screenRef.insertAdjacentHTML("beforeend", TemplateHub.endScreen());
+	document.getElementById("btn-mute-ingame").classList.add("hidden");
+	document.getElementById("btn-pause").classList.add("hidden");
+	document.getElementById("mobile-btns").classList.add("hidden");
+
+	const resultImg = result === "won" ? "./assets/img/10_won_lost/end-screen-won.png" : "./assets/img/10_won_lost/end-screen-lost.png";
+	document.getElementById("game-over").style.backgroundImage = `url(${resultImg})`;
+
+	bindEndScreenEvents();
+}
+
+/**
+  * Handles bind end screen events for the game.
+ */
+function bindEndScreenEvents() {
+	document.getElementById("btn-restart-game").addEventListener("click", init);
+	document.getElementById("btn-back-to-start").addEventListener("click", showStartScreen);
+}
+//#endregion
+
+//#region DIALOG
+/**
+  * Handles open dialog for the game.
+ */
+function openDialog() {
+	document.getElementById("game-dialog").show();
+}
+
+/**
+  * Handles close dialog for the game.
+ */
+function closeDialog() {
+	document.getElementById("game-dialog").close();
+	IntervalHub.resumeAllIntervals();
+}
+// ----- MENU -----
+/**
+  * Handles show dialog menu for the game.
+ */
+function showDialogMenu() {
+	openDialog();
+	dialogRef.innerHTML = TemplateHub.dialogMenu();
+
+	bindDialogMenuEvents();
+}
+
+/**
+  * Handles bind dialog menu events for the game.
+ */
+function bindDialogMenuEvents() {
+	document.getElementById("btn-resume-ingame").addEventListener("click", () => {
+		closeDialog();
+	});
+	document.getElementById("btn-restart-ingame").addEventListener("click", init);
+	document.getElementById("btn-options-ingame").addEventListener("click", () => {
+		dialogRef.innerHTML = TemplateHub.dialogOptions();
+		bindDialogOptionsEvents();
+	});
+	document.getElementById("btn-start-ingame").addEventListener("click", () => showStartScreen());
+}
+// ----------------
+
+// ----- DIALOG OPTIONS -----
+/**
+  * Handles show dialog options for the game.
+ */
+function showDialogOptions() {
+	openDialog();
+	dialogRef.innerHTML = TemplateHub.dialogOptions();
+
+	bindDialogOptionsEvents();
+}
+
+/**
+  * Handles bind dialog options events for the game.
+ */
+function bindDialogOptionsEvents() {
+	const volumeSlider = document.getElementById("volume-slider");
+	const volumeValue = document.getElementById("volume-value");
+	const muteAllInput = document.getElementById("toggle-mute-all");
+	const muteMusicInput = document.getElementById("toggle-mute-music");
+
+	volumeSlider.value = String(AudioHub.masterVolume);
+	volumeValue.textContent = `${Math.round(AudioHub.masterVolume * 100)}%`;
+	muteAllInput.checked = AudioHub.isMuted;
+	muteMusicInput.checked = AudioHub.GAME_SOUND.file.muted &amp;&amp; !AudioHub.isMuted;
+
+	volumeSlider.addEventListener("input", () => {
+		const volume = Number(volumeSlider.value);
+		AudioHub.setMasterVolume(volume);
+		volumeValue.textContent = `${Math.round(volume * 100)}%`;
+	});
+
+	muteAllInput.addEventListener("change", () => {
+		if (muteAllInput.checked !== AudioHub.isMuted) AudioHub.toggleMute();
+		updateMuteControls();
+		if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
+	});
+
+	muteMusicInput.addEventListener("change", () => {
+		AudioHub.setMusicMuted(muteMusicInput.checked);
+		if (muteMusicInput.checked) AudioHub.stopOne(AudioHub.GAME_SOUND);
+		else AudioHub.playOne(AudioHub.GAME_SOUND);
+	});
+
+	document.querySelectorAll(".btn-diff").forEach((button) => {
+		button.addEventListener("click", () => {
+			currentDifficulty = button.dataset.level;
+			localStorage.setItem("game_difficulty", currentDifficulty);
+			updateDifficultyUI(currentDifficulty);
+		});
+	});
+
+	document.getElementById("btn-options-back").addEventListener("click", () => {
+		if (document.getElementById("btn-resume-ingame")) {
+			showDialogMenu();
+		} else {
+			closeDialog();
+		}
+	});
+
+	updateDifficultyUI(currentDifficulty);
+}
+// --------------------------
+
+// ----- DIALOG IMPRESSUM -----
+/**
+  * Handles show dialog impressum for the game.
+ */
+function showDialogImpressum() {
+	openDialog();
+	dialogRef.innerHTML = TemplateHub.dialogImpressum();
+	document.getElementById("btn-impressum-back").addEventListener("click", closeDialog);
+}
+// ----------------------------
+//#endregion
+
+//#region OPTIONS
+export function setupDifficultyControls() {
+	const gameContainer = document.getElementById("game-container");
+
+	gameContainer.addEventListener("click", (event) => {
+		const btn = event.target.closest(".btn-diff");
+		if (!btn) return;
+		currentDifficulty = btn.dataset.level;
+		localStorage.setItem("game_difficulty", currentDifficulty);
+		updateDifficultyUI(currentDifficulty);
+	});
+}
+
+/**
+  * Handles update difficulty ui for the game.
+ * @param {string} selectedLevel - selectedLevel value.
+ */
+function updateDifficultyUI(selectedLevel) {
+	const buttons = document.querySelectorAll(".btn-diff");
+	buttons.forEach((btn) => {
+		btn.classList.toggle("active", btn.dataset.level === selectedLevel);
+	});
+}
+
+//#endregion
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundLayer.html">BackgroundLayer</a></li><li><a href="BossChicken.html">BossChicken</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CollectableBottle.html">CollectableBottle</a></li><li><a href="CollectableCoin.html">CollectableCoin</a></li><li><a href="CollectableObject.html">CollectableObject</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="GameAudio.html">GameAudio</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="LevelHub.html">LevelHub</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="NormalChicken.html">NormalChicken</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="TemplateHub.html">TemplateHub</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindDialogMenuEvents">bindDialogMenuEvents</a></li><li><a href="global.html#bindDialogOptionsEvents">bindDialogOptionsEvents</a></li><li><a href="global.html#bindEndScreenEvents">bindEndScreenEvents</a></li><li><a href="global.html#bindGameScreenEvents">bindGameScreenEvents</a></li><li><a href="global.html#bindStartScreenEvents">bindStartScreenEvents</a></li><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#openDialog">openDialog</a></li><li><a href="global.html#openFullscreen">openFullscreen</a></li><li><a href="global.html#rotateAndOpenFullscreen">rotateAndOpenFullscreen</a></li><li><a href="global.html#showDialogImpressum">showDialogImpressum</a></li><li><a href="global.html#showDialogMenu">showDialogMenu</a></li><li><a href="global.html#showDialogOptions">showDialogOptions</a></li><li><a href="global.html#showEndScreen">showEndScreen</a></li><li><a href="global.html#showGameScreen">showGameScreen</a></li><li><a href="global.html#showStartScreen">showStartScreen</a></li><li><a href="global.html#toggleMuteIcon">toggleMuteIcon</a></li><li><a href="global.html#updateDifficultyUI">updateDifficultyUI</a></li><li><a href="global.html#updateMuteControls">updateMuteControls</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Sep 14 2026 05:39:56 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

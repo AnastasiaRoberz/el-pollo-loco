@@ -1,4 +1,10 @@
+/**
+ * Represents the TemplateHub game object.
+ */
 export class TemplateHub {
+	/**
+	  * Handles start screen for the game.
+	 */
 	static startScreen() {
 		return /*html*/ `
         <div class="start" id="start-screen">
@@ -30,6 +36,9 @@ export class TemplateHub {
     `;
 	}
 
+	/**
+	  * Handles game screen for the game.
+	 */
 	static gameScreen() {
 		return /*html*/ `
         <div id="game-screen" class="game-screen">
@@ -81,6 +90,9 @@ export class TemplateHub {
     `;
 	}
 
+	/**
+	  * Handles end screen for the game.
+	 */
 	static endScreen() {
 		return /*html*/ `
             <div class="game-over" id="game-over">
@@ -94,6 +106,9 @@ export class TemplateHub {
     `;
 	}
 
+	/**
+	  * Handles dialog menu for the game.
+	 */
 	static dialogMenu() {
 		return /*html*/ `
             <div class="in-game-menu" id="in-game-menu">
@@ -114,6 +129,9 @@ export class TemplateHub {
     `;
 	}
 
+	/**
+	  * Handles dialog options for the game.
+	 */
 	static dialogOptions() {
 		return /*html*/ `
             <div class="options-dialog" id="options">
@@ -173,6 +191,9 @@ export class TemplateHub {
     `;
 	}
 
+	/**
+	  * Handles dialog impressum for the game.
+	 */
 	static dialogImpressum() {
 		return /*html*/ `
             <div class="impressum">

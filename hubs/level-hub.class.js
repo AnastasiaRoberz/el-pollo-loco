@@ -1,3 +1,6 @@
+/**
+ * Represents the LevelHub game object.
+ */
 export class LevelHub {
 	static LEVEL_EASY = {
 		// Welt

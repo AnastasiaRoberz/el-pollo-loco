@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/character.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/character.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { AudioHub } from "../hubs/audio-hub.class.js";
+import { ImageHub } from "../hubs/img-hub.class.js";
+import { IntervalHub } from "../hubs/interval-hub.class.js";
+import { Keyboard } from "./keyboard.class.js";
+import { Level } from "./level.class.js";
+import { MovableObject } from "./movable-object.class.js";
+import { World } from "./world.class.js";
+
+/**
+ * Represents the Character game object and extends MovableObject.
+ */
+export class Character extends MovableObject {
+	speedX = 10;
+	lastAction = Date.now();
+	animationTick = 0;
+	deadJumpTriggered = false;
+	isJumping = false;
+	landingTriggered = false;
+	wasHurt = false;
+
+	/**
+	 * Creates and initializes the object.
+	 */
+	constructor() {
+		super();
+		this.loadAllImages();
+		this.initDimensions();
+		this.applyGravity();
+		this.animate();
+		this.hurtSound = AudioHub.PEPE_DAMAGE;
+	}
+
+	/**
+	  * Handles init dimensions for the game.
+	 */
+	initDimensions() {
+		this.height = World.canvas.height * 0.6;
+		this.width = this.height * 0.51;
+		this.xPos = this.width;
+		this.yPosGround = World.canvas.height * 0.86 - this.height + this.offset.bottomRatio * this.height;
+		this.yPos = this.yPosGround;
+	}
+
+	/**
+	  * Handles load all images for the game.
+	 */
+	loadAllImages() {
+		this.offset = ImageHub.PEPE.idle.offset;
+		this.loadImg(ImageHub.PEPE.idle.frames[0]);
+		Object.values(ImageHub.PEPE).forEach((state) => this.loadImages(state.frames));
+	}
+
+	/**
+	  * Handles animate for the game.
+	 */
+	animate() {
+		this.movementInterval = IntervalHub.startInterval(() => {
+			this.handleAudio();
+			this.handleWalking();
+			this.handleJumping();
+		}, 1000 / 60);
+
+		this.animationInterval = IntervalHub.startInterval(() => {
+			this.animationTick++;
+			this.handleAnimations();
+		}, 50);
+	}
+
+	/**
+	  * Handles handle audio for the game.
+	 */
+	handleAudio() {
+		if (this.isDead()) {
+			this.handleDeadAudio();
+			return;
+		}
+
+		this.handleMovementAudio();
+	}
+
+	/**
+	  * Handles handle dead audio for the game.
+	 */
+	handleDeadAudio() {
+		AudioHub.stopOne(AudioHub.PEPE_RUN);
+		AudioHub.stopOne(AudioHub.PEPE_SNORING);
+		AudioHub.stopOne(AudioHub.PEPE_DAMAGE);
+	}
+
+	/**
+	  * Handles handle movement audio for the game.
+	 */
+	handleMovementAudio() {
+		if ((Keyboard.RIGHT || Keyboard.LEFT) &amp;&amp; !this.isAboveGround()) {
+			AudioHub.playOne(AudioHub.PEPE_RUN);
+		} else {
+			AudioHub.stopOne(AudioHub.PEPE_RUN);
+		}
+
+		if (this.isLongIdle()) {
+			AudioHub.playOne(AudioHub.PEPE_SNORING);
+		} else {
+			AudioHub.stopOne(AudioHub.PEPE_SNORING);
+		}
+	}
+
+	/**
+	  * Handles handle walking for the game.
+	 */
+	handleWalking() {
+		if (this.isHurt()) return;
+		if (Keyboard.RIGHT &amp;&amp; this.xPos &lt; Level.maxWidth - this.width) {
+			this.flipDirection = false;
+			this.moveRight();
+			this.lastAction = Date.now();
+		} else if (Keyboard.LEFT) {
+			this.flipDirection = true;
+			this.moveLeft();
+			this.lastAction = Date.now();
+		}
+	}
+
+	/**
+	  * Handles handle jumping for the game.
+	 */
+	handleJumping() {
+		if (this.isHurt()) return;
+		if ((Keyboard.SPACE || Keyboard.UP) &amp;&amp; !this.isAboveGround() &amp;&amp; !this.isJumping) {
+			this.isJumping = true;
+			this.currentImage = 0;
+			this.landingTriggered = false;
+			this.lastAction = Date.now();
+			AudioHub.playOne(AudioHub.PEPE_JUMP);
+		}
+	}
+
+	/**
+	  * Handles handle animations for the game.
+	 */
+	handleAnimations() {
+		if (this.isDead()) return this.handleDeadAnimation();
+		if (this.isHurt() &amp;&amp; !this.isJumping) return this.handleHurtAnimation();
+		if (this.isJumping || this.isAboveGround()) return this.handleJumpAnimation();
+		if (Keyboard.RIGHT || Keyboard.LEFT) return this.handleWalkAnimation();
+		if (this.isLongIdle()) return this.handleIdleAnimation();
+		this.showIdleAnimation();
+	}
+
+	/**
+	  * Handles handle jump animation for the game.
+	 */
+	handleJumpAnimation() {
+		this.offset = ImageHub.PEPE.jump.offset;
+		this.showJumpAnimation(ImageHub.PEPE.jump.frames);
+	}
+
+	/**
+	  * Handles handle dead animation for the game.
+	 */
+	handleDeadAnimation() {
+		this.offset = ImageHub.PEPE.dead.offset;
+		this.showDeadAnimation(ImageHub.PEPE.dead.frames);
+	}
+
+	/**
+	  * Handles handle hurt animation for the game.
+	 */
+	handleHurtAnimation() {
+		this.offset = ImageHub.PEPE.hurt.offset;
+		this.showAnimation(ImageHub.PEPE.hurt.frames);
+	}
+
+	/**
+	  * Handles handle walk animation for the game.
+	 */
+	handleWalkAnimation() {
+		this.offset = ImageHub.PEPE.walk.offset;
+		this.showAnimation(ImageHub.PEPE.walk.frames);
+	}
+
+	/**
+	  * Handles handle idle animation for the game.
+	 */
+	handleIdleAnimation() {
+		const state = ImageHub.PEPE.longIdle;
+		const interval = this.flipDirection ? 8 : 6;
+		this.offset = state.offset;
+		if (this.animationTick % interval === 0) this.showAnimation(state.frames);
+	}
+
+	/**
+	  * Handles show idle animation for the game.
+	 */
+	showIdleAnimation() {
+		this.offset = ImageHub.PEPE.idle.offset;
+		if (this.animationTick % 6 === 0) this.showAnimation(ImageHub.PEPE.idle.frames);
+	}
+
+	/**
+	  * Handles show jump animation for the game.
+	 * @param {string[]} images - images value.
+	 */
+	showJumpAnimation(images) {
+		if (!this.isAboveGround() &amp;&amp; this.speedY === 0 &amp;&amp; !this.landingTriggered) return this.handleJumpStart(images);
+		if (this.speedY > 0) return this.handleJumpDescent(images);
+		if (this.speedY &lt; 0 &amp;&amp; this.isAboveGround()) return this.handleJumpAscent(images);
+		if (!this.isAboveGround()) this.handleJumpLanding(images);
+	}
+
+	/**
+	  * Handles handle jump start for the game.
+	 * @param {string[]} images - images value.
+	 */
+	handleJumpStart(images) {
+		this.img = this.imgCache[images[this.currentImage]];
+		if (this.currentImage &lt; 3) this.currentImage++;
+		else if (this.currentImage === 3) this.jump(30);
+	}
+
+	/**
+	  * Handles handle jump descent for the game.
+	 * @param {string[]} images - images value.
+	 */
+	handleJumpDescent(images) {
+		this.img = this.imgCache[images[3]];
+		this.currentImage = 4;
+	}
+
+	/**
+	  * Handles handle jump ascent for the game.
+	 * @param {string[]} images - images value.
+	 */
+	handleJumpAscent(images) {
+		if (this.currentImage &lt; 4 || this.currentImage > 6) this.currentImage = 4;
+		this.img = this.imgCache[images[this.currentImage]];
+		if (this.currentImage &lt; 6) this.currentImage++;
+	}
+
+	/**
+	  * Handles handle jump landing for the game.
+	 * @param {string[]} images - images value.
+	 */
+	handleJumpLanding(images) {
+		this.landingTriggered = true;
+		if (this.currentImage &lt; 7) this.currentImage = 7;
+		this.img = this.imgCache[images[this.currentImage]];
+		if (this.currentImage &lt; 8) this.currentImage++;
+		else this.resetJump();
+	}
+
+	/**
+	  * Handles reset jump for the game.
+	 */
+	resetJump() {
+		this.isJumping = false;
+		this.landingTriggered = false;
+		this.currentImage = 0;
+		this.speedY = 0;
+	}
+
+	/**
+	  * Handles show dead animation for the game.
+	 * @param {string[]} images - images value.
+	 */
+	showDeadAnimation(images) {
+		this.resetDeadAnimation(images);
+		if (this.currentImage === 3 &amp;&amp; !this.deadJumpTriggered) {
+			this.deadJumpTriggered = true;
+			this.startDeathFall();
+		}
+		this.showDeadFrame(images);
+	}
+
+	/**
+	  * Handles reset dead animation for the game.
+	 * @param {string[]} images - images value.
+	 */
+	resetDeadAnimation(images) {
+		if (this.currentAnimation !== images) {
+			this.currentAnimation = images;
+			this.currentImage = 0;
+			this.deadJumpTriggered = false;
+		}
+	}
+
+	/**
+	  * Handles show dead frame for the game.
+	 * @param {string[]} images - images value.
+	 */
+	showDeadFrame(images) {
+		if (this.currentImage &lt; images.length) {
+			this.img = this.imgCache[images[this.currentImage]];
+			this.currentImage++;
+		} else {
+			this.img = this.imgCache[images[images.length - 1]];
+		}
+	}
+
+	/**
+	  * Handles start death fall for the game.
+	 */
+	startDeathFall() {
+		IntervalHub.stopInterval(this.gravityInterval);
+
+		let deathSpeedY = 20;
+		const gravity = 0.9;
+
+		IntervalHub.startInterval(() => {
+			this.yPos -= deathSpeedY;
+			deathSpeedY -= gravity;
+		}, 1000 / 30);
+	}
+
+	/**
+	  * Handles is long idle for the game.
+	 */
+	isLongIdle() {
+		return (Date.now() - this.lastAction) / 1000 > 15;
+	}
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AudioHub.html">AudioHub</a></li><li><a href="BackgroundLayer.html">BackgroundLayer</a></li><li><a href="BossChicken.html">BossChicken</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="CollectableBottle.html">CollectableBottle</a></li><li><a href="CollectableCoin.html">CollectableCoin</a></li><li><a href="CollectableObject.html">CollectableObject</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="GameAudio.html">GameAudio</a></li><li><a href="ImageHub.html">ImageHub</a></li><li><a href="IntervalHub.html">IntervalHub</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="LevelHub.html">LevelHub</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="NormalChicken.html">NormalChicken</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="TemplateHub.html">TemplateHub</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindDialogMenuEvents">bindDialogMenuEvents</a></li><li><a href="global.html#bindDialogOptionsEvents">bindDialogOptionsEvents</a></li><li><a href="global.html#bindEndScreenEvents">bindEndScreenEvents</a></li><li><a href="global.html#bindGameScreenEvents">bindGameScreenEvents</a></li><li><a href="global.html#bindStartScreenEvents">bindStartScreenEvents</a></li><li><a href="global.html#closeDialog">closeDialog</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#openDialog">openDialog</a></li><li><a href="global.html#openFullscreen">openFullscreen</a></li><li><a href="global.html#rotateAndOpenFullscreen">rotateAndOpenFullscreen</a></li><li><a href="global.html#showDialogImpressum">showDialogImpressum</a></li><li><a href="global.html#showDialogMenu">showDialogMenu</a></li><li><a href="global.html#showDialogOptions">showDialogOptions</a></li><li><a href="global.html#showEndScreen">showEndScreen</a></li><li><a href="global.html#showGameScreen">showGameScreen</a></li><li><a href="global.html#showStartScreen">showStartScreen</a></li><li><a href="global.html#toggleMuteIcon">toggleMuteIcon</a></li><li><a href="global.html#updateDifficultyUI">updateDifficultyUI</a></li><li><a href="global.html#updateMuteControls">updateMuteControls</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Sep 14 2026 05:39:56 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

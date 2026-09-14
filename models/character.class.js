@@ -6,6 +6,9 @@ import { Level } from "./level.class.js";
 import { MovableObject } from "./movable-object.class.js";
 import { World } from "./world.class.js";
 
+/**
+ * Represents the Character game object and extends MovableObject.
+ */
 export class Character extends MovableObject {
 	speedX = 10;
 	lastAction = Date.now();
@@ -15,6 +18,9 @@ export class Character extends MovableObject {
 	landingTriggered = false;
 	wasHurt = false;
 
+	/**
+	 * Creates and initializes the object.
+	 */
 	constructor() {
 		super();
 		this.loadAllImages();
@@ -24,6 +30,9 @@ export class Character extends MovableObject {
 		this.hurtSound = AudioHub.PEPE_DAMAGE;
 	}
 
+	/**
+	  * Handles init dimensions for the game.
+	 */
 	initDimensions() {
 		this.height = World.canvas.height * 0.6;
 		this.width = this.height * 0.51;
@@ -32,12 +41,18 @@ export class Character extends MovableObject {
 		this.yPos = this.yPosGround;
 	}
 
+	/**
+	  * Handles load all images for the game.
+	 */
 	loadAllImages() {
 		this.offset = ImageHub.PEPE.idle.offset;
 		this.loadImg(ImageHub.PEPE.idle.frames[0]);
 		Object.values(ImageHub.PEPE).forEach((state) => this.loadImages(state.frames));
 	}
 
+	/**
+	  * Handles animate for the game.
+	 */
 	animate() {
 		this.movementInterval = IntervalHub.startInterval(() => {
 			this.handleAudio();
@@ -51,6 +66,9 @@ export class Character extends MovableObject {
 		}, 50);
 	}
 
+	/**
+	  * Handles handle audio for the game.
+	 */
 	handleAudio() {
 		if (this.isDead()) {
 			this.handleDeadAudio();
@@ -60,12 +78,18 @@ export class Character extends MovableObject {
 		this.handleMovementAudio();
 	}
 
+	/**
+	  * Handles handle dead audio for the game.
+	 */
 	handleDeadAudio() {
 		AudioHub.stopOne(AudioHub.PEPE_RUN);
 		AudioHub.stopOne(AudioHub.PEPE_SNORING);
 		AudioHub.stopOne(AudioHub.PEPE_DAMAGE);
 	}
 
+	/**
+	  * Handles handle movement audio for the game.
+	 */
 	handleMovementAudio() {
 		if ((Keyboard.RIGHT || Keyboard.LEFT) && !this.isAboveGround()) {
 			AudioHub.playOne(AudioHub.PEPE_RUN);
@@ -80,6 +104,9 @@ export class Character extends MovableObject {
 		}
 	}
 
+	/**
+	  * Handles handle walking for the game.
+	 */
 	handleWalking() {
 		if (this.isHurt()) return;
 		if (Keyboard.RIGHT && this.xPos < Level.maxWidth - this.width) {
@@ -93,6 +120,9 @@ export class Character extends MovableObject {
 		}
 	}
 
+	/**
+	  * Handles handle jumping for the game.
+	 */
 	handleJumping() {
 		if (this.isHurt()) return;
 		if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround() && !this.isJumping) {
@@ -104,6 +134,9 @@ export class Character extends MovableObject {
 		}
 	}
 
+	/**
+	  * Handles handle animations for the game.
+	 */
 	handleAnimations() {
 		if (this.isDead()) return this.handleDeadAnimation();
 		if (this.isHurt() && !this.isJumping) return this.handleHurtAnimation();
@@ -113,26 +146,41 @@ export class Character extends MovableObject {
 		this.showIdleAnimation();
 	}
 
+	/**
+	  * Handles handle jump animation for the game.
+	 */
 	handleJumpAnimation() {
 		this.offset = ImageHub.PEPE.jump.offset;
 		this.showJumpAnimation(ImageHub.PEPE.jump.frames);
 	}
 
+	/**
+	  * Handles handle dead animation for the game.
+	 */
 	handleDeadAnimation() {
 		this.offset = ImageHub.PEPE.dead.offset;
 		this.showDeadAnimation(ImageHub.PEPE.dead.frames);
 	}
 
+	/**
+	  * Handles handle hurt animation for the game.
+	 */
 	handleHurtAnimation() {
 		this.offset = ImageHub.PEPE.hurt.offset;
 		this.showAnimation(ImageHub.PEPE.hurt.frames);
 	}
 
+	/**
+	  * Handles handle walk animation for the game.
+	 */
 	handleWalkAnimation() {
 		this.offset = ImageHub.PEPE.walk.offset;
 		this.showAnimation(ImageHub.PEPE.walk.frames);
 	}
 
+	/**
+	  * Handles handle idle animation for the game.
+	 */
 	handleIdleAnimation() {
 		const state = ImageHub.PEPE.longIdle;
 		const interval = this.flipDirection ? 8 : 6;
@@ -140,11 +188,18 @@ export class Character extends MovableObject {
 		if (this.animationTick % interval === 0) this.showAnimation(state.frames);
 	}
 
+	/**
+	  * Handles show idle animation for the game.
+	 */
 	showIdleAnimation() {
 		this.offset = ImageHub.PEPE.idle.offset;
 		if (this.animationTick % 6 === 0) this.showAnimation(ImageHub.PEPE.idle.frames);
 	}
 
+	/**
+	  * Handles show jump animation for the game.
+	 * @param {string[]} images - images value.
+	 */
 	showJumpAnimation(images) {
 		if (!this.isAboveGround() && this.speedY === 0 && !this.landingTriggered) return this.handleJumpStart(images);
 		if (this.speedY > 0) return this.handleJumpDescent(images);
@@ -152,23 +207,39 @@ export class Character extends MovableObject {
 		if (!this.isAboveGround()) this.handleJumpLanding(images);
 	}
 
+	/**
+	  * Handles handle jump start for the game.
+	 * @param {string[]} images - images value.
+	 */
 	handleJumpStart(images) {
 		this.img = this.imgCache[images[this.currentImage]];
 		if (this.currentImage < 3) this.currentImage++;
 		else if (this.currentImage === 3) this.jump(30);
 	}
 
+	/**
+	  * Handles handle jump descent for the game.
+	 * @param {string[]} images - images value.
+	 */
 	handleJumpDescent(images) {
 		this.img = this.imgCache[images[3]];
 		this.currentImage = 4;
 	}
 
+	/**
+	  * Handles handle jump ascent for the game.
+	 * @param {string[]} images - images value.
+	 */
 	handleJumpAscent(images) {
 		if (this.currentImage < 4 || this.currentImage > 6) this.currentImage = 4;
 		this.img = this.imgCache[images[this.currentImage]];
 		if (this.currentImage < 6) this.currentImage++;
 	}
 
+	/**
+	  * Handles handle jump landing for the game.
+	 * @param {string[]} images - images value.
+	 */
 	handleJumpLanding(images) {
 		this.landingTriggered = true;
 		if (this.currentImage < 7) this.currentImage = 7;
@@ -177,6 +248,9 @@ export class Character extends MovableObject {
 		else this.resetJump();
 	}
 
+	/**
+	  * Handles reset jump for the game.
+	 */
 	resetJump() {
 		this.isJumping = false;
 		this.landingTriggered = false;
@@ -184,6 +258,10 @@ export class Character extends MovableObject {
 		this.speedY = 0;
 	}
 
+	/**
+	  * Handles show dead animation for the game.
+	 * @param {string[]} images - images value.
+	 */
 	showDeadAnimation(images) {
 		this.resetDeadAnimation(images);
 		if (this.currentImage === 3 && !this.deadJumpTriggered) {
@@ -193,6 +271,10 @@ export class Character extends MovableObject {
 		this.showDeadFrame(images);
 	}
 
+	/**
+	  * Handles reset dead animation for the game.
+	 * @param {string[]} images - images value.
+	 */
 	resetDeadAnimation(images) {
 		if (this.currentAnimation !== images) {
 			this.currentAnimation = images;
@@ -201,6 +283,10 @@ export class Character extends MovableObject {
 		}
 	}
 
+	/**
+	  * Handles show dead frame for the game.
+	 * @param {string[]} images - images value.
+	 */
 	showDeadFrame(images) {
 		if (this.currentImage < images.length) {
 			this.img = this.imgCache[images[this.currentImage]];
@@ -210,6 +296,9 @@ export class Character extends MovableObject {
 		}
 	}
 
+	/**
+	  * Handles start death fall for the game.
+	 */
 	startDeathFall() {
 		IntervalHub.stopInterval(this.gravityInterval);
 
@@ -222,6 +311,9 @@ export class Character extends MovableObject {
 		}, 1000 / 30);
 	}
 
+	/**
+	  * Handles is long idle for the game.
+	 */
 	isLongIdle() {
 		return (Date.now() - this.lastAction) / 1000 > 15;
 	}

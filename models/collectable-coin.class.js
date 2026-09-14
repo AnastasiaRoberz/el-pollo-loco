@@ -2,6 +2,9 @@ import { CollectableObject } from "./collectable-object.class.js";
 import { ImageHub } from "../hubs/img-hub.class.js";
 import { World } from "./world.class.js";
 
+/**
+ * Represents the CollectableCoin game object and extends CollectableObject.
+ */
 export class CollectableCoin extends CollectableObject {
 	images = ImageHub.COIN;
 	offset = { topRatio: 0.35, bottomRatio: 0.35, leftRatio: 0.35, rightRatio: 0.35 };
@@ -31,6 +34,11 @@ export class CollectableCoin extends CollectableObject {
 		],
 	};
 
+	/**
+	 * Creates and initializes the object.
+	 * @param {number} xPos - xPos value.
+	 * @param {number} yPos - yPos value.
+	 */
 	constructor(xPos, yPos) {
 		super();
 		this.initDimensions(xPos, yPos);
@@ -39,6 +47,11 @@ export class CollectableCoin extends CollectableObject {
 		this.animate();
 	}
 
+	/**
+	  * Handles init dimensions for the game.
+	 * @param {number} xPos - xPos value.
+	 * @param {number} yPos - yPos value.
+	 */
 	initDimensions(xPos, yPos) {
 		this.height = World.canvas.height * 0.23;
 		this.width = this.height;
@@ -46,6 +59,11 @@ export class CollectableCoin extends CollectableObject {
 		this.yPos = yPos;
 	}
 
+	/**
+	  * Handles create cluster for the game.
+	 * @param {number} startX - startX value.
+	 * @param {number} remainingCoins - remainingCoins value.
+	 */
 	static createCluster(startX, remainingCoins) {
 		const keys = Object.keys(this.coinPatterns);
 		const randomKey = keys[Math.floor(Math.random() * keys.length)];
@@ -61,6 +79,13 @@ export class CollectableCoin extends CollectableObject {
 		return cluster;
 	}
 
+	/**
+	  * Handles create coin for the game.
+	 * @param {number} startX - startX value.
+	 * @param {number} coinSize - coinSize value.
+	 * @param {Object} position - position value.
+	 * @param {number} baseY - baseY value.
+	 */
 	static createCoin(startX, coinSize, position, baseY) {
 		const x = startX + position[0] * coinSize;
 		const y = baseY + position[1] * coinSize;

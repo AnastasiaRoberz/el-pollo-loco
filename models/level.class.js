@@ -9,6 +9,9 @@ import { SmallChicken } from "./small-chicken.class.js";
 import { StatusBar } from "./status-bar.class.js";
 import { World } from "./world.class.js";
 
+/**
+ * Represents the Level game object.
+ */
 export class Level {
 	static maxWidth;
 	config;
@@ -20,6 +23,10 @@ export class Level {
 	colObjects = { bottles: [], coins: [] };
 	lastXPos = 300;
 
+	/**
+	 * Creates and initializes the object.
+	 * @param {Object} levelConfig - levelConfig value.
+	 */
 	constructor(levelConfig) {
 		this.config = levelConfig;
 		Level.maxWidth = this.config.sections * World.canvas.width;
@@ -31,6 +38,10 @@ export class Level {
 		this.createEnemies(this.config.enemies, this.config.chickenRatio);
 	}
 
+	/**
+	  * Handles create bg layers for the game.
+	 * @param {*} sections - sections value.
+	 */
 	createBgLayers(sections) {
 		const step = World.canvas.width;
 
@@ -40,6 +51,11 @@ export class Level {
 		this.clouds.push(new Cloud(ImageHub.BACKGROUND.clouds[sections % 2], step * sections));
 	}
 
+	/**
+	  * Handles create background section for the game.
+	 * @param {number} index - index value.
+	 * @param {number} step - step value.
+	 */
 	createBackgroundSection(index, step) {
 		const background = ImageHub.BACKGROUND;
 		const xPos = index * step;
@@ -52,6 +68,9 @@ export class Level {
 		this.clouds.push(new Cloud(background.clouds[variant], xPos));
 	}
 
+	/**
+	  * Handles create statusbars for the game.
+	 */
 	createStatusbars() {
 		const yPosStart = World.canvas.width * 0.02;
 		const yPosStep = World.canvas.width * 0.04;
@@ -61,6 +80,11 @@ export class Level {
 		this.bars["healthEndboss"] = new StatusBar("healthEndboss", "green", yPosStart, this.config.bossEnergy, 100);
 	}
 
+	/**
+	  * Handles create enemies for the game.
+	 * @param {number} amount - amount value.
+	 * @param {number} ratio - ratio value.
+	 */
 	createEnemies(amount, ratio) {
 		const startX = World.canvas.width * 0.5;
 		const { step, maxJitter } = this.getSlotParams(amount, startX, Level.maxWidth + World.canvas.width);
@@ -74,6 +98,10 @@ export class Level {
 		}
 	}
 
+	/**
+	  * Handles create bottles for the game.
+	 * @param {number} amount - amount value.
+	 */
 	createBottles(amount) {
 		const startX = 0;
 		const { step, maxJitter } = this.getSlotParams(amount, startX);
@@ -83,6 +111,10 @@ export class Level {
 		}
 	}
 
+	/**
+	  * Handles create coins for the game.
+	 * @param {number} amount - amount value.
+	 */
 	createCoins(amount) {
 		const startX = 300;
 		const estClusters = Math.max(1, Math.floor(amount / 4));
@@ -95,6 +127,14 @@ export class Level {
 		}
 	}
 
+	/**
+	  * Handles create coin cluster for the game.
+	 * @param {number} index - index value.
+	 * @param {number} startX - startX value.
+	 * @param {number} step - step value.
+	 * @param {number} maxJitter - maxJitter value.
+	 * @param {number} remainingCoins - remainingCoins value.
+	 */
 	createCoinCluster(index, startX, step, maxJitter, remainingCoins) {
 		const slotX = startX + index * step + Math.random() * maxJitter;
 		const newCoins = CollectableCoin.createCluster(slotX, remainingCoins);
@@ -102,6 +142,13 @@ export class Level {
 		return newCoins.length;
 	}
 
+	/**
+	  * Handles get slot params for the game.
+	 * @param {number} amount - amount value.
+	 * @param {number} startX - startX value.
+	 * @param {number} endX - endX value.
+	 * @param {*} minDistance - minDistance value.
+	 */
 	getSlotParams(amount, startX, endX = Level.maxWidth, minDistance = 50) {
 		const step = (endX - startX) / amount;
 		const maxJitter = Math.max(0, step - minDistance);
