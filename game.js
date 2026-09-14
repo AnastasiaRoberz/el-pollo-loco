@@ -9,6 +9,7 @@ let currentDifficulty = localStorage.getItem("game_difficulty") || "MEDIUM";
 
 window.addEventListener("load", () => {
 	showStartScreen();
+	document.getElementById("flip").addEventListener("click", rotateAndOpenFullscreen);
 });
 
 function init() {
@@ -20,20 +21,51 @@ function init() {
 
 function openFullscreen(element = document.documentElement) {
 	if (element.requestFullscreen) {
-		element.requestFullscreen();
+		return element.requestFullscreen();
 	} else if (element.webkitRequestFullscreen) {
-		element.webkitRequestFullscreen();
+		return element.webkitRequestFullscreen();
 	} else if (element.msRequestFullscreen) {
-		element.msRequestFullscreen();
+		return element.msRequestFullscreen();
 	}
+
+	return Promise.reject(new Error("Fullscreen is not supported by this browser."));
+}
+
+function rotateAndOpenFullscreen() {
+	const fullscreenTarget = document.getElementById("game-container");
+	openFullscreen(fullscreenTarget)
+		.then(() => {
+			if (screen.orientation && screen.orientation.lock) {
+				return screen.orientation.lock("landscape");
+			}
+		})
+		.catch((error) => {
+			if (error.name !== "NotSupportedError" && error.name !== "SecurityError") {
+				console.error("Fullscreen or screen orientation could not be activated.", error);
+			}
+		});
 }
 
 function toggleMuteIcon(currentScreen) {
 	event.currentTarget.blur();
-	const isMuted = AudioHub.toggleMute();
-	if (!isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
-	document.getElementById(`icon-mute-${currentScreen}`).classList.toggle("hidden", !isMuted);
-	document.getElementById(`icon-sound-${currentScreen}`).classList.toggle("hidden", isMuted);
+	AudioHub.toggleMute();
+	updateMuteControls();
+	if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
+}
+
+function updateMuteControls() {
+	["start", "ingame"].forEach((screen) => {
+		const muteIcon = document.getElementById(`icon-mute-${screen}`);
+		const soundIcon = document.getElementById(`icon-sound-${screen}`);
+
+		if (muteIcon && soundIcon) {
+			muteIcon.classList.toggle("hidden", !AudioHub.isMuted);
+			soundIcon.classList.toggle("hidden", AudioHub.isMuted);
+		}
+	});
+
+	const muteAllInput = document.getElementById("toggle-mute-all");
+	if (muteAllInput) muteAllInput.checked = AudioHub.isMuted;
 }
 
 //#region START SCREEN
@@ -41,9 +73,7 @@ function showStartScreen() {
 	screenRef.innerHTML = TemplateHub.startScreen();
 	closeDialog();
 
-	const isMuted = AudioHub.isMuted;
-	const soundIcon = isMuted ? "icon-sound-start" : "icon-mute-start";
-	document.getElementById(`${soundIcon}`).classList.add("hidden");
+	updateMuteControls();
 
 	bindStartScreenEvents();
 }
@@ -61,9 +91,7 @@ function showGameScreen() {
 	screenRef.innerHTML = TemplateHub.gameScreen();
 	closeDialog();
 
-	const isMuted = AudioHub.isMuted;
-	const soundIcon = isMuted ? "icon-sound-ingame" : "icon-mute-ingame";
-	document.getElementById(`${soundIcon}`).classList.add("hidden");
+	updateMuteControls();
 
 	bindGameScreenEvents();
 }
@@ -141,8 +169,8 @@ function bindDialogOptionsEvents() {
 	const muteAllInput = document.getElementById("toggle-mute-all");
 	const muteMusicInput = document.getElementById("toggle-mute-music");
 
-	volumeSlider.value = String(AudioHub.GAME_SOUND.file.volume / AudioHub.GAME_SOUND.baseVolume);
-	volumeValue.textContent = `${Math.round(Number(volumeSlider.value) * 100)}%`;
+	volumeSlider.value = String(AudioHub.masterVolume);
+	volumeValue.textContent = `${Math.round(AudioHub.masterVolume * 100)}%`;
 	muteAllInput.checked = AudioHub.isMuted;
 	muteMusicInput.checked = AudioHub.GAME_SOUND.file.muted && !AudioHub.isMuted;
 
@@ -154,6 +182,8 @@ function bindDialogOptionsEvents() {
 
 	muteAllInput.addEventListener("change", () => {
 		if (muteAllInput.checked !== AudioHub.isMuted) AudioHub.toggleMute();
+		updateMuteControls();
+		if (!AudioHub.isMuted) AudioHub.playOne(AudioHub.GAME_SOUND);
 	});
 
 	muteMusicInput.addEventListener("change", () => {

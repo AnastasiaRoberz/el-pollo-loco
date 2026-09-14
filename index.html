@@ -1,12 +1,8 @@
-<!--
-  El Pollo Loco main entry page.
-  Contains the UI shell and game bootstrapping.
--->
 <!doctype html>
 <html lang="de">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0", viewport-fit=cover, user-scalable=no"/>
 		<title>El Pollo Loco</title>
 
 		<link rel="stylesheet" href="style.css" />
@@ -15,8 +11,14 @@
 	</head>
 	<body>
 		<div class="rotate-overlay">
-			<p>Bitte drehe dein Smartphone in das Querformat.</p>
-			<button id="flip">Drehen</button>
+			<div class="rotate-card">
+				<svg class="icon-rotate" aria-hidden="true">
+					<use href="./assets/icons.svg#icon-rotate"></use>
+				</svg>
+				<h2>Please rotate your phone</h2>
+				<p>For the best game experience, use landscape mode.</p>
+				<button class="btn-start" id="flip" type="button">Rotate &amp; fullscreen</button>
+			</div>
 		</div>
 
 		<div id="game-container" class="game-container">
