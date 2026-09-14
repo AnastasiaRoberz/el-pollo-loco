@@ -53,19 +53,27 @@ export class TemplateHub {
             </div>
             <div class="btn-mobile-container" id="mobile-btns">
                 <div class="btn-move">
-                    <button class="btn-mobile" id="btn-mobile-left">
-                        links
+                    <button class="btn-mobile" id="btn-mobile-left" aria-label="Move left">
+                        <svg class="icon icon-arrow-left" aria-hidden="true">
+                            <use href="./assets/icons.svg#icon-arrow-up"></use>
+                        </svg>
                     </button>
-                    <button class="btn-mobile right" id="btn-mobile-right">
-                        rechts
+                    <button class="btn-mobile right" id="btn-mobile-right" aria-label="Move right">
+                        <svg class="icon icon-arrow-right" aria-hidden="true">
+                            <use href="./assets/icons.svg#icon-arrow-up"></use>
+                        </svg>
                     </button>
                 </div>
                 <div class="btn-actions">
-                    <button class="btn-mobile up" id="btn-mobile-up">
-                        hoch
+                    <button class="btn-mobile up" id="btn-mobile-up" aria-label="Jump">
+                        <svg class="icon icon-arrow-up" aria-hidden="true">
+                            <use href="./assets/icons.svg#icon-arrow-up"></use>
+                        </svg>
                     </button>
-                    <button class="btn-mobile throw" id="btn-mobile-throw">
-                        Wurf
+                    <button class="btn-mobile throw" id="btn-mobile-throw" aria-label="Throw bottle">
+                        <svg class="icon icon-throw" aria-hidden="true">
+                            <use href="./assets/icons.svg#icon-arrow-up"></use>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -112,7 +120,6 @@ export class TemplateHub {
     <h2>Options</h2>
 
     <div class="options-content">
-        <!-- Deine bestehenden Fieldsets bleiben exakt gleich -->
         <fieldset class="options-group">
             <legend>Audio & Sound</legend>
             <div class="volume">
@@ -157,7 +164,6 @@ export class TemplateHub {
         </fieldset>
     </div>
 
-    <!-- Neuer Zurück-Button -->
     <div class="options-footer">
         <button type="button" class="btn-back" id="btn-options-back" aria-label="Zurück">
             <span class="btn-arrow">◀</span> Zurück
