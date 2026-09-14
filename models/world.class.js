@@ -122,15 +122,15 @@ export class World {
 
 	collisionEnemyCharacter(enemy) {
 		if (World.character.isColliding(enemy) && !enemy.isDead()) {
-			if (World.character.isAboveObj() && World.character.isFalling() && World.character.isAboveObj(enemy.ryPos)) {
+			if (World.character.isAboveGround() && World.character.isFalling() && World.character.isAboveObj(enemy)) {
 				enemy.die();
 				setTimeout(() => {
 					const currentIndex = this.level.enemies.indexOf(enemy);
 					this.level.enemies.splice(currentIndex, 1);
 				}, 1000);
-				World.character.jump(World.character.height * 0.03);
+				World.character.jump((World.character.height / 2) * 0.01);
 			} else {
-				if (!World.character.isHurt()) {
+				if (!World.character.isInvulnerable()) {
 					World.character.isHit(this.level.config.damage);
 					this.level.bars.healthBar.setPercentage(World.character.energy);
 				}
@@ -154,7 +154,7 @@ export class World {
 
 	collisionBossCharacter() {
 		if (this.level.bossChicken.isColliding(World.character) && !this.level.bossChicken.isDead()) {
-			if (!World.character.isHurt()) {
+			if (!World.character.isInvulnerable()) {
 				World.character.isHit(this.level.config.damage);
 				this.level.bars.healthBar.setPercentage(World.character.energy);
 			}

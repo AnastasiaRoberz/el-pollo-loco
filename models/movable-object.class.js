@@ -65,17 +65,19 @@ export class MovableObject extends DrawableObject {
 	}
 
 	isHit(damage) {
+		if (this.lastAction) this.lastAction = Date.now();
 		this.energy -= damage;
 		if (this.hurtSound) AudioHub.playOne(this.hurtSound);
 		if (this.energy < 0) this.energy = 0;
 		this.lastHit = Date.now();
 	}
 
-	isDead() {
-		return this.energy === 0;
+	isInvulnerable() {
+		const timePassed = (Date.now() - this.lastHit) / 1000;
+		return timePassed < 3;
 	}
 
-	die() {
-		this.energy = 0;
+	isDead() {
+		return this.energy === 0;
 	}
 }
