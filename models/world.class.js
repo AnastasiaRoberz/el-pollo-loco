@@ -14,18 +14,18 @@ export class World {
 	maxCameraPos;
 	level;
 	gameOver = false;
-	onGameOver;
+	endScreen;
 	collectedBottles = 0;
 	collectedCoins = 0;
 	lastThrow = 0;
 	throwCooldown = 1000;
 
-	constructor(canvas, difficulty) {
+	constructor(canvas, endScreen, difficulty) {
 		World.canvas = canvas;
 		this.ctx = canvas.getContext("2d");
 		World.character = new Character();
 		this.level = new Level(LevelHub[`LEVEL_${difficulty}`]);
-		// this.onGameOver = onGameOver;
+		this.endScreen = endScreen;
 		Keyboard.init();
 		this.maxCameraPos = -(Level.maxWidth - World.canvas.width);
 		this.draw();
@@ -219,18 +219,29 @@ export class World {
 	}
 
 	checkGameEnd() {
-		if (World.character.isDead() && !this.gameOver) {
+		let result = "won";
+		if ((World.character.isDead() || this.level.bossChicken.isDead()) && !this.gameOver) {
+			this.gameOver = true;
+			IntervalHub.stopInterval(World.character.movementInterval);
+			IntervalHub.stopInterval(this.level.bossChicken.movementInterval);
+			this.level.enemies.forEach((enemy) => {
+				IntervalHub.stopInterval(enemy.movementInterval);
+				IntervalHub.stopInterval(enemy.animationInterval);
+			});
+			this.level.colObjects.bottles.forEach((bottle) => IntervalHub.stopInterval(bottle.animationInterval));
+			this.level.colObjects.coins.forEach((coin) => IntervalHub.stopInterval(coin.animationInterval));
+			if (World.character.isDead()) {
+				result = "lost";
+				World.character.showAnimationOnce(ImageHub.PEPE.dead.frames);
+				IntervalHub.stopInterval(this.level.bossChicken.animationInterval);
+			} else {
+				this.level.bossChicken.showAnimationOnce(ImageHub.BOSS_CHICKEN.dead.frames);
+				IntervalHub.stopInterval(World.character.animationInterval);
+			}
+
 			setTimeout(() => {
-				this.gameOver = true;
-				// this.onGameOver("lost");
-				IntervalHub.stopAllIntervals();
-			}, 5000);
-		} else if (this.level.bossChicken.isDead() && !this.gameOver) {
-			setTimeout(() => {
-				this.gameOver = true;
-				// this.onGameOver("won");
-				IntervalHub.stopAllIntervals();
-			}, 3000);
+				this.endScreen(result);
+			}, 4000);
 		}
 	}
 }
