@@ -9,6 +9,7 @@ export class Keyboard {
 	static init() {
 		window.addEventListener("keydown", (event) => this.handleKeyDown(event));
 		window.addEventListener("keyup", (event) => this.handleKeyUp(event));
+		this.initTouchControls();
 	}
 
 	static handleKeyDown(event) {
@@ -26,6 +27,31 @@ export class Keyboard {
 		if (code === "ArrowRight" || code === "KeyD") this.RIGHT = isPressed;
 		if (code === "Space") this.SPACE = isPressed;
 		if (code === "KeyF" || code === "KeyE") this.KEY_F = isPressed;
+	}
+
+	static initTouchControls() {
+		this.bindButton("btn-mobile-left", "LEFT");
+		this.bindButton("btn-mobile-right", "RIGHT");
+		this.bindButton("btn-mobile-up", "SPACE");
+		this.bindButton("btn-mobile-throw", "KEY_F");
+	}
+
+	static bindButton(id, key) {
+		const btn = document.getElementById(id);
+
+		btn.addEventListener("touchstart", (event) => {
+			event.preventDefault();
+			this[key] = true;
+		});
+
+		btn.addEventListener("touchend", (event) => {
+			event.preventDefault();
+			this[key] = false;
+		});
+
+		btn.addEventListener("mousedown", () => (this[key] = true));
+		btn.addEventListener("mouseup", () => (this[key] = false));
+		btn.addEventListener("mouseleave", () => (this[key] = false));
 	}
 
 	static reset() {
