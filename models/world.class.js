@@ -152,7 +152,6 @@ export class World {
 			if (bottle.isColliding(enemy) && !enemy.isDead() && !bottle.hasHit) {
 				enemy.die();
 				bottle.hasHit = true;
-				AudioHub.playOne(AudioHub.BOTTLE_BREAK);
 				setTimeout(() => {
 					const enemyId = this.level.enemies.indexOf(enemy);
 					this.level.enemies.splice(enemyId, 1);

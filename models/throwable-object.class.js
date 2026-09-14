@@ -45,6 +45,10 @@ export class ThrowableObject extends MovableObject {
 
 	handleBottleImpact() {
 		IntervalHub.stopInterval(this.gravityInterval);
+		if (!this.soundPlayed) {
+			this.soundPlayed = true;
+			AudioHub.playOne(AudioHub.BOTTLE_BREAK);
+		}
 		this.showAnimationOnce(ImageHub.BOTTLE.splash);
 		setTimeout(() => {
 			IntervalHub.stopInterval(this.animationInterval);
@@ -62,11 +66,6 @@ export class ThrowableObject extends MovableObject {
 	}
 
 	bottleHitGround() {
-		const check = this.yPos >= this.yPosGround;
-		if (check && !this.soundPlayed) {
-			this.soundPlayed = true;
-			AudioHub.playOne(AudioHub.BOTTLE_BREAK);
-		}
-		return check;
+		return this.yPos >= this.yPosGround;
 	}
 }

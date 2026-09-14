@@ -27,23 +27,15 @@ function openFullscreen(element = document.documentElement) {
 	} else if (element.msRequestFullscreen) {
 		return element.msRequestFullscreen();
 	}
-
-	return Promise.reject(new Error("Fullscreen is not supported by this browser."));
 }
 
 function rotateAndOpenFullscreen() {
 	const fullscreenTarget = document.getElementById("game-container");
-	openFullscreen(fullscreenTarget)
-		.then(() => {
-			if (screen.orientation && screen.orientation.lock) {
-				return screen.orientation.lock("landscape");
-			}
-		})
-		.catch((error) => {
-			if (error.name !== "NotSupportedError" && error.name !== "SecurityError") {
-				console.error("Fullscreen or screen orientation could not be activated.", error);
-			}
-		});
+	openFullscreen(fullscreenTarget).then(() => {
+		if (screen.orientation && screen.orientation.lock) {
+			return screen.orientation.lock("landscape");
+		}
+	});
 }
 
 function toggleMuteIcon(currentScreen) {
