@@ -3,7 +3,7 @@ import { ImageHub } from "../hubs/img-hub.class.js";
 import { World } from "./world.class.js";
 
 export class StatusBar extends DrawableObject {
-	xPos;
+	xPos = World.canvas.width * 0.02;
 	width = 250;
 	height = 60;
 	percentage;
@@ -12,10 +12,10 @@ export class StatusBar extends DrawableObject {
 	barImg;
 	maxValue = 100;
 
-	constructor(icon, color, yPos, maxValue, percentage = 0, xPos = 20) {
+	constructor(icon, color, yPos, maxValue, percentage = 0) {
 		super();
 		this.loadAllImages(icon, color);
-		this.xPos = xPos;
+		if (icon === "healthEndboss") this.xPos = World.canvas.width - World.canvas.width * 0.02 - this.width;
 		this.yPos = yPos;
 		this.percentage = percentage;
 		this.maxValue = maxValue;
