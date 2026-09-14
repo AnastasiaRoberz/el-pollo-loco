@@ -94,10 +94,10 @@ export class Character extends MovableObject {
 		if (this.isHurt()) return;
 		if ((Keyboard.SPACE || Keyboard.UP) && !this.isAboveGround() && !this.isJumping) {
 			this.isJumping = true;
-			AudioHub.playOne(AudioHub.PEPE_JUMP);
 			this.currentImage = 0;
 			this.landingTriggered = false;
 			this.lastAction = Date.now();
+			AudioHub.playOne(AudioHub.PEPE_JUMP);
 		}
 	}
 
@@ -110,7 +110,7 @@ export class Character extends MovableObject {
 			this.showAnimation(ImageHub.PEPE.hurt.frames);
 		} else if (this.isJumping || this.isAboveGround()) {
 			this.offset = ImageHub.PEPE.jump.offset;
-			if (this.animationTick % 2 === 0) this.showAnimationOnce(ImageHub.PEPE.jump.frames);
+			this.showJumpAnimation(ImageHub.PEPE.jump.frames);
 		} else if (Keyboard.RIGHT || Keyboard.LEFT) {
 			this.offset = ImageHub.PEPE.walk.offset;
 			this.showAnimation(ImageHub.PEPE.walk.frames);
