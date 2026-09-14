@@ -44,7 +44,7 @@ export class World {
 	}
 
 	/**
-	  * Handles draw for the game.
+	 * Handles draw for the game.
 	 */
 	draw() {
 		this.ctx.clearRect(0, 0, World.canvas.width, World.canvas.height);
@@ -54,15 +54,13 @@ export class World {
 
 		this.ctx.translate(this.cameraPos, 0);
 		this.drawObjects();
-		// this.drawFrames();
-		// this.drawOffsetFrames();
 		this.ctx.translate(-this.cameraPos, 0);
 		this.drawStatusbars();
 		requestAnimationFrame(() => this.draw());
 	}
 
 	/**
-	  * Handles draw objects for the game.
+	 * Handles draw objects for the game.
 	 */
 	drawObjects() {
 		this.addObjectsToMap(this.level.bgLayers);
@@ -76,29 +74,7 @@ export class World {
 	}
 
 	/**
-	  * Handles draw frames for the game.
-	 */
-	drawFrames() {
-		World.character.drawFrame(this.ctx);
-		this.level.bossChicken.drawFrame(this.ctx);
-		this.level.enemies.forEach((enemy) => enemy.drawFrame(this.ctx));
-		this.level.colObjects.bottles.forEach((bottle) => bottle.drawFrame(this.ctx));
-		this.level.colObjects.coins.forEach((coin) => coin.drawFrame(this.ctx));
-	}
-
-	/**
-	  * Handles draw offset frames for the game.
-	 */
-	drawOffsetFrames() {
-		World.character.drawOffsetFrame(this.ctx);
-		this.level.bossChicken.drawOffsetFrame(this.ctx);
-		this.level.enemies.forEach((enemy) => enemy.drawOffsetFrame(this.ctx));
-		this.level.colObjects.bottles.forEach((bottle) => bottle.drawOffsetFrame(this.ctx));
-		this.level.colObjects.coins.forEach((coin) => coin.drawOffsetFrame(this.ctx));
-	}
-
-	/**
-	  * Handles draw statusbars for the game.
+	 * Handles draw statusbars for the game.
 	 */
 	drawStatusbars() {
 		this.level.bars.healthBar.draw(this.ctx);
@@ -110,7 +86,7 @@ export class World {
 	}
 
 	/**
-	  * Handles add objects to map for the game.
+	 * Handles add objects to map for the game.
 	 * @param {*} objects - objects value.
 	 */
 	addObjectsToMap(objects) {
@@ -118,7 +94,7 @@ export class World {
 	}
 
 	/**
-	  * Handles run for the game.
+	 * Handles run for the game.
 	 */
 	run() {
 		IntervalHub.startInterval(() => {
@@ -131,7 +107,7 @@ export class World {
 	}
 
 	/**
-	  * Handles set real frames for the game.
+	 * Handles set real frames for the game.
 	 */
 	setRealFrames() {
 		World.character.setRealFrame();
@@ -143,7 +119,7 @@ export class World {
 	}
 
 	/**
-	  * Handles check collisions for the game.
+	 * Handles check collisions for the game.
 	 */
 	checkCollisions() {
 		this.collisionBossCharacter();
@@ -158,7 +134,7 @@ export class World {
 	}
 
 	/**
-	  * Handles collision enemy character for the game.
+	 * Handles collision enemy character for the game.
 	 * @param {*} enemy - enemy value.
 	 */
 	collisionEnemyCharacter(enemy) {
@@ -174,7 +150,7 @@ export class World {
 	}
 
 	/**
-	  * Handles handle enemy stomp for the game.
+	 * Handles handle enemy stomp for the game.
 	 * @param {*} enemy - enemy value.
 	 */
 	handleEnemyStomp(enemy) {
@@ -187,7 +163,7 @@ export class World {
 	}
 
 	/**
-	  * Handles handle enemy damage for the game.
+	 * Handles handle enemy damage for the game.
 	 */
 	handleEnemyDamage() {
 		if (World.character.isInvulnerable()) return;
@@ -196,7 +172,7 @@ export class World {
 	}
 
 	/**
-	  * Handles collision enemy bottle for the game.
+	 * Handles collision enemy bottle for the game.
 	 * @param {*} enemy - enemy value.
 	 */
 	collisionEnemyBottle(enemy) {
@@ -213,7 +189,7 @@ export class World {
 	}
 
 	/**
-	  * Handles collision boss character for the game.
+	 * Handles collision boss character for the game.
 	 */
 	collisionBossCharacter() {
 		if (this.level.bossChicken.isColliding(World.character) && !this.level.bossChicken.isDead()) {
@@ -225,7 +201,7 @@ export class World {
 	}
 
 	/**
-	  * Handles collision boss bottle for the game.
+	 * Handles collision boss bottle for the game.
 	 * @param {*} bottle - bottle value.
 	 */
 	collisionBossBottle(bottle) {
@@ -239,7 +215,7 @@ export class World {
 	}
 
 	/**
-	  * Handles remove bottle for the game.
+	 * Handles remove bottle for the game.
 	 * @param {*} bottle - bottle value.
 	 */
 	removeBottle(bottle) {
@@ -252,7 +228,7 @@ export class World {
 	}
 
 	/**
-	  * Handles collect items for the game.
+	 * Handles collect items for the game.
 	 */
 	collectItems() {
 		this.level.colObjects.bottles.forEach((bottle) => this.collectBottles(bottle));
@@ -260,7 +236,7 @@ export class World {
 	}
 
 	/**
-	  * Handles collect bottles for the game.
+	 * Handles collect bottles for the game.
 	 * @param {*} bottle - bottle value.
 	 */
 	collectBottles(bottle) {
@@ -274,7 +250,7 @@ export class World {
 	}
 
 	/**
-	  * Handles collect coins for the game.
+	 * Handles collect coins for the game.
 	 * @param {*} coin - coin value.
 	 */
 	collectCoins(coin) {
@@ -288,7 +264,7 @@ export class World {
 	}
 
 	/**
-	  * Handles throw objects for the game.
+	 * Handles throw objects for the game.
 	 */
 	throwObjects() {
 		if (Keyboard.KEY_F && this.collectedBottles > 0 && Date.now() - this.lastThrow > this.throwCooldown) {
@@ -302,7 +278,7 @@ export class World {
 	}
 
 	/**
-	  * Handles check game end for the game.
+	 * Handles check game end for the game.
 	 */
 	checkGameEnd() {
 		if (this.gameOver || (!World.character.isDead() && !this.level.bossChicken.isDead())) return;
@@ -315,7 +291,7 @@ export class World {
 	}
 
 	/**
-	  * Handles stop game intervals for the game.
+	 * Handles stop game intervals for the game.
 	 */
 	stopGameIntervals() {
 		IntervalHub.stopInterval(World.character.movementInterval);
@@ -329,7 +305,7 @@ export class World {
 	}
 
 	/**
-	  * Handles show game result for the game.
+	 * Handles show game result for the game.
 	 */
 	showGameResult() {
 		if (World.character.isDead()) {
